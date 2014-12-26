@@ -1,11 +1,12 @@
-Package: aws.signature
+Package: aws.s3
 Type: Package
-Title: Amazon Web Services Request Signatures
+Title: AWS S3 Client Package
 Version: 0.1
 Date: 2014-12-11
 Author: Thomas J. Leeper
 Maintainer: Thomas J. Leeper <thosjleeper@gmail.com>
-Description: Generates Amazon Web Services (AWS) request signatures for RESTful APIs.
+Description: A simple client package for the Amazon Web Services (AWS) Simple Storage Service (S3) REST API.
 License: GPL (>= 2)
-URL: https://github.com/leeper/aws.signature
-BugReports: https://github.com/leeper/aws.signature/issues
+Imports: httr, XML, aws.signature
+URL: https://github.com/cloudyr/aws.s3
+BugReports: https://github.com/cloudyr/aws.s3/issues
