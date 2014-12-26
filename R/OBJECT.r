@@ -1,13 +1,14 @@
 # GET
 
-getobject <- function(object, bucket, ...) {
+getobject <- function(bucket, object, ...) {
     if(inherits(object, "s3_object"))
         object <- object$Key
     if(inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("GET", paste0("https://",bucket,".s3.amazonaws.com",object), 
-               headers = c(headers, `x-amz-content-sha256` = ""), 
-               ...)
+    r <- s3HTTP("GET", paste0("https://",bucket,".s3.amazonaws.com/"), 
+                action = paste0("/",object),
+                headers = c(headers, `x-amz-content-sha256` = ""), 
+                ...)
     if(inherits(r, "aws_error")) {
         return(r)
     } else {
@@ -15,29 +16,40 @@ getobject <- function(object, bucket, ...) {
     }
 }
 
-getobject_acl <- function(object, bucket, ...) {
-    if(inherits(object, "s3_object"))
-        object <- object$Key
+get_acl <- function(bucket, object, ...) {
     if(inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("GET", paste0("https://",bucket,".s3.amazonaws.com",object), 
-               headers = c(headers, `x-amz-content-sha256` = ""), 
-               ...)
-    if(inherits(r, "aws_error")) {
-        return(r)
+    if(missing(object)) {
+        r <- s3HTTP("GET", paste0("https://",bucket,".s3.amazonaws.com/?acl"), 
+                    headers = c(headers, `x-amz-content-sha256` = ""), 
+                    ...)
+        if(inherits(r, "aws_error")) {
+            return(r)
+        } else {
+            structure(r, class = "s3_bucket")
+        }
     } else {
-        structure(r, class = "s3_object")
+        if(inherits(object, "s3_object"))
+            object <- object$Key
+        r <- s3HTTP("GET", paste0("https://",bucket,".s3.amazonaws.com/", object, "?acl"), 
+                    headers = c(headers, `x-amz-content-sha256` = ""), 
+                    ...)
+        if(inherits(r, "aws_error")) {
+            return(r)
+        } else {
+            structure(r, class = "s3_object")
+        }
     }
 }
 
-getobject_torrent <- function(object, bucket, ...) {
+get_torrent <- function(bucket, object, ...) {
     if(inherits(object, "s3_object"))
         object <- object$Key
     if(inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("GET", paste0("https://",bucket,".s3.amazonaws.com",object), 
-               headers = c(headers, `x-amz-content-sha256` = ""), 
-               ...)
+    r <- s3HTTP("GET", paste0("https://",bucket,".s3.amazonaws.com/", object, "?torrent"), 
+                headers = c(headers, `x-amz-content-sha256` = ""), 
+                ...)
     if(inherits(r, "aws_error")) {
         return(r)
     } else {
@@ -48,32 +60,32 @@ getobject_torrent <- function(object, bucket, ...) {
 
 # HEAD
 
-headobject <- function(object, bucket, ...) {
+headobject <- function(bucket, object, ...) {
     if(inherits(object, "s3_object"))
         object <- object$Key
     if(inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("HEAD", paste0("https://",bucket,".s3.amazonaws.com",object), 
-               headers = c(headers, `x-amz-content-sha256` = ""), 
-               ...)
+    r <- s3HTTP("HEAD", paste0("https://",bucket,".s3.amazonaws.com/", object), 
+                headers = c(headers, `x-amz-content-sha256` = ""), 
+                ...)
     if(inherits(r, "aws_error")) {
         return(r)
     } else {
-        structure(r, class = "s3_object")
+        structure(r, class = "HEAD")
     }
 }
 
 
 # OPTIONS
 
-optsobject <- function(object, bucket, ...) {
+optsobject <- function(bucket, object, ...) {
     if(inherits(object, "s3_object"))
         object <- object$Key
     if(inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("OPTIONS", paste0("https://",bucket,".s3.amazonaws.com",object), 
-               headers = c(headers, `x-amz-content-sha256` = ""), 
-               ...)
+    r <- s3HTTP("OPTIONS", paste0("https://",bucket,".s3.amazonaws.com/", object), 
+                headers = c(headers, `x-amz-content-sha256` = ""), 
+                ...)
     if(inherits(r, "aws_error")) {
         return(r)
     } else {
@@ -84,14 +96,14 @@ optsobject <- function(object, bucket, ...) {
 
 # POST
 
-postobject <- function(object, bucket, ...) {
+postobject <- function(bucket, object, ...) {
     if(inherits(object, "s3_object"))
         object <- object$Key
     if(inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("POST", paste0("https://",bucket,".s3.amazonaws.com",object), 
-               headers = c(headers, `x-amz-content-sha256` = ""), 
-               ...)
+    r <- s3HTTP("POST", paste0("https://",bucket,".s3.amazonaws.com/", object), 
+                headers = c(headers, `x-amz-content-sha256` = ""), 
+                ...)
     if(inherits(r, "aws_error")) {
         return(r)
     } else {
@@ -103,14 +115,14 @@ postobject <- function(object, bucket, ...) {
 
 # PUT
 
-putobject <- function(object, bucket, ...) {
+putobject <- function(bucket, object, ...) {
     if(inherits(object, "s3_object"))
         object <- object$Key
     if(inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("PUT", paste0("https://",bucket,".s3.amazonaws.com",object), 
-               headers = c(headers, `x-amz-content-sha256` = ""), 
-               ...)
+    r <- s3HTTP("PUT", paste0("https://",bucket,".s3.amazonaws.com/", object), 
+                headers = c(headers, `x-amz-content-sha256` = ""), 
+                ...)
     if(inherits(r, "aws_error")) {
         return(r)
     } else {
@@ -118,18 +130,29 @@ putobject <- function(object, bucket, ...) {
     }
 }
 
-putobject_acl <- function(object, bucket, ...) {
-    if(inherits(object, "s3_object"))
-        object <- object$Key
+putobject_acl <- function(bucket, object, ...) {
     if(inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("PUT", paste0("https://",bucket,".s3.amazonaws.com",object), 
-               headers = c(headers, `x-amz-content-sha256` = ""), 
-               ...)
-    if(inherits(r, "aws_error")) {
-        return(r)
+    if(missing(object)) {
+        r <- s3HTTP("PUT", paste0("https://",bucket,".s3.amazonaws.com/?acl"), 
+                    headers = c(headers, `x-amz-content-sha256` = ""), 
+                    ...)
+        if(inherits(r, "aws_error")) {
+            return(r)
+        } else {
+            structure(r, class = "s3_bucket")
+        }
     } else {
-        structure(r, class = "s3_object")
+        if(inherits(object, "s3_object"))
+            object <- object$Key
+        r <- s3HTTP("PUT", paste0("https://",bucket,".s3.amazonaws.com/", object), 
+                    headers = c(headers, `x-amz-content-sha256` = ""), 
+                    ...)
+        if(inherits(r, "aws_error")) {
+            return(r)
+        } else {
+            structure(r, class = "s3_object")
+        }
     }
 }
 
@@ -138,7 +161,7 @@ copyobject <- function(from_object, to_object, from_bucket, to_bucket, ...) {
         object <- object$Key
     if(inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("PUT", paste0("https://",bucket,".s3.amazonaws.com",object), 
+    r <- s3HTTP("PUT", paste0("https://",bucket,".s3.amazonaws.com/", object), 
                headers = c(headers, `x-amz-content-sha256` = ""), 
                ...)
     if(inherits(r, "aws_error")) {
@@ -151,7 +174,7 @@ copyobject <- function(from_object, to_object, from_bucket, to_bucket, ...) {
 
 # DELETE
 
-deleteobject <- function(object, bucket, ...) {
+deleteobject <- function(bucket, object, ...) {
     if(inherits(object, "s3_object"))
         object <- object$Key
     if(inherits(bucket, "s3bucket"))

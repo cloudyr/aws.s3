@@ -17,11 +17,10 @@ install_github("cloudyr/aws.s3")
 ```
 
 To install the latest version from CRAN, simply use `install.packages("aws.s3")`.
-```
 
 ## Code Examples ##
 
-Coming soon...using examples from the "mturk" bucket
+Coming soon...
 
 ---
 [![cloudyr project logo](http://i.imgur.com/JHS98Y7.png)](https://github.com/cloudyr)

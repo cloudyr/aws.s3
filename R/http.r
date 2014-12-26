@@ -22,6 +22,7 @@ s3HTTP <- function(verb, url, region, key, secret, ...) {
     #d_header <- format(current, "%a, %d %b %Y %T %Z", tz = "UTC")
     d_timestamp <- format(current, "%Y%m%dT%H%M%SZ", tz = "UTC")
     p <- parse_url(url)
+    action <- if(p$path == "") "/" else paste0("/",p$path)
     if(key == "") {
         H <- add_headers(`x-amz-date` = d_timestamp)
     } else {
@@ -30,7 +31,7 @@ s3HTTP <- function(verb, url, region, key, secret, ...) {
                region = region,
                service = "s3",
                verb = verb,
-               action = "/",
+               action = action,
                query_args = p$query,
                canonical_headers = list(host = p$hostname,
                                         `x-amz-date` = d_timestamp),
@@ -56,6 +57,7 @@ s3HTTP <- function(verb, url, region, key, secret, ...) {
     }
     out <- parse_s3_error(r)
     if(inherits(out, "aws_error")) {
+        attr(out, "request_canonical") <- S$CanonicalRequest
         attr(out, "request_string_to_sign") <- S$StringToSign
         attr(out, "request_signature") <- S$SignatureHeader
     }
