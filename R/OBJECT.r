@@ -5,9 +5,9 @@ getobject <- function(bucket, object, ...) {
         object <- object$Key
     if(inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("GET", paste0("https://",bucket,".s3.amazonaws.com/"), 
-                action = paste0("/",object),
+    r <- s3HTTP("GET", paste0("https://",bucket,".s3.amazonaws.com/", object), 
                 headers = c(headers, `x-amz-content-sha256` = ""), 
+                parse_response = FALSE,
                 ...)
     if(inherits(r, "aws_error")) {
         return(r)

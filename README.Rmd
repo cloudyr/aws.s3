@@ -20,7 +20,27 @@ To install the latest version from CRAN, simply use `install.packages("aws.s3")`
 
 ## Code Examples ##
 
+The package can be used to examine publicly accessible S3 buckets and publicly accessible S3 objects without registering an AWS account. 
+
+To access buckets and objects that have access restrictions (such as your own private objects), you will need an AWS account and enter your credentials into R. Your keypair can be generated on the [IAM Management Console](https://console.aws.amazon.com/iam/home?#security_credential) under the heading *Access Keys*. Note that you only have access to your secret key once. After it is generated, you need to save it in a secure location. New keypairs can be generated at any time if yours has been lost, stolen, or forgotten. By default, all **cloudyr** packages look for the access key ID and secret access key in environment variables ("AWS_ACCESS_KEY_ID" and "AWS_SECRET_ACCESS_KEY", respectively). The [Appendix to the httr API vignette](http://cran.r-project.org/web/packages/httr/vignettes/api-packages.html) explains how to configure these variables if you do not want to manually set them in each session using `Sys.setenv`.
+
+If credentials have been generated in the AWS console and make available in R, you can find your available buckets using:
+
+```
+bucketlist()
+```
+
+If your credentials are incorrect, this function will return an error. Otherwise, it will return a list of information about the buckets you have access to.
+
+### Buckets ###
+
 Coming soon...
+
+
+### Objects ###
+
+Coming soon...
+
 
 ---
 [![cloudyr project logo](http://i.imgur.com/JHS98Y7.png)](https://github.com/cloudyr)

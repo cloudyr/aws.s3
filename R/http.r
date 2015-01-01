@@ -1,5 +1,7 @@
 parse_s3_error <- function(response) {
     x <- xmlToList(xmlParse(content(response, "text")))
+    if(inherits(x, "try-error"))
+        return(content(response, "text"))
     if(http_status(response)$category == "client error") {
         warn_for_status(response)
         h <- headers(response)
@@ -9,7 +11,7 @@ parse_s3_error <- function(response) {
     }
 }
 
-s3HTTP <- function(verb, url, region, key, secret, ...) {
+s3HTTP <- function(verb, url, region, key, secret, parse_response = TRUE, ...) {
     if(missing(verb))
         verb <- "GET"
     if(missing(region))
@@ -43,6 +45,9 @@ s3HTTP <- function(verb, url, region, key, secret, ...) {
     }
     if(verb == "GET") {
         r <- GET(url, H, ...)
+        if(!parse_response) {
+            return(content(r)) # this needs to handle MIME-types
+        }
     } else if (verb == "HEAD") {
         r <- HEAD(url, H, ...)
         return(headers(r))
@@ -56,7 +61,7 @@ s3HTTP <- function(verb, url, region, key, secret, ...) {
         r <- VERB("OPTIONS", url, H, ...)
     }
     out <- parse_s3_error(r)
-    if(inherits(out, "aws_error")) {
+    if(inherits(out, "aws_error") & exists("S")) {
         attr(out, "request_canonical") <- S$CanonicalRequest
         attr(out, "request_string_to_sign") <- S$StringToSign
         attr(out, "request_signature") <- S$SignatureHeader
