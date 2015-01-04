@@ -1,10 +1,26 @@
 # GET
 
-getbucket <- function(bucket, ...){
-    if(inherits(bucket, "s3bucket"))
+getbucket <- 
+function(bucket, 
+         prefix, 
+         delimiter,
+         # encoding,
+         max,
+         marker, ...){
+    if(inherits(bucket, "s3_bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("GET", paste0("https://",bucket,".s3.amazonaws.com"), 
-                headers = c(headers, `x-amz-content-sha256` = ""), 
+    h <- list()
+    if(!missing(prefix))
+        h$prefix <- prefix
+    if(!missing(delimiter))
+        h$delimiter <- delimiter
+    if(!missing(max))
+        h$"max-keys" <- max
+    if(!missing(marker))
+        h$marker <- marker
+    h$`x-amz-content-sha256` <- ""
+    r <- s3HTTP("GET", paste0("https://", bucket, ".s3.amazonaws.com"), 
+                headers = h, 
                 ...)
     if(inherits(r, "aws_error")) {
         return(r)
@@ -15,6 +31,13 @@ getbucket <- function(bucket, ...){
         structure(r, class = "s3_bucket")
     }
 }
+
+print.s3_bucket <- function(x, ...){
+    cat("Bucket:", x$Name, "\n\n")
+    print(x[names(x) == "Contents"])
+    invisible(x)
+}
+
 
 # get_acl listed in OBJECT.r
 
