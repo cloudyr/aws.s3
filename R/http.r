@@ -1,14 +1,3 @@
-parse_s3_error <- function(response) {
-    x <- xmlToList(xmlParse(content(response, "text")))
-    if(http_status(response)$category == "client error") {
-        warn_for_status(response)
-        h <- headers(response)
-        return(structure(x, headers = h, class = "aws_error"))
-    } else {
-        return(x)
-    }
-}
-
 s3HTTP <- function(verb, url, region, key, secret, ...) {
     if(missing(verb))
         verb <- "GET"
@@ -55,7 +44,15 @@ s3HTTP <- function(verb, url, region, key, secret, ...) {
     } else if (verb == "OPTIONS") {
         r <- VERB("OPTIONS", url, H, ...)
     }
-    out <- parse_s3_error(r)
+    
+    x <- xmlToList(xmlParse(content(r, "text")))
+    if(http_status(r)$category == "client error") {
+        warn_for_status(r)
+        h <- headers(r)
+        out <- structure(x, headers = h, class = "aws_error")
+    } else {
+        out <- x
+    }
     if(inherits(out, "aws_error")) {
         attr(out, "request_canonical") <- S$CanonicalRequest
         attr(out, "request_string_to_sign") <- S$StringToSign
