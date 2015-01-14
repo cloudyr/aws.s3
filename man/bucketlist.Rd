@@ -1,12 +1,12 @@
-\name{s3service}
-\alias{s3service}
+\name{bucketlist}
+\alias{bucketlist}
 \title{List buckets for authenticated user}
 \description{This function lists the S3 buckets available to the authenticated user. If no authentication credentials are supplied, the function will fail.}
 \usage{
-s3service(\dots)
+bucketlist(\dots)
 }
 \arguments{
-    \item{\dots}{Additional arguments passed to \code{\link[httr]{GET}}.}
+    \item{\dots}{Additional arguments passed to \code{\link{s3HTTP}}.}
 }
 \details{If authentication is successful, this function provides a list of buckets available to the authenticated user. In this way, it can serve as a \dQuote{hello world!} function, to confirm that one's authentication credentials are working correctly.}
 \value{}

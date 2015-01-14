@@ -1,13 +1,17 @@
 # GET
 
-getobject <- function(bucket, object, ...) {
+getobject <- 
+function(bucket, 
+         object, 
+         ...) {
     if(inherits(object, "s3_object"))
         object <- object$Key
     if(inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("GET", paste0("https://",bucket,".s3.amazonaws.com/"), 
-                action = paste0("/",object),
-                headers = c(headers, `x-amz-content-sha256` = ""), 
+    h <- list()
+    r <- s3HTTP("GET", paste0("https://",bucket,".s3.amazonaws.com/", object), 
+                headers = c(h, `x-amz-content-sha256` = ""), 
+                parse_response = FALSE,
                 ...)
     if(inherits(r, "aws_error")) {
         return(r)
@@ -15,6 +19,17 @@ getobject <- function(bucket, object, ...) {
         structure(r, class = "s3_object")
     }
 }
+
+print.s3_object <- function(x, ...){
+    cat("Key:           ", x$Key, "\n")
+    cat("Modified:      ", x$LastModified, "\n")
+    cat("ETag:          ", x$ETag, "\n")
+    cat("Size (kb):     ", x$Size, "\n")
+    cat("Owner:         ", x$Owner$DisplayName, "\n")
+    cat("Storage class: ", x$StorageClass, "\n")
+    invisible(x)
+}
+
 
 get_acl <- function(bucket, object, ...) {
     if(inherits(bucket, "s3bucket"))

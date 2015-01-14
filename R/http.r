@@ -1,6 +1,8 @@
-s3HTTP <- function(verb, url, region, key, secret, ...) {
+s3HTTP <- function(verb, url, headers, region, key, secret, parse_response = TRUE, ...) {
     if(missing(verb))
         verb <- "GET"
+    if(missing(headers))
+        headers <- list()
     if(missing(region))
         region <- "us-east-1"
     if(missing(key))
@@ -8,14 +10,14 @@ s3HTTP <- function(verb, url, region, key, secret, ...) {
     if(missing(secret))
         secret <- Sys.getenv("AWS_SECRET_ACCESS_KEY")
     current <- Sys.time()
-    #d_header <- format(current, "%a, %d %b %Y %T %Z", tz = "UTC")
     d_timestamp <- format(current, "%Y%m%dT%H%M%SZ", tz = "UTC")
     p <- parse_url(url)
     action <- if(p$path == "") "/" else paste0("/",p$path)
     if(key == "") {
-        H <- add_headers(`x-amz-date` = d_timestamp)
+        headers$`x-amz-date` <- d_timestamp
+        H <- do.call(add_headers, headers)
     } else {
-        S <- signature_v4_auth(
+        Sig <- signature_v4_auth(
                datetime = d_timestamp,
                region = region,
                service = "s3",
@@ -26,12 +28,34 @@ s3HTTP <- function(verb, url, region, key, secret, ...) {
                                         `x-amz-date` = d_timestamp),
                request_body = "",
                key = key, secret = secret)
-        H <- add_headers(`x-amz-date` = d_timestamp, 
-                         `x-amz-content-sha256` = S$BodyHash,
-                         Authorization = S$SignatureHeader)
+        headers$`x-amz-date` <- d_timestamp
+        headers$`x-amz-content-sha256` <- Sig$BodyHash
+        headers$Authorization <- Sig$SignatureHeader
+        H <- do.call(add_headers, headers)
     }
     if(verb == "GET") {
         r <- GET(url, H, ...)
+        if(!parse_response) {
+            h <- headers(r)
+            switch(h[["content-type"]], )
+            return(content(r)) # this needs to handle MIME-types
+        } else {
+            content <- content(r, "text")
+            response <- xmlToList(xmlParse(content))
+            if(http_status(r)$category == "client error") {
+                warn_for_status(r)
+                out <- list(response, headers = headers(r))
+                class(out) <- "aws_error"
+                if(exists("S")) {
+                    attr(out, "request_canonical") <- S$CanonicalRequest
+                    attr(out, "request_string_to_sign") <- S$StringToSign
+                    attr(out, "request_signature") <- S$SignatureHeader
+                }
+                return(out)
+            } else {
+                return(response)
+            }
+        }
     } else if (verb == "HEAD") {
         r <- HEAD(url, H, ...)
         return(headers(r))
@@ -43,8 +67,9 @@ s3HTTP <- function(verb, url, region, key, secret, ...) {
         return(headers(r))
     } else if (verb == "OPTIONS") {
         r <- VERB("OPTIONS", url, H, ...)
+        return(headers(r))
     }
-    
+
     x <- xmlToList(xmlParse(content(r, "text")))
     if(http_status(r)$category == "client error") {
         warn_for_status(r)
