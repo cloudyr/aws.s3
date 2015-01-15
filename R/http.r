@@ -70,18 +70,22 @@ s3HTTP <- function(verb, url, headers, region, key, secret, parse_response = TRU
         return(headers(r))
     }
 
-    x <- xmlToList(xmlParse(content(r, "text")))
-    if(http_status(r)$category == "client error") {
-        warn_for_status(r)
-        h <- headers(r)
-        out <- structure(x, headers = h, class = "aws_error")
+    if(parse_response) {
+        x <- xmlToList(xmlParse(content(r, "text")))
+        if(http_status(r)$category == "client error") {
+            warn_for_status(r)
+            h <- headers(r)
+            out <- structure(x, headers = h, class = "aws_error")
+        } else {
+            out <- x
+        }
+        if(inherits(out, "aws_error")) {
+            attr(out, "request_canonical") <- S$CanonicalRequest
+            attr(out, "request_string_to_sign") <- S$StringToSign
+            attr(out, "request_signature") <- S$SignatureHeader
+        }
+        return(out)
     } else {
-        out <- x
+        return(r)
     }
-    if(inherits(out, "aws_error")) {
-        attr(out, "request_canonical") <- S$CanonicalRequest
-        attr(out, "request_string_to_sign") <- S$StringToSign
-        attr(out, "request_signature") <- S$SignatureHeader
-    }
-    return(out)
 }
