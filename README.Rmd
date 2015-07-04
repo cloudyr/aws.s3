@@ -13,6 +13,7 @@ if(!require("devtools")){
     install.packages("devtools")
     library("devtools")
 }
+install_github("cloudyr/aws.signature")
 install_github("cloudyr/aws.s3")
 ```
 
