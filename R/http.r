@@ -1,14 +1,20 @@
-s3HTTP <- function(verb, url, headers, region, key, secret, parse_response = TRUE, ...) {
-    if(missing(verb))
-        verb <- "GET"
-    if(missing(headers))
-        headers <- list()
-    if(missing(region))
-        region <- "us-east-1"
-    if(missing(key))
-        key <- Sys.getenv("AWS_ACCESS_KEY_ID")
-    if(missing(secret))
-        secret <- Sys.getenv("AWS_SECRET_ACCESS_KEY")
+s3HTTP <- function(verb = "GET",
+                   url = "https://s3.amazonaws.com",
+                   bucket = "", 
+                   path = "", 
+                   headers = list(), 
+                   region = "us-east-1", 
+                   key =  Sys.getenv("AWS_ACCESS_KEY_ID"), 
+                   secret = Sys.getenv("AWS_SECRET_ACCESS_KEY"), 
+                   parse_response = TRUE, 
+                   debug = FALSE, ...) {
+    
+    ## Endpoint must match region (the default s3.amazonaws.com is us-east-1 region only)
+    if(region != "us-east-1" && url == "https://s3.amazonaws.com")
+      url = paste0("https://s3-", region, ".amazonaws.com")
+    
+    url <- paste0(url, "/", bucket, path)
+    
     current <- Sys.time()
     d_timestamp <- format(current, "%Y%m%dT%H%M%SZ", tz = "UTC")
     p <- parse_url(url)
@@ -35,9 +41,11 @@ s3HTTP <- function(verb, url, headers, region, key, secret, parse_response = TRU
     }
     if(verb == "GET") {
         r <- GET(url, H, ...)
-        if(!parse_response) {
+        if(debug) {
+          r
+        } else if(!parse_response) {
             h <- headers(r)
-            switch(h[["content-type"]], )
+         #   switch(h[["content-type"]], )
             return(content(r)) # this needs to handle MIME-types
         } else {
             content <- content(r, "text")
