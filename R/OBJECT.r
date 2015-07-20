@@ -16,7 +16,7 @@ function(bucket,
     if(inherits(r, "aws_error")) {
         return(r)
     } else {
-        structure(r, class = "s3_object")
+        r
     }
 }
 

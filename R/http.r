@@ -3,6 +3,7 @@ s3HTTP <- function(verb = "GET",
                    bucket = "", 
                    path = "", 
                    headers = list(), 
+                   request_body = "",
                    region = "us-east-1", 
                    key =  Sys.getenv("AWS_ACCESS_KEY_ID"), 
                    secret = Sys.getenv("AWS_SECRET_ACCESS_KEY"), 
@@ -32,7 +33,7 @@ s3HTTP <- function(verb = "GET",
                query_args = p$query,
                canonical_headers = list(host = p$hostname,
                                         `x-amz-date` = d_timestamp),
-               request_body = "",
+               request_body = request_body,
                key = key, secret = secret)
         headers$`x-amz-date` <- d_timestamp
         headers$`x-amz-content-sha256` <- Sig$BodyHash
