@@ -195,7 +195,7 @@ deleteobject <- function(bucket, object, ...) {
     if(inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
     if(length(object) == 1) {
-        r <- DELETE(paste0("https://",bucket,".s3.amazonaws.com/",object), ...)
+        r <- s3HTTP("DELETE", paste0("https://",bucket,".s3.amazonaws.com/",object), ...)
         if(inherits(r, "aws_error")) {
             return(r)
         } else {
