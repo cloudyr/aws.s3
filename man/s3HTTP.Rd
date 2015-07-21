@@ -5,7 +5,7 @@
 \title{S3 HTTP Requests}
 \usage{
 s3HTTP(verb = "GET", url = "https://s3.amazonaws.com", bucket = "",
-  path = "", headers = list(), region = "us-east-1",
+  path = "", headers = list(), request_body = "", region = "us-east-1",
   key = Sys.getenv("AWS_ACCESS_KEY_ID"),
   secret = Sys.getenv("AWS_SECRET_ACCESS_KEY"), parse_response = TRUE, ...)
 }

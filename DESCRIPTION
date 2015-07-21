@@ -9,8 +9,7 @@ Authors@R: c(person("Thomas J.", "Leeper", role = c("aut", "cre"),
 Maintainer: Thomas J. Leeper <thosjleeper@gmail.com>
 Description: A simple client package for the Amazon Web Services (AWS) Simple Storage Service (S3) REST API.
 License: GPL (>= 2)
-Imports: httr, XML, aws.signature
 URL: https://github.com/cloudyr/aws.s3
 BugReports: https://github.com/cloudyr/aws.s3/issues
+Depends: httr, XML, aws.signature, magrittr
 Suggests: testthat
-Imports: httr, XML, aws.signature

@@ -11,13 +11,15 @@
 #' @param path A character string with the name of the object to put in the bucket 
 #' (sometimes called the object or 'key name' in the AWS documentation.)
 #' @param headers  
+#' @param request_body
 #' @param region A character string containing the AWS region.
 #' If missing, defaults to \dQuote{us-east-1}.
 #' @param key A character string containing an AWS Access Key ID. 
 #' If missing, defaults to value stored in environment variable \dQuote{AWS_ACCESS_KEY_ID}.
 #' @param secret A character string containing an AWS Secret Access Key. 
 #' If missing, defaults to value stored in environment variable \dQuote{AWS_SECRET_ACCESS_KEY}.
-#' @param parse_response 
+#' @param parse_response return the response as is, or parse and return as a list?  
+#' default is TRUE.
 #' @param ... Additional arguments passed to an HTTP request function, 
 #' such as \code{\link[httr]{GET}}.
 #'
@@ -45,7 +47,7 @@ s3HTTP <- function(verb = "GET",
     url <- paste0(url, "/", bucket, path)
     current <- Sys.time()
     d_timestamp <- format(current, "%Y%m%dT%H%M%SZ", tz = "UTC")
-    p <- parse_url(url)
+    p <- httr::parse_url(url)
     action <- if(p$path == "") "/" else paste0("/",p$path)
     
     if (key == "") {
@@ -82,26 +84,31 @@ s3HTTP <- function(verb = "GET",
     } else if (verb == "OPTIONS") {
         r <- VERB("OPTIONS", url, H, ...)
     }
-    
+
+    #start by returning everything    
+    out <- r
+
+    #if parse_response, use httr's parsed method to extract as XML, then convert to list
     if (parse_response) {
-        x <- XML::xmlToList(XML::xmlParse(content(r, "text")))
-        response <- XML::xmlToList(XML::xmlParse(content))
-        if (http_status(r)$category == "client error") {
-            warn_for_status(r)
-            h <- headers(r)
-            out <- structure(x, headers = h, class = "aws_error")
-        } else {
-            out <- response
-        }
-        if (inherits(out, "aws_error")) {
-          if (exists("S")) {
-            attr(out, "request_canonical") <- S$CanonicalRequest
-            attr(out, "request_string_to_sign") <- S$StringToSign
-            attr(out, "request_signature") <- S$SignatureHeader
-          }
-        }
+      response <- httr::content(r, "parsed") %>%
+        XML::xmlToList()
+    }
+    
+    #raise errors if bad values are passed. 
+    if (http_status(r)$category == "client error") {
+      warn_for_status(r)
+      h <- headers(r)
+      out <- structure(x, headers = h, class = "aws_error")
     } else {
-      out <- r
+      out <- response
+    }
+    
+    if (inherits(out, "aws_error")) {
+      if (exists("S")) {
+        attr(out, "request_canonical") <- S$CanonicalRequest
+        attr(out, "request_string_to_sign") <- S$StringToSign
+        attr(out, "request_signature") <- S$SignatureHeader
+      }
     }
   out
 }
