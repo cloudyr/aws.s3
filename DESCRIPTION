@@ -10,3 +10,4 @@ License: GPL (>= 2)
 Imports: httr, XML, aws.signature
 URL: https://github.com/cloudyr/aws.s3
 BugReports: https://github.com/cloudyr/aws.s3/issues
+Suggests: testthat
