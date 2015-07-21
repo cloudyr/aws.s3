@@ -51,7 +51,7 @@ s3HTTP <- function(verb = "GET",
         headers$`x-amz-date` <- d_timestamp
         H <- do.call(add_headers, headers)
     } else {
-        Sig <- signature_v4_auth(
+        Sig <- aws.signature::signature_v4_auth(
                datetime = d_timestamp,
                region = region,
                service = "s3",
@@ -83,8 +83,8 @@ s3HTTP <- function(verb = "GET",
     }
     
     if (parse_response) {
-        x <- xmlToList(xmlParse(content(r, "text")))
-        response <- xmlToList(xmlParse(content))
+        x <- XML::xmlToList(XML::xmlParse(content(r, "text")))
+        response <- XML::xmlToList(XML::xmlParse(content))
         if (http_status(r)$category == "client error") {
             warn_for_status(r)
             h <- headers(r)
