@@ -11,4 +11,4 @@ Imports: httr, XML, aws.signature
 URL: https://github.com/cloudyr/aws.s3
 BugReports: https://github.com/cloudyr/aws.s3/issues
 Suggests: testthat
-Depends: httr
+Imports: httr, XML, aws.signature
