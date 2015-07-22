@@ -1,0 +1,125 @@
+```{r}
+library("httr")
+library("caTools")
+library("digest")
+library("aws.signature")
+library("jsonlite")
+```
+
+
+
+Parameters we probably want specified by the user
+
+```{r}
+key =  Sys.getenv("AWS_ACCESS_KEY")
+secret = Sys.getenv("AWS_SECRET_ACCESS_KEY")
+
+filename = "test.html"
+verb = "POST"
+region = "us-west-2"
+bucket = "drat"
+acl = "private"
+```
+
+Compute some parameters needed by the API
+
+```{r}
+  # Same results from each, documentation unclear which is prefered (for non-default (east-us-1) region)
+  url <- paste0("https://s3-", region, ".amazonaws.com/", bucket)
+  url <- paste0("https://", bucket, ".s3-", region, ".amazonaws.com")
+  
+  ## 
+  current <- Sys.time()
+  d_timestamp <- format(current, "%Y%m%dT%H%M%SZ", tz = "UTC")
+  p <- parse_url(url)
+  action <- if(p$path == "") "/" else paste0("/",p$path)
+  service = 's3'
+  request_body <- readLines(filename)
+
+  algorithm <- "AWS4-HMAC-SHA256"
+  successStatus = '201'
+  credential <- paste(key, format(Sys.Date(), "%Y%m%d"), region, service, 'aws4_request', sep="/")
+```
+
+POST requests require a policy json document, passed encoded into a base64 string that the server decodes.  It is unclear what the minimal specificity is for the policy, though it seems that best practices would have it as specific as possible (though that may be less important when a user is uploading from their own console then when the POST method is implemented in a potentially public-facing HTML page.)
+
+  
+```{r}
+  policy <- jsonlite::toJSON(list(
+    expiration = format(Sys.time() + 60*60, '%Y-%m-%dT%H:%M:%SZ'),
+    conditions = list(
+    bucket = bucket,
+    acl = acl,
+    "x-amz-credential" = credential,
+    "x-amz-algorithm" = algorithm,
+    "x-amz-date" = d_timestamp 
+    )))
+```  
+
+All requests need a signature. I've modified this lightly from the `s3HTML()`, and it may not be correct.  In particular, the policy JSON and a hash of the file contents need to be included.  The `signature_v4_auth` does not appear to have an obvious way to include the policy JSON, nor am I sure if this is the right format to provide the body contents in.  
+
+  
+```{r}  
+  Sig <- aws.signature::signature_v4_auth(
+    datetime = d_timestamp,
+    region = region,
+    service = service,
+    verb = verb,
+    action = action,
+    query_args = p$query,
+    canonical_headers = list(host = p$hostname,
+                             `x-amz-date` = d_timestamp),
+    request_body = request_body,
+    key = key, secret = secret)
+```  
+
+In a POST request, it [looks like](https://raam.org/2008/using-curl-to-upload-files-via-post-to-amazon-s3/) all of this information is passed in the body (form) instead of the header?  Note that order matters, though it is unclear how much ([some](http://stackoverflow.com/questions/31046876/aws-authentication-v4-signature-failure-where-am-i-going-wrong-in-generating-th) online [examples](http://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-post-example.html) show some variation in the order; but clearly `key` must be first.)
+  
+```{r}
+  fields <- list()
+  fields$key <- filename
+  fields$acl <- acl
+  fields$success_action_status <- "201"
+  fields$`Content-Type` <- mime::guess_type(filename)
+  fields$`x-amz-credential` <- credential
+  fields$`x-amz-algorithm` <- algorithm
+  fields$`x-amz-date` <- d_timestamp
+```
+
+Here we add the policy in base64, and then add this to the signature digest.  Last, we include the file with `httr::upload_file()`
+
+```{r}
+  fields$Policy <- caTools::base64encode(as.character(policy))
+  fields$`x-amz-signature` <- digest::hmac(Sig$Signature, fields$Policy, "sha256")
+  fields$file <- httr::upload_file(filename)
+```
+
+Let's give this a try:
+
+```{r}
+  r <- httr::POST(url, encode="multipart", body = fields)
+  content(r)
+```
+ 
+ 
+------------ 
+ 
+For comparison, AWS docs show [example](http://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-post-example.html) as a FORM request 
+ 
+```html  
+  Key to upload: 
+  <input type="input"  name="key" value="user/user1/${filename}" /><br />
+  <input type="hidden" name="acl" value="public-read" />
+  <input type="hidden" name="success_action_redirect" value="http://examplebucket.s3.amazonaws.com/successful_upload.html" />
+  Content-Type: 
+  <input type="hidden" name="x-amz-meta-uuid" value="14365123651274" />
+  <input type="text"   name="X-Amz-Credential" value="AKIAIOSFODNN7EXAMPLE/20130806/us-east-1/s3/aws4_request" />
+  <input type="text"   name="X-Amz-Algorithm" value="AWS4-HMAC-SHA256" />
+  Tags for File: 
+  <input type="input"  name="x-amz-meta-tag" value="" /><br />
+  <input type="hidden" name="Policy" value='<Base64-encoded policy string>' />
+  <input type="hidden" name="X-Amz-Signature" value="<signature-value>" />
+  File: 
+  <input type="file"   name="file" /> <br />
+```
+  

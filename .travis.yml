@@ -1,15 +1,19 @@
 language: c
 script: ./travis-tool.sh run_tests
 before_install:
-  - curl -OL http://raw.github.com/craigcitro/r-travis/master/scripts/travis-tool.sh
-  - chmod 755 ./travis-tool.sh
-  - ./travis-tool.sh bootstrap
+- curl -OL http://raw.github.com/craigcitro/r-travis/master/scripts/travis-tool.sh
+- chmod 755 ./travis-tool.sh
+- ./travis-tool.sh bootstrap
 install:
-  - ./travis-tool.sh install_deps
-  - ./travis-tool.sh install_github cloudyr/aws.signature
+- ./travis-tool.sh install_deps
+- ./travis-tool.sh install_github cloudyr/aws.signature
 notifications:
   email:
     on_success: change
     on_failure: change
 after_script:
-  - ./travis-tool.sh dump_logs
+- ./travis-tool.sh dump_logs
+env:
+  global:
+  - secure: NkoBLN7g9Jjkn1kXfjFbiTmCRXgEFWAeRObLyiJZCA9FzeAN6pARvuV45Jkt8T3pRzma7MbOg1wN/FG7ywAXYYMeijIDUy5VxNZWxbmTOHVOeVBVW+H8qlrGxHF/KXHKKAcjnOnO2Z/rHrvBmXOJQbEXXUwPAlr7RNNxwasrFAY=
+  - secure: XT+piKb0x5Tt4Zac/h7K7IuO3/RtH+KatM7GjNKxUuMjCU8BMKon95e5AG3kCUfnKoEbeuPaV+zx2FwJXP72tVHmEfvVuxnPPH5rPQkEWfAd+THeTnVEqfi+64v4d/oDqY1nbdZ7H8PZNiRnMuWigsLjlmwkitXOpzNL2JPivZk=
