@@ -3,3 +3,4 @@
 export(bucketlist)
 export(getbucket)
 export(s3HTTP)
+importFrom(magrittr,"%>%")

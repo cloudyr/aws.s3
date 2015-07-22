@@ -1,3 +1,5 @@
+utils::globalVariables(c("S"))
+
 #' @title S3 HTTP Requests
 #' 
 #' @description This is the workhorse function for executing API requests for S3.
@@ -10,8 +12,8 @@
 #' @param bucket A character string containing the name of AWS bucket to use.
 #' @param path A character string with the name of the object to put in the bucket 
 #' (sometimes called the object or 'key name' in the AWS documentation.)
-#' @param headers  
-#' @param request_body
+#' @param headers a list of request headers for the REST call.   
+#' @param request_body character string of request body data.
 #' @param region A character string containing the AWS region.
 #' If missing, defaults to \dQuote{us-east-1}.
 #' @param key A character string containing an AWS Access Key ID. 
@@ -27,6 +29,7 @@
 #' 
 #' @return the S3 response, or the relevant error.
 #' 
+#' @importFrom magrittr %>%
 #' @export
 
 s3HTTP <- function(verb = "GET",
@@ -52,7 +55,7 @@ s3HTTP <- function(verb = "GET",
     
     if (key == "") {
         headers$`x-amz-date` <- d_timestamp
-        H <- do.call(add_headers, headers)
+        H <- do.call(httr::add_headers, headers)
     } else {
         Sig <- aws.signature::signature_v4_auth(
                datetime = d_timestamp,
@@ -68,21 +71,21 @@ s3HTTP <- function(verb = "GET",
         headers$`x-amz-date` <- d_timestamp
         headers$`x-amz-content-sha256` <- Sig$BodyHash
         headers$Authorization <- Sig$SignatureHeader
-        H <- do.call(add_headers, headers)
+        H <- do.call(httr::add_headers, headers)
     }
     
     if (verb == "GET") {
-        r <- GET(url, H, ...)
+      r <- httr::GET(url, H, ...)
     } else if (verb == "HEAD") {
-        r <- HEAD(url, H, ...)
+      r <- httr::HEAD(url, H, ...)
     } else if (verb == "DELETE") {
-        r <- DELETE(url, H, ...)
+      r <- httr::DELETE(url, H, ...)
     } else if (verb == "POST") {
-      r <- POST(url, H, ...)
+      r <- httr::POST(url, H, ...)
     } else if (verb == "PUT") {
-        r <- PUT(url, H, ...)
+      r <- httr::PUT(url, H, ...)
     } else if (verb == "OPTIONS") {
-        r <- VERB("OPTIONS", url, H, ...)
+      r <- httr::VERB("OPTIONS", url, H, ...)
     }
 
     #if parse_response, use httr's parsed method to extract as XML, then convert to list
@@ -95,10 +98,10 @@ s3HTTP <- function(verb = "GET",
     }
     
     #raise errors if bad values are passed. 
-    if (http_status(r)$category == "client error") {
-      warn_for_status(r)
+    if (httr::http_status(r)$category == "client error") {
+      httr::warn_for_status(r)
       h <- headers(r)
-      out <- structure(x, headers = h, class = "aws_error")
+      out <- structure(response, headers = h, class = "aws_error")
     } else {
       out <- response
     }

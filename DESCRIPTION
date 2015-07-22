@@ -12,5 +12,5 @@ Description: A simple client package for the Amazon Web Services (AWS) Simple St
 License: GPL (>= 2)
 URL: https://github.com/cloudyr/aws.s3
 BugReports: https://github.com/cloudyr/aws.s3/issues
-Depends: httr, XML, aws.signature, magrittr
+Imports: httr, XML, aws.signature, magrittr
 Suggests: testthat
