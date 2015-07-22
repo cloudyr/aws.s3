@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #' @title List the contents of a s3 bucket
 #' @description from the AWS doc: "This implementation of the GET operation returns some
 #'  or all (up to 1000) of the objects in a bucket. You can use the request parameters 
@@ -39,10 +40,17 @@ getbucket <- function(bucket,
     if (!missing(marker))
         h$marker <- marker
     h$`x-amz-content-sha256` <- ""
+<<<<<<< HEAD
     r <- s3HTTP(
       verb = "GET", url = paste0("https://", bucket, ".s3.amazonaws.com"), headers = h, ...
     )
     if (inherits(r, "aws_error") | inherits(r, "response")) {
+=======
+    r <- s3HTTP("GET", paste0("https://", bucket, ".s3.amazonaws.com"), 
+                headers = h, 
+                ...)
+    if (inherits(r, "aws_error")) {
+>>>>>>> master
         return(r)
     } else {
         for (i in which(names(r) == "Contents")) {
