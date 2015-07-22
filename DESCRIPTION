@@ -5,7 +5,7 @@ Version: 0.1
 Date: 2015-07-20
 Authors@R: c(person("Thomas J.", "Leeper", role = c("aut", "cre"),
                     email = "thosjleeper@gmail.com"),
-             person( "Boettiger", "Carl", role = "ctb"),
+             person("Boettiger", "Carl", role = "ctb"),
              person("Andrew", "Martin", role = "ctb", email = "almartin@gmail.com"))
 Maintainer: Thomas J. Leeper <thosjleeper@gmail.com>
 Description: A simple client package for the Amazon Web Services (AWS) Simple Storage Service (S3) REST API.
