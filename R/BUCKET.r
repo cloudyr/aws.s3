@@ -1,32 +1,31 @@
 # GET
-
-getbucket <- 
-function(bucket, 
-         prefix, 
-         delimiter,
-         # encoding,
-         max,
-         marker, ...){
-    if(inherits(bucket, "s3_bucket"))
+getbucket <- function(bucket, 
+                      prefix, 
+                      delimiter,
+                      max,
+                      marker, 
+                      ...){
+  
+    if (inherits(bucket, "s3_bucket"))
         bucket <- bucket$Name
     h <- list()
-    if(!missing(prefix))
+    if (!missing(prefix))
         h$prefix <- prefix
-    if(!missing(delimiter))
+    if (!missing(delimiter))
         h$delimiter <- delimiter
-    if(!missing(max))
+    if (!missing(max))
         h$"max-keys" <- max
-    if(!missing(marker))
+    if (!missing(marker))
         h$marker <- marker
     h$`x-amz-content-sha256` <- ""
     r <- s3HTTP("GET", paste0("https://", bucket, ".s3.amazonaws.com"), 
                 headers = h, 
                 ...)
-    if(inherits(r, "aws_error")) {
+    if (inherits(r, "aws_error")) {
         return(r)
     } else {
-        for(i in which(names(r) == "Contents")) {
-            attr(r[[i]], "class") <- "s3_object"
+        for (i in which(names(r) == "Contents")) {
+          attr(r[[i]], "class") <- "s3_object"
         }
         structure(r, class = "s3_bucket")
     }

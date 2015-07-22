@@ -21,6 +21,8 @@ s3HTTP(verb = "GET", url = "https://s3.amazonaws.com", bucket = "",
 
 \item{headers}{}
 
+\item{request_body}{}
+
 \item{region}{A character string containing the AWS region.
 If missing, defaults to \dQuote{us-east-1}.}
 
@@ -30,7 +32,8 @@ If missing, defaults to value stored in environment variable \dQuote{AWS_ACCESS_
 \item{secret}{A character string containing an AWS Secret Access Key.
 If missing, defaults to value stored in environment variable \dQuote{AWS_SECRET_ACCESS_KEY}.}
 
-\item{parse_response}{}
+\item{parse_response}{return the response as is, or parse and return as a list?
+default is TRUE.}
 
 \item{...}{Additional arguments passed to an HTTP request function,
 such as \code{\link[httr]{GET}}.}

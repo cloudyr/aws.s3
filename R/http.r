@@ -36,7 +36,7 @@ s3HTTP <- function(verb = "GET",
                    headers = list(), 
                    request_body = "",
                    region = "us-east-1", 
-                   key =  Sys.getenv("AWS_ACCESS_KEY_ID"), 
+                   key = Sys.getenv("AWS_ACCESS_KEY_ID"), 
                    secret = Sys.getenv("AWS_SECRET_ACCESS_KEY"), 
                    parse_response = TRUE, 
                    ...) {
@@ -48,7 +48,7 @@ s3HTTP <- function(verb = "GET",
     current <- Sys.time()
     d_timestamp <- format(current, "%Y%m%dT%H%M%SZ", tz = "UTC")
     p <- httr::parse_url(url)
-    action <- if(p$path == "") "/" else paste0("/",p$path)
+    action <- if (p$path == "") "/" else paste0("/", p$path)
     
     if (key == "") {
         headers$`x-amz-date` <- d_timestamp
@@ -85,13 +85,13 @@ s3HTTP <- function(verb = "GET",
         r <- VERB("OPTIONS", url, H, ...)
     }
 
-    #start by returning everything    
-    out <- r
-
     #if parse_response, use httr's parsed method to extract as XML, then convert to list
     if (parse_response) {
       response <- httr::content(r, "parsed") %>%
         XML::xmlToList()
+    #otherwise just return the raw response
+    } else if (!parse_response) {
+      response <- r
     }
     
     #raise errors if bad values are passed. 
