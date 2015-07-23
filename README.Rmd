@@ -4,9 +4,9 @@
 
 ## Installation ##
 
-[![Build Status](https://travis-ci.org/cloudyr/aws.s3.png?branch=master)](https://travis-ci.org/cloudyr/aws.s3)
+[![Build Status](https://travis-ci.org/cloudyr/aws.s3.png?branch=master)](https://travis-ci.org/cloudyr/aws.s3) [![codecov.io](http://codecov.io/github/cloudyr/aws.s3/coverage.svg?branch=master)](http://codecov.io/github/cloudyr/aws.s3?branch=master)
 
-To install the latest development version from GitHub, run the following:
+This package is not yet on CRAN. To install the latest development version from GitHub, run the following:
 
 ```R
 if(!require("devtools")){
@@ -16,8 +16,6 @@ if(!require("devtools")){
 install_github("cloudyr/aws.signature")
 install_github("cloudyr/aws.s3")
 ```
-
-aws.s3 is not yet on CRAN
 
 ## Code Examples ##
 
