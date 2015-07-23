@@ -19,9 +19,9 @@ s3HTTP(verb = "GET", url = "https://s3.amazonaws.com", bucket = "",
 \item{path}{A character string with the name of the object to put in the bucket
 (sometimes called the object or 'key name' in the AWS documentation.)}
 
-\item{headers}{}
+\item{headers}{a list of request headers for the REST call.}
 
-\item{request_body}{}
+\item{request_body}{character string of request body data.}
 
 \item{region}{A character string containing the AWS region.
 If missing, defaults to \dQuote{us-east-1}.}

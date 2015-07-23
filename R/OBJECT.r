@@ -202,7 +202,7 @@ deleteobject <- function(bucket, object, ...) {
             TRUE
         }
     } else {
-        r <- POST(paste0("https://",bucket,".s3.amazonaws.com/?delete"), ...)
+        r <- httr::POST(paste0("https://",bucket,".s3.amazonaws.com/?delete"), ...)
         if(inherits(r, "aws_error")) {
             return(r)
         } else {

@@ -4,7 +4,7 @@
 \docType{package}
 \title{AWS S3 Client Package}
 \description{A simple client package for the Amazon Web Services (AWS) Simple Storage Service (S3) REST API.}
-\details{}
+%\details{}
 \author{Thomas J. Leeper <thosjleeper@gmail.com>}
 %\references{}
 \keyword{ package }

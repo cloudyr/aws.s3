@@ -5,14 +5,17 @@ before_install:
 - chmod 755 ./travis-tool.sh
 - ./travis-tool.sh bootstrap
 install:
-- ./travis-tool.sh install_deps
-- ./travis-tool.sh install_github cloudyr/aws.signature
+  - ./travis-tool.sh install_deps
+  - ./travis-tool.sh install_github cloudyr/aws.signature
+  - ./travis-tool.sh install_github jimhester/covr
 notifications:
   email:
     on_success: change
     on_failure: change
+after_success:
+  - Rscript -e 'library(covr);coveralls()'    
 after_script:
-- ./travis-tool.sh dump_logs
+  - ./travis-tool.sh dump_logs
 env:
   global:
   - secure: NkoBLN7g9Jjkn1kXfjFbiTmCRXgEFWAeRObLyiJZCA9FzeAN6pARvuV45Jkt8T3pRzma7MbOg1wN/FG7ywAXYYMeijIDUy5VxNZWxbmTOHVOeVBVW+H8qlrGxHF/KXHKKAcjnOnO2Z/rHrvBmXOJQbEXXUwPAlr7RNNxwasrFAY=

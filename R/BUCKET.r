@@ -1,6 +1,27 @@
-# GET
+#' @title List the contents of a s3 bucket
+#' @description from the AWS doc: "This implementation of the GET operation returns some
+#'  or all (up to 1000) of the objects in a bucket. You can use the request parameters 
+#'  as selection criteria to return a subset of the objects in a bucket."
+#' 
+#' @param bucket Character string with the name of the bucket you want to get.
+#' @param prefix Character string that limits the response to keys that begin 
+#' with the specified prefix
+#' @param delimiter Character string used to group keys.  Read the AWS doc for more detail.
+#' @param max Integer indicating the maximum number of keys to return (max 1000).
+#' @param marker Character string that pecifies the key to start with when 
+#' listing objects in a bucket. Amazon S3 returns object keys in alphabetical order, 
+#' starting with key after the marker in order.
+#' @param ... additional arguments passed to \code{\link{s3HTTP}}
+#'
+#' @return a list of objects in the bucket.  if parse_response = FALSE, a nested list with the
+#' complete contents of the AWS response.
+#'
+#' @references 
+#' {\href{https://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGET.html}{AWS Documentation}}
+#' @export
+
 getbucket <- function(bucket, 
-                      prefix, 
+                      prefix , 
                       delimiter,
                       max,
                       marker, 
@@ -18,10 +39,10 @@ getbucket <- function(bucket,
     if (!missing(marker))
         h$marker <- marker
     h$`x-amz-content-sha256` <- ""
-    r <- s3HTTP("GET", paste0("https://", bucket, ".s3.amazonaws.com"), 
-                headers = h, 
-                ...)
-    if (inherits(r, "aws_error")) {
+    r <- s3HTTP(
+      verb = "GET", url = paste0("https://", bucket, ".s3.amazonaws.com"), headers = h, ...
+    )
+    if (inherits(r, "aws_error") | inherits(r, "response")) {
         return(r)
     } else {
         for (i in which(names(r) == "Contents")) {
