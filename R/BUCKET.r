@@ -59,20 +59,29 @@ print.s3_bucket <- function(x, ...){
 }
 
 
-# get_acl listed in OBJECT.r
+#' Get the cross origin resource sharing config info for a bucket.
+#'
+#' @param bucket Character string with the name of the bucket you want to get.
+#' @param ... additional arguments passed to \code{\link{s3HTTP}}
+#'
+#' @return a list with cors configuration and rules
+#' @export
 
 get_cors <- function(bucket, ...){
-    if(inherits(bucket, "s3bucket"))
+    if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("GET", paste0("https://",bucket,".s3.amazonaws.com/?cors"), 
+    r <- s3HTTP(verb = "GET", 
+                url = paste0("https://", bucket, ".s3.amazonaws.com"),
+                path = '/?cors',
                 headers = list(`x-amz-content-sha256` = ""), 
                 ...)
-    if(inherits(r, "aws_error")) {
+    if (inherits(r, "aws_error")) {
         return(r)
     } else {
         structure(r, class = "s3_bucket")
     }
 }
+
 
 get_lifecycle <- function(bucket, ...){
     if(inherits(bucket, "s3bucket"))

@@ -53,3 +53,17 @@ test_that("intentional bad keys", {
     regexp = "client error: (403) Forbidden", fixed = TRUE
   )
 })
+
+
+test_that("get_cors on a bucket with no cors setup", {
+  ex <- get_cors(
+    bucket = 'hpk',
+    key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
+    secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY")
+  )
+  
+  expect_is(ex, "aws_error")
+  expect_true(
+    c("Code", "Message", "BucketName", "RequestId", "HostId") %in% names(ex) %>% all()
+  )
+})
