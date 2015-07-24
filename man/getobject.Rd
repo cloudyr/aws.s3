@@ -2,6 +2,7 @@
 % Please edit documentation in R/OBJECT.r
 \name{getobject}
 \alias{getobject}
+\title{retrieves an object from a S3 bucket}
 \usage{
 getobject(bucket, object, ...)
 }
@@ -14,5 +15,8 @@ getobject(bucket, object, ...)
 }
 \value{
 raw object
+}
+\description{
+retrieves an object from a S3 bucket
 }
 
