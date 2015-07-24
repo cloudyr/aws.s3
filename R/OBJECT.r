@@ -54,7 +54,8 @@ get_acl <- function(bucket, object, ...) {
         if (inherits(object, "s3_object"))
             object <- object$Key
         r <- s3HTTP(verb = "GET", 
-                    url = paste0("https://", bucket, ".s3.amazonaws.com/", object, "?acl"), 
+                    url = paste0("https://", bucket, ".s3.amazonaws.com/", object), 
+                    path = "/?acl",
                     headers = list(`x-amz-content-sha256` = ""), 
                     ...)
         if (inherits(r, "aws_error")) {
@@ -71,7 +72,8 @@ get_torrent <- function(bucket, object, ...) {
     if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
     r <- s3HTTP(verb = "GET", 
-                url = paste0("https://", bucket, ".s3.amazonaws.com/", object, "?torrent"), 
+                url = paste0("https://", bucket, ".s3.amazonaws.com/", object), 
+                path = "/?torrent",
                 headers = list(`x-amz-content-sha256` = ""), 
                 ...)
     if (inherits(r, "aws_error")) {
