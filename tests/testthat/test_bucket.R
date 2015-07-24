@@ -9,7 +9,7 @@ test_that("basic usage of getbucket for signed in user", {
   
   expect_is(ex, "s3_bucket")
   expect_true(
-    c("Name", "Prefix", "Marker", "MaxKeys", "IsTruncated", "Contents") %in% names(ex) %>% all()
+    all(c("Name", "Prefix", "Marker", "MaxKeys", "IsTruncated", "Contents") %in% names(ex))
   )
 })
 
@@ -21,7 +21,7 @@ test_that("basic usage of getbucket for anonymous user", {
   
   expect_is(ex, "s3_bucket")
   expect_true(
-    c("Name", "Prefix", "Marker", "MaxKeys", "IsTruncated", "Contents") %in% names(ex) %>% all()
+    all(c("Name", "Prefix", "Marker", "MaxKeys", "IsTruncated", "Contents") %in% names(ex))
   )
 })
 
@@ -36,8 +36,8 @@ test_that("unparsed getbucket", {
   
   expect_is(ex, "response")
   expect_true(
-    c("url", "status_code", "headers", "all_headers", "cookies", 
-      "content", "date", "times", "request", "handle") %in% names(ex) %>% all()
+    all(c("url", "status_code", "headers", "all_headers", "cookies", 
+      "content", "date", "times", "request", "handle") %in% names(ex))
   )
 })
 
@@ -64,6 +64,6 @@ test_that("get_cors on a bucket with no cors setup", {
   
   expect_is(ex, "aws_error")
   expect_true(
-    c("Code", "Message", "BucketName", "RequestId", "HostId") %in% names(ex) %>% all()
+    all(c("Code", "Message", "BucketName", "RequestId", "HostId") %in% names(ex))
   )
 })
