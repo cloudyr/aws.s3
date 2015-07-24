@@ -52,11 +52,15 @@ getbucket <- function(bucket,
     }
 }
 
+
 print.s3_bucket <- function(x, ...){
     cat("Bucket:", x$Name, "\n\n")
     print(x[names(x) == "Contents"])
     invisible(x)
 }
+
+
+# get acl for bucket not yet implemented
 
 
 #' Get the cross origin resource sharing config info for a bucket.
@@ -84,12 +88,14 @@ get_cors <- function(bucket, ...){
 
 
 get_lifecycle <- function(bucket, ...){
-    if(inherits(bucket, "s3bucket"))
+    if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("GET", paste0("https://",bucket,".s3.amazonaws.com/?lifecycle"), 
+    r <- s3HTTP(verb = "GET", 
+                url = paste0("https://", bucket, ".s3.amazonaws.com"),
+                path = '/?lifecycle',
                 headers = list(`x-amz-content-sha256` = ""), 
                 ...)
-    if(inherits(r, "aws_error")) {
+    if (inherits(r, "aws_error")) {
         return(r)
     } else {
         structure(r, class = "s3_bucket")
@@ -97,12 +103,14 @@ get_lifecycle <- function(bucket, ...){
 }
 
 get_policy <- function(bucket, ...){
-    if(inherits(bucket, "s3bucket"))
+    if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("GET", paste0("https://",bucket,".s3.amazonaws.com/?policy"), 
+    r <- s3HTTP(verb = "GET", 
+                url = paste0("https://", bucket, ".s3.amazonaws.com"),
+                path = "/?policy",
                 headers = list(`x-amz-content-sha256` = ""), 
                 ...)
-    if(inherits(r, "aws_error")) {
+    if (inherits(r, "aws_error")) {
         return(r)
     } else {
         structure(r, class = "s3_bucket")
@@ -110,12 +118,14 @@ get_policy <- function(bucket, ...){
 }
 
 get_location <- function(bucket, ...){
-    if(inherits(bucket, "s3bucket"))
+    if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("GET", paste0("https://",bucket,".s3.amazonaws.com/?location"), 
+    r <- s3HTTP(verb = "GET", 
+                url = paste0("https://", bucket, ".s3.amazonaws.com"),
+                path = "/?location",
                 headers = list(`x-amz-content-sha256` = ""), 
                 ...)
-    if(inherits(r, "aws_error")) {
+    if (inherits(r, "aws_error")) {
         return(r)
     } else {
         structure(r, class = "s3_bucket")
@@ -123,12 +133,14 @@ get_location <- function(bucket, ...){
 }
 
 get_logging <- function(bucket, ...){
-    if(inherits(bucket, "s3bucket"))
+    if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("GET", paste0("https://",bucket,".s3.amazonaws.com/?logging"), 
+    r <- s3HTTP(verb = "GET", 
+                url = paste0("https://", bucket, ".s3.amazonaws.com"),
+                path = "/?logging",
                 headers = list(`x-amz-content-sha256` = ""), 
                 ...)
-    if(inherits(r, "aws_error")) {
+    if (inherits(r, "aws_error")) {
         return(r)
     } else {
         structure(r, class = "s3_bucket")
@@ -136,12 +148,14 @@ get_logging <- function(bucket, ...){
 }
 
 get_notification <- function(bucket, ...){
-    if(inherits(bucket, "s3bucket"))
+    if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("GET", paste0("https://",bucket,".s3.amazonaws.com/?notification"), 
+    r <- s3HTTP(verb = "GET", 
+                url = paste0("https://", bucket, ".s3.amazonaws.com"),
+                path = "/?notification",
                 headers = list(`x-amz-content-sha256` = ""), 
                 ...)
-    if(inherits(r, "aws_error")) {
+    if (inherits(r, "aws_error")) {
         return(r)
     } else {
         structure(r, class = "s3_bucket")
@@ -149,12 +163,14 @@ get_notification <- function(bucket, ...){
 }
 
 get_tagging <- function(bucket, ...){
-    if(inherits(bucket, "s3bucket"))
+    if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("GET", paste0("https://",bucket,".s3.amazonaws.com/?tagging"), 
+    r <- s3HTTP(verb = "GET", 
+                url = paste0("https://", bucket, ".s3.amazonaws.com"),
+                path = "/?tagging",
                 headers = list(`x-amz-content-sha256` = ""), 
                 ...)
-    if(inherits(r, "aws_error")) {
+    if (inherits(r, "aws_error")) {
         return(r)
     } else {
         structure(r, class = "s3_bucket")
@@ -162,12 +178,14 @@ get_tagging <- function(bucket, ...){
 }
 
 get_versions <- function(bucket, ...){
-    if(inherits(bucket, "s3bucket"))
+    if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("GET", paste0("https://",bucket,".s3.amazonaws.com/?versions"), 
+    r <- s3HTTP(verb = "GET", 
+                url = paste0("https://", bucket, ".s3.amazonaws.com"),
+                path = "/?versions",
                 headers = list(`x-amz-content-sha256` = ""), 
                 ...)
-    if(inherits(r, "aws_error")) {
+    if (inherits(r, "aws_error")) {
         return(r)
     } else {
         structure(r, class = "s3_bucket")
@@ -175,12 +193,14 @@ get_versions <- function(bucket, ...){
 }
 
 get_versioning <- function(bucket, ...){
-    if(inherits(bucket, "s3bucket"))
+    if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("GET", paste0("https://",bucket,".s3.amazonaws.com/?versioning"), 
+    r <- s3HTTP(verb = "GET", 
+                url = paste0("https://", bucket, ".s3.amazonaws.com"),
+                path = "/?versioning",
                 headers = list(`x-amz-content-sha256` = ""), 
                 ...)
-    if(inherits(r, "aws_error")) {
+    if (inherits(r, "aws_error")) {
         return(r)
     } else {
         structure(r, class = "s3_bucket")
@@ -188,12 +208,14 @@ get_versioning <- function(bucket, ...){
 }
 
 get_website <- function(bucket, ...){
-    if(inherits(bucket, "s3bucket"))
+    if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("GET", paste0("https://",bucket,".s3.amazonaws.com/?website"), 
+    r <- s3HTTP(verb = "GET", 
+                url = paste0("https://", bucket, ".s3.amazonaws.com"),
+                path = "/?website",
                 headers = list(`x-amz-content-sha256` = ""), 
                 ...)
-    if(inherits(r, "aws_error")) {
+    if (inherits(r, "aws_error")) {
         return(r)
     } else {
         structure(r, class = "s3_bucket")
@@ -201,12 +223,14 @@ get_website <- function(bucket, ...){
 }
 
 get_uploads <- function(bucket, ...){
-    if(inherits(bucket, "s3bucket"))
+    if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("GET", paste0("https://",bucket,".s3.amazonaws.com/?uploads"), 
+    r <- s3HTTP(verb = "GET", 
+                url = paste0("https://", bucket, ".s3.amazonaws.com"),
+                path = "/?uploads",
                 headers = list(`x-amz-content-sha256` = ""), 
                 ...)
-    if(inherits(r, "aws_error")) {
+    if (inherits(r, "aws_error")) {
         return(r)
     } else {
         structure(r, class = "s3_bucket")
@@ -214,12 +238,14 @@ get_uploads <- function(bucket, ...){
 }
 
 get_requestpayment <- function(bucket, ...){
-    if(inherits(bucket, "s3bucket"))
+    if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("GET", paste0("https://",bucket,".s3.amazonaws.com/?requestPayment"), 
+    r <- s3HTTP(verb = "GET", 
+                url = paste0("https://", bucket, ".s3.amazonaws.com"),
+                path = "/?requestPayment",
                 headers = list(`x-amz-content-sha256` = ""), 
                 ...)
-    if(inherits(r, "aws_error")) {
+    if (inherits(r, "aws_error")) {
         return(r)
     } else {
         structure(r, class = "s3_bucket")
@@ -228,14 +254,14 @@ get_requestpayment <- function(bucket, ...){
 
 
 # DELETE
-
 deletebucket <- function(bucket, ...){
-    if(inherits(bucket, "s3bucket"))
+    if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("DELETE", paste0("https://",bucket,".s3.amazonaws.com"), 
-               headers = list(`x-amz-content-sha256` = ""), 
-               ...)
-    if(inherits(r, "aws_error")) {
+    r <- s3HTTP(verb = "DELETE", 
+                url = paste0("https://", bucket, ".s3.amazonaws.com"), 
+                headers = list(`x-amz-content-sha256` = ""), 
+                ...)
+    if (inherits(r, "aws_error")) {
         return(r)
     } else {
         TRUE
@@ -243,12 +269,14 @@ deletebucket <- function(bucket, ...){
 }
 
 delete_cors <- function(bucket, ...){
-    if(inherits(bucket, "s3bucket"))
+    if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("DELETE", paste0("https://",bucket,".s3.amazonaws.com/?cors"), 
+    r <- s3HTTP(verb = "DELETE", 
+                url = paste0("https://", bucket, ".s3.amazonaws.com"),
+                path = "/?cors",
                 headers = list(`x-amz-content-sha256` = ""), 
                 ...)
-    if(inherits(r, "aws_error")) {
+    if (inherits(r, "aws_error")) {
         return(r)
     } else {
         structure(r, class = "s3_bucket")
@@ -256,12 +284,14 @@ delete_cors <- function(bucket, ...){
 }
 
 delete_lifecycle <- function(bucket, ...){
-    if(inherits(bucket, "s3bucket"))
+    if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("DELETE", paste0("https://",bucket,".s3.amazonaws.com/?lifecycle"), 
+    r <- s3HTTP(verb = "DELETE", 
+                url = paste0("https://", bucket, ".s3.amazonaws.com"),
+                path = "/?lifecycle",
                 headers = list(`x-amz-content-sha256` = ""), 
                 ...)
-    if(inherits(r, "aws_error")) {
+    if (inherits(r, "aws_error")) {
         return(r)
     } else {
         structure(r, class = "s3_bucket")
@@ -269,12 +299,14 @@ delete_lifecycle <- function(bucket, ...){
 }
 
 delete_policy <- function(bucket, ...){
-    if(inherits(bucket, "s3bucket"))
+    if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("DELETE", paste0("https://",bucket,".s3.amazonaws.com/?policy"), 
+    r <- s3HTTP(verb = "DELETE", 
+                url = paste0("https://", bucket, ".s3.amazonaws.com"),
+                path = "/?policy",
                 headers = list(`x-amz-content-sha256` = ""), 
                 ...)
-    if(inherits(r, "aws_error")) {
+    if (inherits(r, "aws_error")) {
         return(r)
     } else {
         structure(r, class = "s3_bucket")
@@ -282,12 +314,14 @@ delete_policy <- function(bucket, ...){
 }
 
 delete_tagging <- function(bucket, ...){
-    if(inherits(bucket, "s3bucket"))
+    if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("DELETE", paste0("https://",bucket,".s3.amazonaws.com/?tagging"), 
+    r <- s3HTTP(verb = "DELETE", 
+                url = paste0("https://", bucket, ".s3.amazonaws.com"),
+                path = "/?tagging",
                 headers = list(`x-amz-content-sha256` = ""), 
                 ...)
-    if(inherits(r, "aws_error")) {
+    if (inherits(r, "aws_error")) {
         return(r)
     } else {
         structure(r, class = "s3_bucket")
@@ -295,12 +329,14 @@ delete_tagging <- function(bucket, ...){
 }
 
 delete_website <- function(bucket, ...){
-    if(inherits(bucket, "s3bucket"))
+    if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("DELETE", paste0("https://",bucket,".s3.amazonaws.com/?website"), 
+    r <- s3HTTP(verb = "DELETE", 
+                url = paste0("https://", bucket, ".s3.amazonaws.com"),
+                path = "/?website",
                 headers = list(`x-amz-content-sha256` = ""), 
                 ...)
-    if(inherits(r, "aws_error")) {
+    if (inherits(r, "aws_error")) {
         return(r)
     } else {
         structure(r, class = "s3_bucket")
@@ -309,14 +345,14 @@ delete_website <- function(bucket, ...){
 
 
 # HEAD
-
 headbucket <- function(bucket, ...){
-    if(inherits(bucket, "s3bucket"))
+    if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("HEAD", paste0("https://",bucket,".s3.amazonaws.com"), 
+    r <- s3HTTP(verb = "HEAD", 
+                url = paste0("https://", bucket, ".s3.amazonaws.com"), 
                 headers = list(`x-amz-content-sha256` = ""), 
                 ...)
-    if(inherits(r, "aws_error")) {
+    if (inherits(r, "aws_error")) {
         return(r)
     } else {
         structure(r, class = "HEAD")
@@ -325,14 +361,14 @@ headbucket <- function(bucket, ...){
 
 
 # PUT
-
 putbucket <- function(bucket, ...){
-    if(inherits(bucket, "s3bucket"))
+    if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("PUT", paste0("https://",bucket,".s3.amazonaws.com"), 
+    r <- s3HTTP(verb = "PUT", 
+                url = paste0("https://", bucket, ".s3.amazonaws.com"), 
                 headers = list(`x-amz-content-sha256` = ""), 
                 ...)
-    if(inherits(r, "aws_error")) {
+    if (inherits(r, "aws_error")) {
         return(r)
     } else {
         TRUE
@@ -341,14 +377,15 @@ putbucket <- function(bucket, ...){
 
 # put_acl listed in OBJECT.r
 
-
 put_cors <- function(bucket, ...){
-    if(inherits(bucket, "s3bucket"))
+    if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("PUT", paste0("https://",bucket,".s3.amazonaws.com/?cors"), 
+    r <- s3HTTP(verb = "PUT", 
+                url = paste0("https://", bucket, ".s3.amazonaws.com"),
+                path = "/?cors",
                 headers = list(`x-amz-content-sha256` = ""), 
                 ...)
-    if(inherits(r, "aws_error")) {
+    if (inherits(r, "aws_error")) {
         return(r)
     } else {
         structure(r, class = "s3_bucket")
@@ -356,13 +393,13 @@ put_cors <- function(bucket, ...){
 }
 
 put_lifecycle <- function(bucket, ...){
-    if(inherits(bucket, "s3bucket"))
+    if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("PUT", paste0("https://",bucket,".s3.amazonaws.com"), 
+    r <- s3HTTP(verb = "PUT", url = paste0("https://", bucket, ".s3.amazonaws.com"), 
                 action = "/?lifecycle",
                 headers = list(`x-amz-content-sha256` = ""), 
                 ...)
-    if(inherits(r, "aws_error")) {
+    if (inherits(r, "aws_error")) {
         return(r)
     } else {
         structure(r, class = "s3_bucket")
@@ -370,12 +407,14 @@ put_lifecycle <- function(bucket, ...){
 }
 
 put_policy <- function(bucket, ...){
-    if(inherits(bucket, "s3bucket"))
+    if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("PUT", paste0("https://",bucket,".s3.amazonaws.com/?policy"), 
+    r <- s3HTTP(verb = "PUT", 
+                url = paste0("https://", bucket, ".s3.amazonaws.com"),
+                path = "/?policy",
                 headers = list(`x-amz-content-sha256` = ""), 
                 ...)
-    if(inherits(r, "aws_error")) {
+    if (inherits(r, "aws_error")) {
         return(r)
     } else {
         structure(r, class = "s3_bucket")
@@ -383,12 +422,14 @@ put_policy <- function(bucket, ...){
 }
 
 put_logging <- function(bucket, ...){
-    if(inherits(bucket, "s3bucket"))
+    if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("PUT", paste0("https://",bucket,".s3.amazonaws.com/?logging"), 
+    r <- s3HTTP(verb = "PUT", 
+                url = paste0("https://", bucket, ".s3.amazonaws.com"),
+                path = "/?logging",
                 headers = list(`x-amz-content-sha256` = ""), 
                 ...)
-    if(inherits(r, "aws_error")) {
+    if (inherits(r, "aws_error")) {
         return(r)
     } else {
         structure(r, class = "s3_bucket")
@@ -396,12 +437,14 @@ put_logging <- function(bucket, ...){
 }
 
 put_notification <- function(bucket, ...){
-    if(inherits(bucket, "s3bucket"))
+    if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("PUT", paste0("https://",bucket,".s3.amazonaws.com/?notification"), 
+    r <- s3HTTP(verb = "PUT", 
+                url = paste0("https://", bucket, ".s3.amazonaws.com"),
+                path = "/?notification",
                 headers = list(`x-amz-content-sha256` = ""), 
                 ...)
-    if(inherits(r, "aws_error")) {
+    if (inherits(r, "aws_error")) {
         return(r)
     } else {
         structure(r, class = "s3_bucket")
@@ -409,12 +452,14 @@ put_notification <- function(bucket, ...){
 }
 
 put_tagging <- function(bucket, ...){
-    if(inherits(bucket, "s3bucket"))
+    if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("PUT", paste0("https://",bucket,".s3.amazonaws.com/?tagging"), 
+    r <- s3HTTP(verb = "PUT", 
+                url = paste0("https://", bucket, ".s3.amazonaws.com"),
+                path = "/?tagging",
                 headers = list(`x-amz-content-sha256` = ""), 
                 ...)
-    if(inherits(r, "aws_error")) {
+    if (inherits(r, "aws_error")) {
         return(r)
     } else {
         structure(r, class = "s3_bucket")
@@ -422,12 +467,14 @@ put_tagging <- function(bucket, ...){
 }
 
 put_versioning <- function(bucket, ...){
-    if(inherits(bucket, "s3bucket"))
+    if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("PUT", paste0("https://",bucket,".s3.amazonaws.com/?versioning"), 
+    r <- s3HTTP(verb = "PUT", 
+                url = paste0("https://", bucket, ".s3.amazonaws.com"),
+                path = "/?versioning",
                 headers = list(`x-amz-content-sha256` = ""), 
                 ...)
-    if(inherits(r, "aws_error")) {
+    if (inherits(r, "aws_error")) {
         return(r)
     } else {
         structure(r, class = "s3_bucket")
@@ -435,12 +482,14 @@ put_versioning <- function(bucket, ...){
 }
 
 put_website <- function(bucket, ...){
-    if(inherits(bucket, "s3bucket"))
+    if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("PUT", paste0("https://",bucket,".s3.amazonaws.com/?website"), 
+    r <- s3HTTP(verb = "PUT", 
+                url = paste0("https://", bucket, ".s3.amazonaws.com"),
+                path = "/?website",
                 headers = list(`x-amz-content-sha256` = ""), 
                 ...)
-    if(inherits(r, "aws_error")) {
+    if (inherits(r, "aws_error")) {
         return(r)
     } else {
         structure(r, class = "s3_bucket")
@@ -448,12 +497,14 @@ put_website <- function(bucket, ...){
 }
 
 put_requestpayment <- function(bucket, ...){
-    if(inherits(bucket, "s3bucket"))
+    if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP("PUT", paste0("https://",bucket,".s3.amazonaws.com/?requestPayment"), 
+    r <- s3HTTP(verb = "PUT", 
+                url = paste0("https://", bucket, ".s3.amazonaws.com"),
+                path = "/?requestPayment",
                 headers = list(`x-amz-content-sha256` = ""), 
                 ...)
-    if(inherits(r, "aws_error")) {
+    if (inherits(r, "aws_error")) {
         return(r)
     } else {
         structure(r, class = "s3_bucket")
