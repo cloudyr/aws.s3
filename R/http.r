@@ -29,7 +29,6 @@ utils::globalVariables(c("S"))
 #' 
 #' @return the S3 response, or the relevant error.
 #' 
-#' @importFrom magrittr %>%
 #' @export
 
 s3HTTP <- function(verb = "GET",
@@ -90,8 +89,7 @@ s3HTTP <- function(verb = "GET",
 
     #if parse_response, use httr's parsed method to extract as XML, then convert to list
     if (parse_response) {
-      response <- httr::content(r, "parsed") %>%
-        XML::xmlToList()
+      response <- XML::xmlToList(httr::content(r, "parsed"))
     #otherwise just return the raw response
     } else if (!parse_response) {
       response <- r
