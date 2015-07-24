@@ -21,8 +21,8 @@ test_that("unparsed bucketlist", {
   expect_is(bl, "response")
   expect_true(length(bl) == 10)
   expect_true(
-    c("url", "status_code", "headers", "all_headers", "cookies", 
-    "content", "date", "times", "request", "handle") %in% names(bl) %>% all
+    all(c("url", "status_code", "headers", "all_headers", "cookies", 
+    "content", "date", "times", "request", "handle") %in% names(bl))
   )
 })
 

@@ -1,11 +1,11 @@
-#' @title retrieves an object from a S3 bucket
+#' @title Retrieves an object from an S3 bucket
 #' 
 #' @param bucket Character string of the name of the bucket you want to get.
 #' @param object Character string of the name of the object you want to get.
 #' @param headers List of request headers for the REST call.   
 #' @param ... additional arguments passed to \code{\link{s3HTTP}}
 #'
-#' @return raw object
+#' @return A raw object.
 #' @export
 
 getobject <- function(bucket, object, headers = list(), ...) {
@@ -55,7 +55,8 @@ get_acl <- function(bucket, object, ...) {
         if (inherits(object, "s3_object"))
             object <- object$Key
         r <- s3HTTP(verb = "GET", 
-                    url = paste0("https://", bucket, ".s3.amazonaws.com/", object, "?acl"), 
+                    url = paste0("https://", bucket, ".s3.amazonaws.com/", object), 
+                    path = "/?acl",
                     headers = list(`x-amz-content-sha256` = ""), 
                     ...)
         if (inherits(r, "aws_error")) {
@@ -72,7 +73,8 @@ get_torrent <- function(bucket, object, ...) {
     if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
     r <- s3HTTP(verb = "GET", 
-                url = paste0("https://", bucket, ".s3.amazonaws.com/", object, "?torrent"), 
+                url = paste0("https://", bucket, ".s3.amazonaws.com/", object), 
+                path = "/?torrent",
                 headers = list(`x-amz-content-sha256` = ""), 
                 ...)
     if (inherits(r, "aws_error")) {
@@ -142,28 +144,27 @@ postobject <- function(bucket, object, ...) {
 
 # PUT
 
-#' @title puts an object into a s3 bucket
+#' @title Puts an object into an S3 bucket
 #'
-#' @inheritParams getobject
+#' @param file A character string containing the filename (or full path) of the file you want to upload to S3.
+#' @param bucket A character string containing the name of the bucket you want to put an object into.
+#' @param object A character string containing the name the object should have in S3 (i.e., its "object key"). If missing, the filename is used.
 #'
-#' @return list, containing aws api response
+#' @return A list, containing the AWS API response.
 #' @export
 
-putobject <- function(bucket, object, object_content, headers = list(), ...) {
-    if (inherits(object, "s3_object"))
+putobject <- function(file, bucket, object, ...) {
+    if (!missing(object) && inherits(object, "s3_object"))
         object <- object$Key
-    if (inherits(bucket, "s3bucket"))
-        bucket <- bucket$Name
-    
-    #make headers
-    obj_length <- utils::object.size(x = object_content) %>% format(units = 'b') %>% 
-      sub(pattern = 'bytes', replacement = '', fixed = TRUE) %>% as.integer()
-    headers = c(headers, `content-length` = obj_length, `x-amz-content-sha256` = "")
-    
-    r <- s3HTTP(verb = "PUT",
-                url = paste0("https://", bucket, ".s3.amazonaws.com/", object),
-                headers = headers, 
-                request_body = object_content,
+    if (missing(object)) {
+        object <- basename(file)
+    }
+
+    r <- s3HTTP(verb = "PUT", 
+                url = paste0("https://", bucket, ".s3.amazonaws.com/", object), 
+                headers = list(`Content-Length` = file.size(file), 
+                               `x-amz-content-sha256` = ""), 
+                request_body = file,
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)

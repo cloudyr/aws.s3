@@ -5,8 +5,8 @@ test_that("basic usage of getobject for anonymous user", {
   
   expect_is(ex, "response")
   expect_true(
-    c("url", "status_code", "headers", "all_headers", "cookies", 
-      "content", "date", "times", "request", "handle") %in% names(ex) %>% all()
+    all(c("url", "status_code", "headers", "all_headers", "cookies", 
+      "content", "date", "times", "request", "handle") %in% names(ex))
   )
   expect_equal(ex$status_code, 200)
 })
@@ -21,8 +21,8 @@ test_that("basic usage of getobject for signed in user", {
   
   expect_is(ex, "response")
   expect_true(
-    c("url", "status_code", "headers", "all_headers", "cookies", 
-      "content", "date", "times", "request", "handle") %in% names(ex) %>% all()
+    all(c("url", "status_code", "headers", "all_headers", "cookies", 
+      "content", "date", "times", "request", "handle") %in% names(ex))
   )
   expect_equal(ex$status_code, 200)
 })
