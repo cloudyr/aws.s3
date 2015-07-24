@@ -2,21 +2,26 @@
 % Please edit documentation in R/OBJECT.r
 \name{putobject}
 \alias{putobject}
-\title{puts an object into a s3 bucket}
+\title{Puts an object into an S3 bucket}
 \usage{
-putobject(bucket, object, ...)
+putobject(file, bucket, object, ...)
 }
 \arguments{
-\item{bucket}{Character string of the name of the bucket you want to get.}
+\item{file}{A character string containing the filename (or full path) of
+the file you want to upload to S3.}
 
-\item{object}{Character string of the name of the object you want to get.}
+\item{bucket}{A character string containing the name of the bucket you want
+to put an object into.}
+
+\item{object}{A character string containing the name the object should
+have in S3 (i.e., its "object key"). If missing, the filename is used.}
 
 \item{...}{additional arguments passed to \code{\link{s3HTTP}}}
 }
 \value{
-list, containing aws api response
+A list, containing the AWS API response.
 }
 \description{
-puts an object into a s3 bucket
+Puts an object into an S3 bucket
 }
 

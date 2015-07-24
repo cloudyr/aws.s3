@@ -146,9 +146,13 @@ postobject <- function(bucket, object, ...) {
 
 #' @title Puts an object into an S3 bucket
 #'
-#' @param file A character string containing the filename (or full path) of the file you want to upload to S3.
-#' @param bucket A character string containing the name of the bucket you want to put an object into.
-#' @param object A character string containing the name the object should have in S3 (i.e., its "object key"). If missing, the filename is used.
+#' @param file A character string containing the filename (or full path) of 
+#' the file you want to upload to S3.
+#' @param bucket A character string containing the name of the bucket you want 
+#' to put an object into.
+#' @param object A character string containing the name the object should 
+#' have in S3 (i.e., its "object key"). If missing, the filename is used.
+#' @param ... additional arguments passed to \code{\link{s3HTTP}}
 #'
 #' @return A list, containing the AWS API response.
 #' @export
