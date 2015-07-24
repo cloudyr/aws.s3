@@ -56,6 +56,7 @@ s3HTTP <- function(verb = "GET",
         headers$`x-amz-date` <- d_timestamp
         H <- do.call(httr::add_headers, headers)
     } else {
+        r <- if(file.exists(request_body)) readBin(request_body, what = raw(), n = file.size(request_body)) else request_body
         Sig <- aws.signature::signature_v4_auth(
                datetime = d_timestamp,
                region = region,
@@ -65,7 +66,7 @@ s3HTTP <- function(verb = "GET",
                query_args = p$query,
                canonical_headers = list(host = p$hostname,
                                         `x-amz-date` = d_timestamp),
-               request_body = request_body,
+               request_body = r,
                key = key, secret = secret)
         headers$`x-amz-date` <- d_timestamp
         headers$`x-amz-content-sha256` <- Sig$BodyHash
@@ -82,7 +83,7 @@ s3HTTP <- function(verb = "GET",
     } else if (verb == "POST") {
       r <- httr::POST(url, H, ...)
     } else if (verb == "PUT") {
-      r <- httr::PUT(url, H, ...)
+      r <- httr::PUT(url, H, body = httr::upload_file(request_body), ...)
     } else if (verb == "OPTIONS") {
       r <- httr::VERB("OPTIONS", url, H, ...)
     }
