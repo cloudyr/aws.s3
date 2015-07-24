@@ -25,3 +25,14 @@ test_that("unparsed bucketlist", {
     "content", "date", "times", "request", "handle") %in% names(bl) %>% all
   )
 })
+
+
+test_that("intentional bad keys", {
+  bad <- bucketlist(key = 'THIS IS A BAD KEY', secret = 'THIS IS A BAD SECRET')
+  expect_is(bad, "aws_error")
+  expect_equal(bad$Code, "InvalidAccessKeyId")
+  expect_warning(
+    bucketlist(key = 'THIS IS A BAD KEY', secret = 'THIS IS A BAD SECRET'),
+    regexp = "client error: (403) Forbidden", fixed = TRUE
+  )
+})

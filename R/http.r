@@ -100,7 +100,7 @@ s3HTTP <- function(verb = "GET",
     #raise errors if bad values are passed. 
     if (httr::http_status(r)$category == "client error") {
       httr::warn_for_status(r)
-      h <- headers(r)
+      h <- httr::headers(r)
       out <- structure(response, headers = h, class = "aws_error")
     } else {
       out <- response
