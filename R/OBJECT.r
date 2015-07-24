@@ -2,20 +2,21 @@
 #' 
 #' @param bucket Character string of the name of the bucket you want to get.
 #' @param object Character string of the name of the object you want to get.
+#' @param headers List of request headers for the REST call.   
 #' @param ... additional arguments passed to \code{\link{s3HTTP}}
 #'
 #' @return raw object
 #' @export
 
-getobject <- function(bucket, object, ...) {
+getobject <- function(bucket, object, headers = list(), ...) {
     if (inherits(object, "s3_object"))
         object <- object$Key
     if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    h <- list()
+
     r <- s3HTTP(verb = "GET", 
                 url = paste0("https://", bucket, ".s3.amazonaws.com/", object), 
-                headers = c(h, `x-amz-content-sha256` = ""), 
+                headers = c(headers, `x-amz-content-sha256` = ""), 
                 parse_response = FALSE,
                 ...)
     if (inherits(r, "aws_error")) {
@@ -139,7 +140,6 @@ postobject <- function(bucket, object, ...) {
 }
 
 
-
 # PUT
 
 #' @title puts an object into a s3 bucket
@@ -149,14 +149,21 @@ postobject <- function(bucket, object, ...) {
 #' @return list, containing aws api response
 #' @export
 
-putobject <- function(bucket, object, ...) {
+putobject <- function(bucket, object, object_content, headers = list(), ...) {
     if (inherits(object, "s3_object"))
         object <- object$Key
     if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    r <- s3HTTP(verb = "PUT", 
-                url = paste0("https://", bucket, ".s3.amazonaws.com/", object), 
-                headers = list(`x-amz-content-sha256` = ""), 
+    
+    #make headers
+    obj_length <- utils::object.size(x = object_content) %>% format(units = 'b') %>% 
+      sub(pattern = 'bytes', replacement = '', fixed = TRUE) %>% as.integer()
+    headers = c(headers, `content-length` = obj_length, `x-amz-content-sha256` = "")
+    
+    r <- s3HTTP(verb = "PUT",
+                url = paste0("https://", bucket, ".s3.amazonaws.com/", object),
+                headers = headers, 
+                request_body = object_content,
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
