@@ -7,7 +7,7 @@
 getbucket(bucket, prefix, delimiter, max, marker, ...)
 }
 \arguments{
-\item{bucket}{Character string with the name of the bucket you want to get.}
+\item{bucket}{Character string of the name of the bucket you want to get.}
 
 \item{prefix}{Character string that limits the response to keys that begin
 with the specified prefix}

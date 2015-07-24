@@ -1,4 +1,11 @@
-# GET
+# retrieves an object from a S3 bucket
+
+#' @param bucket Character string of the name of the bucket you want to get.
+#' @param object Character string of the name of the object you want to get.
+#' @param ... additional arguments passed to \code{\link{s3HTTP}}
+#'
+#' @return raw object
+#' @export
 
 getobject <- function(bucket, object, ...) {
     if (inherits(object, "s3_object"))
@@ -134,6 +141,13 @@ postobject <- function(bucket, object, ...) {
 
 
 # PUT
+
+#' puts an object into a s3 bucket
+#'
+#' @inheritParams getobject
+#'
+#' @return list, containing aws api response
+#' @export
 
 putobject <- function(bucket, object, ...) {
     if (inherits(object, "s3_object"))

@@ -3,5 +3,7 @@
 export(bucketlist)
 export(get_cors)
 export(getbucket)
+export(getobject)
+export(putobject)
 export(s3HTTP)
 importFrom(magrittr,"%>%")

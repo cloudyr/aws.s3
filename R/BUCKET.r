@@ -3,7 +3,7 @@
 #'  or all (up to 1000) of the objects in a bucket. You can use the request parameters 
 #'  as selection criteria to return a subset of the objects in a bucket."
 #' 
-#' @param bucket Character string with the name of the bucket you want to get.
+#' @param bucket Character string of the name of the bucket you want to get.
 #' @param prefix Character string that limits the response to keys that begin 
 #' with the specified prefix
 #' @param delimiter Character string used to group keys.  Read the AWS doc for more detail.

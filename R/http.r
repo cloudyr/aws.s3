@@ -43,11 +43,11 @@ s3HTTP <- function(verb = "GET",
                    secret = Sys.getenv("AWS_SECRET_ACCESS_KEY"), 
                    parse_response = TRUE, 
                    ...) {
-    
     ## Endpoint must match region (the default s3.amazonaws.com is us-east-1 region only)
     if (region != "us-east-1" && url == "https://s3.amazonaws.com")
       url = paste0("https://s3-", region, ".amazonaws.com")
-    url <- paste0(url, "/", bucket, path)
+    if (bucket != "" | path != "")
+      url <- paste0(url, "/", bucket, path)
     current <- Sys.time()
     d_timestamp <- format(current, "%Y%m%dT%H%M%SZ", tz = "UTC")
     p <- httr::parse_url(url)
