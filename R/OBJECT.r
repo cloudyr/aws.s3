@@ -1,21 +1,22 @@
 #' @title Retrieves an object from an S3 bucket
 #' 
-#' @param bucket A character string containing the name of the bucket you want to get.
-#' @param object A character string containing the name of the object you want to get from that bucket.
-#' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
+#' @param bucket Character string of the name of the bucket you want to get.
+#' @param object Character string of the name of the object you want to get.
+#' @param headers List of request headers for the REST call.   
+#' @param ... additional arguments passed to \code{\link{s3HTTP}}
 #'
 #' @return A raw object.
 #' @export
 
-getobject <- function(bucket, object, ...) {
+getobject <- function(bucket, object, headers = list(), ...) {
     if (inherits(object, "s3_object"))
         object <- object$Key
     if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
-    h <- list()
+
     r <- s3HTTP(verb = "GET", 
                 url = paste0("https://", bucket, ".s3.amazonaws.com/", object), 
-                headers = c(h, `x-amz-content-sha256` = ""), 
+                headers = c(headers, `x-amz-content-sha256` = ""), 
                 parse_response = FALSE,
                 ...)
     if (inherits(r, "aws_error")) {
@@ -141,30 +142,33 @@ postobject <- function(bucket, object, ...) {
 }
 
 
-
 # PUT
 
 #' @title Puts an object into an S3 bucket
 #'
-#' @param file A character string containing the filename (or full path) of the file you want to upload to S3.
-#' @param bucket A character string containing the name of the bucket you want to put an object into.
-#' @param object A character string containing the name the object should have in S3 (i.e., its "object key"). If missing, the filename is used.
+#' @param file A character string containing the filename (or full path) of 
+#' the file you want to upload to S3.
+#' @param bucket A character string containing the name of the bucket you want 
+#' to put an object into.
+#' @param object A character string containing the name the object should 
+#' have in S3 (i.e., its "object key"). If missing, the filename is used.
+#' @param headers List of request headers for the REST call.   
+#' @param ... additional arguments passed to \code{\link{s3HTTP}}
 #'
 #' @return A list, containing the AWS API response.
 #' @export
 
-putobject <- function(file, bucket, object, ...) {
+putobject <- function(file, bucket, object, headers = list(), ...) {
     if (!missing(object) && inherits(object, "s3_object"))
         object <- object$Key
     if (missing(object)) {
         object <- basename(file)
     }
-    if (inherits(bucket, "s3bucket"))
-        bucket <- bucket$Name
+
     r <- s3HTTP(verb = "PUT", 
                 url = paste0("https://", bucket, ".s3.amazonaws.com/", object), 
-                headers = list(`Content-Length` = file.size(file), 
-                               `x-amz-content-sha256` = ""), 
+                headers = c(headers, list(`Content-Length` = file.size(file), 
+                                          `x-amz-content-sha256` = "")), 
                 request_body = file,
                 ...)
     if (inherits(r, "aws_error")) {

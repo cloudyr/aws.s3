@@ -2,21 +2,23 @@
 % Please edit documentation in R/OBJECT.r
 \name{getobject}
 \alias{getobject}
-\title{retrieves an object from a S3 bucket}
+\title{Retrieves an object from an S3 bucket}
 \usage{
-getobject(bucket, object, ...)
+getobject(bucket, object, headers = list(), ...)
 }
 \arguments{
 \item{bucket}{Character string of the name of the bucket you want to get.}
 
 \item{object}{Character string of the name of the object you want to get.}
 
+\item{headers}{List of request headers for the REST call.}
+
 \item{...}{additional arguments passed to \code{\link{s3HTTP}}}
 }
 \value{
-raw object
+A raw object.
 }
 \description{
-retrieves an object from a S3 bucket
+Retrieves an object from an S3 bucket
 }
 

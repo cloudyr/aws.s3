@@ -63,7 +63,7 @@ print.s3_bucket <- function(x, ...){
 # get acl for bucket not yet implemented
 
 
-#' Get the cross origin resource sharing config info for a bucket.
+#' @title Get the cross origin resource sharing config info for a bucket.
 #'
 #' @param bucket Character string with the name of the bucket you want to get.
 #' @param ... additional arguments passed to \code{\link{s3HTTP}}
@@ -253,18 +253,26 @@ get_requestpayment <- function(bucket, ...){
 }
 
 
-# DELETE
+#' @title Deletes an aws bucket.
+#'
+#' @param bucket Character string with thename of the bucket you want to delete.
+#' @param ... additional arguments passed to \code{\link{s3HTTP}}
+#'
+#' @return TRUE if successful, aws_error details if not.
+#' @export
+
 deletebucket <- function(bucket, ...){
     if (inherits(bucket, "s3bucket"))
-        bucket <- bucket$Name
+      bucket <- bucket$Name
     r <- s3HTTP(verb = "DELETE", 
                 url = paste0("https://", bucket, ".s3.amazonaws.com"), 
-                headers = list(`x-amz-content-sha256` = ""), 
+                headers = list(`x-amz-content-sha256` = ""),
+                parse_response = FALSE,
                 ...)
     if (inherits(r, "aws_error")) {
-        return(r)
+      return(r)
     } else {
-        TRUE
+      TRUE
     }
 }
 
@@ -275,6 +283,7 @@ delete_cors <- function(bucket, ...){
                 url = paste0("https://", bucket, ".s3.amazonaws.com"),
                 path = "/?cors",
                 headers = list(`x-amz-content-sha256` = ""), 
+                parse_response = FALSE,
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -289,7 +298,8 @@ delete_lifecycle <- function(bucket, ...){
     r <- s3HTTP(verb = "DELETE", 
                 url = paste0("https://", bucket, ".s3.amazonaws.com"),
                 path = "/?lifecycle",
-                headers = list(`x-amz-content-sha256` = ""), 
+                headers = list(`x-amz-content-sha256` = ""),
+                parse_response = FALSE,
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -304,7 +314,8 @@ delete_policy <- function(bucket, ...){
     r <- s3HTTP(verb = "DELETE", 
                 url = paste0("https://", bucket, ".s3.amazonaws.com"),
                 path = "/?policy",
-                headers = list(`x-amz-content-sha256` = ""), 
+                headers = list(`x-amz-content-sha256` = ""),
+                parse_response = FALSE,
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -320,6 +331,7 @@ delete_tagging <- function(bucket, ...){
                 url = paste0("https://", bucket, ".s3.amazonaws.com"),
                 path = "/?tagging",
                 headers = list(`x-amz-content-sha256` = ""), 
+                parse_response = FALSE,
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -335,6 +347,7 @@ delete_website <- function(bucket, ...){
                 url = paste0("https://", bucket, ".s3.amazonaws.com"),
                 path = "/?website",
                 headers = list(`x-amz-content-sha256` = ""), 
+                parse_response = FALSE,
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -360,13 +373,21 @@ headbucket <- function(bucket, ...){
 }
 
 
-# PUT
+#' @title Creates a new aws S3 bucket.
+#'
+#' @param bucket Character string with the name of the bucket you want to create.
+#' @param ... additional arguments passed to \code{\link{s3HTTP}}
+#'
+#' @return TRUE if successful, aws_error details if not.
+#' @export
+
 putbucket <- function(bucket, ...){
     if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
     r <- s3HTTP(verb = "PUT", 
                 url = paste0("https://", bucket, ".s3.amazonaws.com"), 
-                headers = list(`x-amz-content-sha256` = ""), 
+                headers = list(`x-amz-content-sha256` = ""),
+                parse_response = FALSE,
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
