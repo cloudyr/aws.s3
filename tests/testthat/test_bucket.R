@@ -86,3 +86,26 @@ test_that("putbucket and deletebucket", {
   )
   expect_true(resp)
 })
+
+test_that("bucket versioning", {
+  test_name <- paste0('cloudyr_test_', gsub('\\s', '_', gsub('[-:]', '_', Sys.time())))
+  
+  resp <- putbucket(
+    bucket = test_name,
+    key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
+    secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY")
+  )
+  expect_null(get_versioning(test_name))
+  
+  put_versioning(test_name, "Enabled")
+  expect_equal(get_versioning(test_name), "Enabled")
+  
+  put_versioning(test_name, "Suspended")
+  expect_equal(get_versioning(test_name), "Suspended")
+  
+  resp <- deletebucket(
+    bucket = test_name,
+    key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
+    secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY")
+  )
+})
