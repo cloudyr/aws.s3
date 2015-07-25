@@ -8,7 +8,7 @@ after_success:
 - Rscript -e 'library(covr);codecov()'
 - test $TRAVIS_PULL_REQUEST == "false" && 
   test $TRAVIS_BRANCH == "master" && 
-  bash deploy.sh
+  bash drat.sh
 env:
   global:
   - secure: NkoBLN7g9Jjkn1kXfjFbiTmCRXgEFWAeRObLyiJZCA9FzeAN6pARvuV45Jkt8T3pRzma7MbOg1wN/FG7ywAXYYMeijIDUy5VxNZWxbmTOHVOeVBVW+H8qlrGxHF/KXHKKAcjnOnO2Z/rHrvBmXOJQbEXXUwPAlr7RNNxwasrFAY=
