@@ -1,11 +1,16 @@
 language: r
 sudo: required
+r_packages:
+- knitr
 r_github_packages:
 - cloudyr/aws.signature
 - jimhester/covr
 - eddelbuettel/drat
 after_success:
-- Rscript -e 'library(covr);codecov()'
+- Rscript -e 'library("covr");codecov()'
+#- test $TRAVIS_PULL_REQUEST == "false" && 
+#  test $TRAVIS_BRANCH == "master" && 
+#  bash knitreadme.sh
 - test $TRAVIS_PULL_REQUEST == "false" && 
   test $TRAVIS_BRANCH == "master" && 
   bash drat.sh
