@@ -4,7 +4,7 @@
 \alias{putobject}
 \title{Puts an object into an S3 bucket}
 \usage{
-putobject(file, bucket, object, ...)
+putobject(file, bucket, object, headers = list(), ...)
 }
 \arguments{
 \item{file}{A character string containing the filename (or full path) of
@@ -15,6 +15,8 @@ to put an object into.}
 
 \item{object}{A character string containing the name the object should
 have in S3 (i.e., its "object key"). If missing, the filename is used.}
+
+\item{headers}{List of request headers for the REST call.}
 
 \item{...}{additional arguments passed to \code{\link{s3HTTP}}}
 }

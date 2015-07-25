@@ -81,6 +81,8 @@ s3HTTP <- function(verb = "GET",
       r <- httr::DELETE(url, H, ...)
     } else if (verb == "POST") {
       r <- httr::POST(url, H, ...)
+    } else if (verb == "PUT" & request_body == "") {
+      r <- httr::PUT(url, H, ...)
     } else if (verb == "PUT") {
       r <- httr::PUT(url, H, body = httr::upload_file(request_body), ...)
     } else if (verb == "OPTIONS") {

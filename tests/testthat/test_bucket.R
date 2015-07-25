@@ -67,3 +67,22 @@ test_that("get_cors on a bucket with no cors setup", {
     all(c("Code", "Message", "BucketName", "RequestId", "HostId") %in% names(ex))
   )
 })
+
+
+test_that("putbucket and deletebucket", {
+  test_name <- paste0('cloudyr_test_', gsub('\\s', '_', gsub('[-:]', '_', Sys.time())))
+  
+  resp <- putbucket(
+    bucket = test_name,
+    key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
+    secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY")
+  )
+  expect_true(resp)
+  
+  resp <- deletebucket(
+    bucket = test_name,
+    key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
+    secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY")
+  )
+  expect_true(resp)
+})
