@@ -155,7 +155,7 @@ postobject <- function(bucket, object, ...) {
 #' @param headers List of request headers for the REST call.   
 #' @param ... additional arguments passed to \code{\link{s3HTTP}}
 #'
-#' @return A list, containing the AWS API response.
+#' @return If successful, \code{TRUE}, otherwise an aws_error object.
 #' @export
 
 putobject <- function(file, bucket, object, headers = list(), ...) {
@@ -174,7 +174,7 @@ putobject <- function(file, bucket, object, headers = list(), ...) {
     if (inherits(r, "aws_error")) {
         return(r)
     } else {
-        structure(r, class = "s3_object")
+        TRUE
     }
 }
 
@@ -214,8 +214,8 @@ copyobject <- function(from_object, to_object, from_bucket, to_bucket, ...) {
         bucket <- bucket$Name
     r <- s3HTTP(verb = "PUT", 
                 url = paste0("https://", bucket, ".s3.amazonaws.com/", object), 
-               headers = list(`x-amz-content-sha256` = ""), 
-               ...)
+                headers = list(`x-amz-content-sha256` = ""), 
+                ...)
     if (inherits(r, "aws_error")) {
         return(r)
     } else {
@@ -226,6 +226,15 @@ copyobject <- function(from_object, to_object, from_bucket, to_bucket, ...) {
 
 # DELETE
 
+#' @title Deletes an object from an S3 bucket.
+#'
+#' @param bucket A character string containing the name of the bucket you want 
+#' to delete an object from.
+#' @param object A character string containing the name of the object.
+#' @param ... Additional arguments passed to \code{\link{s3HTTP}}
+#'
+#' @return TRUE if successful, aws_error details if not.
+#' @export
 deleteobject <- function(bucket, object, ...) {
     if (inherits(object, "s3_object"))
         object <- object$Key
@@ -240,11 +249,37 @@ deleteobject <- function(bucket, object, ...) {
             TRUE
         }
     } else {
-        r <- httr::POST(paste0("https://", bucket, ".s3.amazonaws.com/?delete"), ...)
+        b1 <- 
+'<?xml version="1.0" encoding="UTF-8"?>
+<Delete>
+    <Quiet>true</Quiet>
+    <Object>'
+#         <Key>Key</Key>
+# version not implemented yet:
+#         <VersionId>VersionId</VersionId>
+        b2 <- 
+'    </Object>
+    <Object>
+         <Key>Key</Key>
+    </Object>
+    ...
+</Delete>'
+        tmpfile <- tempfile()
+        on.exit(unlink(tmpfile))
+        b <- writeLines(paste0(b1, paste0("<Key>",object,"</Key>"), b2), tmpfile)
+        md <- base64enc::base64encode(digest::digest(file = tmpfile, raw = TRUE))
+        r <- s3HTTP(verb = "POST", 
+                    url = paste0("https://", bucket, ".s3.amazonaws.com"), 
+                    path = "/?delete",
+                    body = tmpfile,
+                    headers = list(`Content-Length` = file.size(tmpfile), 
+                                   `Content-MD5` = md,
+                                   `x-amz-content-sha256` = ""), 
+                    ...)
         if (inherits(r, "aws_error")) {
             return(r)
         } else {
-            return(r, class = "s3_object")
+            return(structure(r, class = "s3_object"))
         }
     }
     return(r)

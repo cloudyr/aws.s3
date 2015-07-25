@@ -2,19 +2,19 @@
 % Please edit documentation in R/BUCKET.r
 \name{deletebucket}
 \alias{deletebucket}
-\title{Deletes an aws bucket.}
+\title{Deletes an S3 bucket.}
 \usage{
 deletebucket(bucket, ...)
 }
 \arguments{
-\item{bucket}{Character string with thename of the bucket you want to delete.}
+\item{bucket}{Character string with the name of the bucket you want to delete.}
 
-\item{...}{additional arguments passed to \code{\link{s3HTTP}}}
+\item{...}{Additional arguments passed to \code{\link{s3HTTP}}}
 }
 \value{
 TRUE if successful, aws_error details if not.
 }
 \description{
-Deletes an aws bucket.
+Deletes an S3 bucket.
 }
 

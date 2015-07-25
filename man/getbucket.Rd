@@ -2,7 +2,7 @@
 % Please edit documentation in R/BUCKET.r
 \name{getbucket}
 \alias{getbucket}
-\title{List the contents of a s3 bucket}
+\title{List the contents of an S3 bucket}
 \usage{
 getbucket(bucket, prefix, delimiter, max, marker, ...)
 }

@@ -1,4 +1,4 @@
-#' @title List the contents of a s3 bucket
+#' @title List the contents of an S3 bucket
 #' @description from the AWS doc: "This implementation of the GET operation returns some
 #'  or all (up to 1000) of the objects in a bucket. You can use the request parameters 
 #'  as selection criteria to return a subset of the objects in a bucket."
@@ -266,10 +266,10 @@ get_requestpayment <- function(bucket, ...){
 }
 
 
-#' @title Deletes an aws bucket.
+#' @title Deletes an S3 bucket.
 #'
-#' @param bucket Character string with thename of the bucket you want to delete.
-#' @param ... additional arguments passed to \code{\link{s3HTTP}}
+#' @param bucket Character string with the name of the bucket you want to delete.
+#' @param ... Additional arguments passed to \code{\link{s3HTTP}}
 #'
 #' @return TRUE if successful, aws_error details if not.
 #' @export

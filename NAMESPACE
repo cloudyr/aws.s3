@@ -2,6 +2,7 @@
 
 export(bucketlist)
 export(deletebucket)
+export(deleteobject)
 export(get_cors)
 export(get_versioning)
 export(getbucket)
