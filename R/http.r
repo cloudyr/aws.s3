@@ -81,10 +81,14 @@ s3HTTP <- function(verb = "GET",
       r <- httr::DELETE(url, H, ...)
     } else if (verb == "POST") {
       r <- httr::POST(url, H, ...)
-    } else if (verb == "PUT" & request_body == "") {
-      r <- httr::PUT(url, H, ...)
     } else if (verb == "PUT") {
-      r <- httr::PUT(url, H, body = httr::upload_file(request_body), ...)
+      if(request_body == "") {
+        r <- httr::PUT(url, H, ...)
+      } else if (file.exists(request_body)) {
+        r <- httr::PUT(url, H, body = httr::upload_file(request_body), ...)
+      } else {
+        r <- httr::PUT(url, H, body = request_body, ...)
+      }
     } else if (verb == "OPTIONS") {
       r <- httr::VERB("OPTIONS", url, H, ...)
     }
@@ -93,9 +97,18 @@ s3HTTP <- function(verb = "GET",
     if (parse_response) {
       response_contents <- try(httr::content(r, "parsed"), silent = TRUE)
       if (!inherits(response_contents, "try-error")) {
-        response <- XML::xmlToList(response_contents)
+        if (!is.null(response_contents)) {
+            response <- XML::xmlToList(response_contents)
+        } else {
+            response <- NULL
+        }
       } else {
-        response <- XML::xmlToList(httr::content(r, "text"))
+        response_contents <- httr::content(r, "text")
+        if (!is.null(response_contents)) {
+            response <- XML::xmlToList(response_contents)
+        } else {
+            response <- NULL
+        }
       }
     #otherwise just return the raw response
     } else if (!parse_response) {

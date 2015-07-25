@@ -192,6 +192,15 @@ get_versions <- function(bucket, ...){
     }
 }
 
+#' @title Get the versioning status of a bucket.
+#'
+#' @param bucket Character string with the name of the bucket you want to get.
+#' @param ... Additional arguments passed to \code{\link{s3HTTP}}
+#'
+#' @return If versioning has never been enabled or suspend, the value is \code{NULL}.
+#' Otherwise, the status is returned (either \dQuote{Enabled} or \dQuote{Suspended}).
+#' @export
+
 get_versioning <- function(bucket, ...){
     if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
@@ -203,7 +212,11 @@ get_versioning <- function(bucket, ...){
     if (inherits(r, "aws_error")) {
         return(r)
     } else {
-        structure(r, class = "s3_bucket")
+        if (identical(r, list())) {
+            return(NULL)
+        } else {
+            return(r$Status)
+        }
     }
 }
 
@@ -487,18 +500,39 @@ put_tagging <- function(bucket, ...){
     }
 }
 
-put_versioning <- function(bucket, ...){
+#' @title Set the versioning status of a bucket.
+#'
+#' @param bucket Character string with the name of the bucket you want to get.
+#' @param status Character string specifying whether versioning should be
+#' \dQuote{Enabled} or \dQuote{Suspended}.
+#' @param ... Additional arguments passed to \code{\link{s3HTTP}}
+#'
+#' @return If versioning has never been enabled or suspend, the value is \code{NULL}.
+#' Otherwise, the status is returned (either \dQuote{Enabled} or \dQuote{Suspended}).
+#' @export
+
+put_versioning <- function(bucket, status = c("Enabled", "Suspended"), ...){
     if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
+    b <- paste0(
+'<VersioningConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/"> 
+  <Status>',match.arg(status),'</Status> 
+</VersioningConfiguration>'
+) # note this does not currently allow MFA Delete
     r <- s3HTTP(verb = "PUT", 
                 url = paste0("https://", bucket, ".s3.amazonaws.com"),
                 path = "/?versioning",
                 headers = list(`x-amz-content-sha256` = ""), 
+                request_body = b,
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
     } else {
-        structure(r, class = "s3_bucket")
+        if (identical(r, list())) {
+            return(NULL)
+        } else {
+            return(r$Status)
+        }
     }
 }
 
