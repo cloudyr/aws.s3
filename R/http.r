@@ -91,7 +91,12 @@ s3HTTP <- function(verb = "GET",
 
     #if parse_response, use httr's parsed method to extract as XML, then convert to list
     if (parse_response) {
-      response <- XML::xmlToList(httr::content(r, "parsed"))
+      response_contents <- try(httr::content(r, "parsed"), silent = TRUE)
+      if (!inherits(response_contents, "try-error")) {
+        response <- XML::xmlToList(response_contents)
+      } else {
+        response <- XML::xmlToList(httr::content(r, "text"))
+      }
     #otherwise just return the raw response
     } else if (!parse_response) {
       response <- r
