@@ -1,11 +1,16 @@
 language: r
 sudo: required
 r_github_packages:
-  - cloudyr/aws.signature
-  - jimhester/covr
+- cloudyr/aws.signature
+- jimhester/covr
+- eddelbuettel/drat
 after_success:
-  - Rscript -e 'library(covr);codecov()'
+- Rscript -e 'library(covr);codecov()'
+- test $TRAVIS_PULL_REQUEST == "false" && 
+  test $TRAVIS_BRANCH == "master" && 
+  bash deploy.sh
 env:
   global:
   - secure: NkoBLN7g9Jjkn1kXfjFbiTmCRXgEFWAeRObLyiJZCA9FzeAN6pARvuV45Jkt8T3pRzma7MbOg1wN/FG7ywAXYYMeijIDUy5VxNZWxbmTOHVOeVBVW+H8qlrGxHF/KXHKKAcjnOnO2Z/rHrvBmXOJQbEXXUwPAlr7RNNxwasrFAY=
   - secure: XT+piKb0x5Tt4Zac/h7K7IuO3/RtH+KatM7GjNKxUuMjCU8BMKon95e5AG3kCUfnKoEbeuPaV+zx2FwJXP72tVHmEfvVuxnPPH5rPQkEWfAd+THeTnVEqfi+64v4d/oDqY1nbdZ7H8PZNiRnMuWigsLjlmwkitXOpzNL2JPivZk=
+  - secure: g0Gsff+BDSMHFDfLvB+r5vOxgaLWjQBy7eMMJoMdrU+40nXuOaHCHmjL67BYuTjWjfHvnCq01n+rZjIRjJbiSCzlELx0bw7hW0JteAqFrU3UVYwgEnJb7ulBEWuVjL0e/tJItSCwGo1S+ighMXQlM1fCKBTCX5QPV1ROonSla2Y=

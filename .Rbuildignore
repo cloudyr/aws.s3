@@ -1,4 +1,5 @@
 .travis.yml
 README.Rmd
+drat.sh
 ^.*\.Rproj$
 ^\.Rproj\.user$
