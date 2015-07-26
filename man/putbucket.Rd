@@ -2,19 +2,19 @@
 % Please edit documentation in R/BUCKET.r
 \name{putbucket}
 \alias{putbucket}
-\title{Creates a new aws S3 bucket.}
+\title{Creates a new S3 bucket.}
 \usage{
 putbucket(bucket, ...)
 }
 \arguments{
 \item{bucket}{Character string with the name of the bucket you want to create.}
 
-\item{...}{additional arguments passed to \code{\link{s3HTTP}}}
+\item{...}{Additional arguments passed to \code{\link{s3HTTP}}.}
 }
 \value{
-TRUE if successful, aws_error details if not.
+\code{TRUE} if successful, aws_error details if not.
 }
 \description{
-Creates a new aws S3 bucket.
+Creates a new S3 bucket.
 }
 

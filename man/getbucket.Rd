@@ -20,7 +20,7 @@ with the specified prefix}
 listing objects in a bucket. Amazon S3 returns object keys in alphabetical order,
 starting with key after the marker in order.}
 
-\item{...}{additional arguments passed to \code{\link{s3HTTP}}}
+\item{...}{Additional arguments passed to \code{\link{s3HTTP}}.}
 }
 \value{
 a list of objects in the bucket.  if parse_response = FALSE, a nested list with the

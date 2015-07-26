@@ -7,9 +7,9 @@
 get_versioning(bucket, ...)
 }
 \arguments{
-\item{bucket}{Character string with the name of the bucket you want to get.}
+\item{bucket}{Character string with the name of the bucket.}
 
-\item{...}{Additional arguments passed to \code{\link{s3HTTP}}}
+\item{...}{Additional arguments passed to \code{\link{s3HTTP}}.}
 }
 \value{
 If versioning has never been enabled or suspend, the value is \code{NULL}.

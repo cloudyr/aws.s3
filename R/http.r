@@ -77,8 +77,22 @@ s3HTTP <- function(verb = "GET",
       r <- httr::GET(url, H, ...)
     } else if (verb == "HEAD") {
       r <- httr::HEAD(url, H, ...)
+      s <- httr::http_status(r)
+      if (s$category == "success") {
+          return(TRUE)
+      } else {
+          message(s$message)
+          return(FALSE)
+      }
     } else if (verb == "DELETE") {
       r <- httr::DELETE(url, H, ...)
+      s <- httr::http_status(r)
+      if (s$category == "success") {
+          return(TRUE)
+      } else {
+          message(s$message)
+          return(FALSE)
+      }
     } else if (verb == "POST") {
       r <- httr::POST(url, H, ...)
     } else if (verb == "PUT") {
