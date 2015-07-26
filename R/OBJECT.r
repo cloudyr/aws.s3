@@ -1,6 +1,6 @@
 #' @title Retrieves an object from an S3 bucket
 #' 
-#' @param bucket Character string of the name of the bucket you want to get.
+#' @param bucket Character string with the name of the bucket.
 #' @param object Character string of the name of the object you want to get.
 #' @param headers List of request headers for the REST call.   
 #' @param ... additional arguments passed to \code{\link{s3HTTP}}
@@ -43,7 +43,7 @@ get_acl <- function(bucket, object, ...) {
     if (missing(object)) {
         r <- s3HTTP(verb = "GET", 
                     url = paste0("https://", bucket, ".s3.amazonaws.com"),
-                    path = "/?acl",
+                    path = "?acl",
                     headers = list(`x-amz-content-sha256` = ""), 
                     ...)
         if (inherits(r, "aws_error")) {
@@ -67,6 +67,15 @@ get_acl <- function(bucket, object, ...) {
     }
 }
 
+#' @title Retrieves a Bencoded dictionary (BitTorrent) for an object from an S3 bucket.
+#' 
+#' @param bucket Character string with the name of the bucket.
+#' @param object Character string of the name of the object you want to get.
+#' @param ... additional arguments passed to \code{\link{s3HTTP}}.
+#'
+#' @return Something.
+#' @export
+
 get_torrent <- function(bucket, object, ...) {
     if (inherits(object, "s3_object"))
         object <- object$Key
@@ -74,13 +83,13 @@ get_torrent <- function(bucket, object, ...) {
         bucket <- bucket$Name
     r <- s3HTTP(verb = "GET", 
                 url = paste0("https://", bucket, ".s3.amazonaws.com/", object), 
-                path = "/?torrent",
+                path = "?torrent",
                 headers = list(`x-amz-content-sha256` = ""), 
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
     } else {
-        structure(r, class = "s3_object")
+        return(r)
     }
 }
 
@@ -118,7 +127,7 @@ optsobject <- function(bucket, object, ...) {
     if (inherits(r, "aws_error")) {
         return(r)
     } else {
-        structure(r, class = "s3_object")
+        return(r)
     }
 }
 
@@ -184,7 +193,7 @@ putobject_acl <- function(bucket, object, ...) {
     if (missing(object)) {
         r <- s3HTTP(verb = "PUT", 
                     url = paste0("https://", bucket, ".s3.amazonaws.com"),
-                    path = "/?acl",
+                    path = "?acl",
                     headers = list(`x-amz-content-sha256` = ""), 
                     ...)
         if (inherits(r, "aws_error")) {
@@ -270,7 +279,7 @@ deleteobject <- function(bucket, object, ...) {
         md <- base64enc::base64encode(digest::digest(file = tmpfile, raw = TRUE))
         r <- s3HTTP(verb = "POST", 
                     url = paste0("https://", bucket, ".s3.amazonaws.com"), 
-                    path = "/?delete",
+                    path = "?delete",
                     body = tmpfile,
                     headers = list(`Content-Length` = file.size(tmpfile), 
                                    `Content-MD5` = md,

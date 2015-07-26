@@ -9,7 +9,7 @@ utils::globalVariables(c("S"))
 #' 
 #' @param verb A character string containing an HTTP verb, defaulting to \dQuote{GET}.
 #' @param url A character string containing the URL for the API endpoint.
-#' @param bucket A character string containing the name of AWS bucket to use.
+#' @param bucket Character string with the name of the bucket.
 #' @param path A character string with the name of the object to put in the bucket 
 #' (sometimes called the object or 'key name' in the AWS documentation.)
 #' @param headers a list of request headers for the REST call.   
@@ -44,9 +44,11 @@ s3HTTP <- function(verb = "GET",
                    ...) {
     ## Endpoint must match region (the default s3.amazonaws.com is us-east-1 region only)
     if (region != "us-east-1" && url == "https://s3.amazonaws.com")
-      url = paste0("https://s3-", region, ".amazonaws.com")
-    if (bucket != "" | path != "")
-      url <- paste0(url, "/", bucket, path)
+      url <- paste0("https://s3-", region, ".amazonaws.com")
+    if (bucket != "")
+      url <- paste0(url, "/", bucket)
+    if (path != "")
+      url <- paste0(url, path)
     current <- Sys.time()
     d_timestamp <- format(current, "%Y%m%dT%H%M%SZ", tz = "UTC")
     p <- httr::parse_url(url)

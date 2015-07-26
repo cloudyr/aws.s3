@@ -7,7 +7,7 @@
 getobject(bucket, object, headers = list(), ...)
 }
 \arguments{
-\item{bucket}{Character string of the name of the bucket you want to get.}
+\item{bucket}{Character string with the name of the bucket.}
 
 \item{object}{Character string of the name of the object you want to get.}
 

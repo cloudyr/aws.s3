@@ -14,7 +14,7 @@ s3HTTP(verb = "GET", url = "https://s3.amazonaws.com", bucket = "",
 
 \item{url}{A character string containing the URL for the API endpoint.}
 
-\item{bucket}{A character string containing the name of AWS bucket to use.}
+\item{bucket}{Character string with the name of the bucket.}
 
 \item{path}{A character string with the name of the object to put in the bucket
 (sometimes called the object or 'key name' in the AWS documentation.)}
