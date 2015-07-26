@@ -95,13 +95,30 @@ test_that("bucket versioning", {
     key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
     secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY")
   )
-  expect_null(get_versioning(test_name))
+  expect_null(get_versioning(test_name,
+    key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
+    secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY")
+  ))
   
-  put_versioning(test_name, "Enabled")
-  expect_equal(get_versioning(test_name), "Enabled")
+  put_versioning(test_name, "Enabled",
+    key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
+    secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY")
+  )
+  expect_equal(get_versioning(test_name,
+    key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
+    secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY")), 
+    "Enabled"
+  )
   
-  put_versioning(test_name, "Suspended")
-  expect_equal(get_versioning(test_name), "Suspended")
+  put_versioning(test_name, "Suspended",
+    key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
+    secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY")
+  )
+  expect_equal(get_versioning(test_name,
+    key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
+    secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY")), 
+    "Suspended"
+  )
   
   resp <- deletebucket(
     bucket = test_name,
