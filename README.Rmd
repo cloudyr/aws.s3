@@ -4,9 +4,9 @@
 
 ## Installation ##
 
-[![Build Status](https://travis-ci.org/cloudyr/aws.s3.png?branch=master)](https://travis-ci.org/cloudyr/aws.s3)
+[![Build Status](https://travis-ci.org/cloudyr/aws.s3.png?branch=master)](https://travis-ci.org/cloudyr/aws.s3) [![codecov.io](http://codecov.io/github/cloudyr/aws.s3/coverage.svg?branch=master)](http://codecov.io/github/cloudyr/aws.s3?branch=master)
 
-To install the latest development version from GitHub, run the following:
+This package is not yet on CRAN. To install the latest development version from GitHub, run the following:
 
 ```R
 if(!require("devtools")){
@@ -16,8 +16,6 @@ if(!require("devtools")){
 install_github("cloudyr/aws.signature")
 install_github("cloudyr/aws.s3")
 ```
-
-To install the latest version from CRAN, simply use `install.packages("aws.s3")`.
 
 ## Code Examples ##
 
@@ -35,8 +33,21 @@ If your credentials are incorrect, this function will return an error. Otherwise
 
 ### Buckets ###
 
-Coming soon...
+To get a listing of all objects in a public bucket, simply call
+```
+aws.s3::getbucket(bucket = '1000genomes')
+```
+Amazon maintains a listing of [Public Data Sets](https://aws.amazon.com/datasets) on S3.
 
+To get a listing for all objects in a private bucket, pass your AWS key and secret in as parameters.  (As described above, all functions in `aws.s3` will look for your keys as environment variables by default, greatly simplifying the process of making a s3 request.)
+
+```
+aws.s3::getbucket(
+  bucket = 'hpk',
+  key = YOUR_AWS_ACCESS_KEY,
+  secret = YOUR_AWS_SECRET_ACCESS_KEY
+)
+```
 
 ### Objects ###
 

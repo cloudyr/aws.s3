@@ -1,15 +1,16 @@
 Package: aws.s3
 Type: Package
 Title: AWS S3 Client Package
-Version: 0.1
-Date: 2015-07-20
+Version: 0.1.8
+Date: 2015-07-26
 Authors@R: c(person("Thomas J.", "Leeper", role = c("aut", "cre"),
                     email = "thosjleeper@gmail.com"),
-             person("Boettiger", "Carl", role = "ctb"))
+             person("Boettiger", "Carl", role = "ctb"),
+             person("Andrew", "Martin", role = "ctb", email = "almartin@gmail.com"))
 Maintainer: Thomas J. Leeper <thosjleeper@gmail.com>
 Description: A simple client package for the Amazon Web Services (AWS) Simple Storage Service (S3) REST API.
 License: GPL (>= 2)
 URL: https://github.com/cloudyr/aws.s3
 BugReports: https://github.com/cloudyr/aws.s3/issues
-Depends: httr, XML, aws.signature, magrittr
+Imports: httr, XML, base64enc, digest, aws.signature
 Suggests: testthat

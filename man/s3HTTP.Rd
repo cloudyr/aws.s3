@@ -14,12 +14,14 @@ s3HTTP(verb = "GET", url = "https://s3.amazonaws.com", bucket = "",
 
 \item{url}{A character string containing the URL for the API endpoint.}
 
-\item{bucket}{A character string containing the name of AWS bucket to use.}
+\item{bucket}{Character string with the name of the bucket.}
 
 \item{path}{A character string with the name of the object to put in the bucket
 (sometimes called the object or 'key name' in the AWS documentation.)}
 
-\item{headers}{}
+\item{headers}{a list of request headers for the REST call.}
+
+\item{request_body}{character string of request body data.}
 
 \item{region}{A character string containing the AWS region.
 If missing, defaults to \dQuote{us-east-1}.}
@@ -30,7 +32,8 @@ If missing, defaults to value stored in environment variable \dQuote{AWS_ACCESS_
 \item{secret}{A character string containing an AWS Secret Access Key.
 If missing, defaults to value stored in environment variable \dQuote{AWS_SECRET_ACCESS_KEY}.}
 
-\item{parse_response}{}
+\item{parse_response}{return the response as is, or parse and return as a list?
+default is TRUE.}
 
 \item{...}{Additional arguments passed to an HTTP request function,
 such as \code{\link[httr]{GET}}.}
