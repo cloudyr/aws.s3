@@ -15,7 +15,9 @@ getobject <- function(bucket, object, headers = list(), ...) {
         bucket <- bucket$Name
 
     r <- s3HTTP(verb = "GET", 
-                url = paste0("https://", bucket, ".s3.amazonaws.com/", object), 
+                bucket = bucket,
+                path = paste0("/", object),
+              #  url = paste0("https://", bucket, ".s3.amazonaws.com/", object), 
                 headers = c(headers, `x-amz-content-sha256` = ""), 
                 parse_response = FALSE,
                 ...)
@@ -42,7 +44,8 @@ get_acl <- function(bucket, object, ...) {
         bucket <- bucket$Name
     if (missing(object)) {
         r <- s3HTTP(verb = "GET", 
-                    url = paste0("https://", bucket, ".s3.amazonaws.com"),
+                    bucket = bucket,
+#                    url = paste0("https://", bucket, ".s3.amazonaws.com"),
                     path = "?acl",
                     headers = list(`x-amz-content-sha256` = ""), 
                     ...)
@@ -82,8 +85,9 @@ get_torrent <- function(bucket, object, ...) {
     if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
     r <- s3HTTP(verb = "GET", 
-                url = paste0("https://", bucket, ".s3.amazonaws.com/", object), 
-                path = "?torrent",
+                bucket = bucket,
+                path = paste0("/", object, "?torrent"),
+                #  url = paste0("https://", bucket, ".s3.amazonaws.com/", object), 
                 headers = list(`x-amz-content-sha256` = ""), 
                 ...)
     if (inherits(r, "aws_error")) {
@@ -102,7 +106,9 @@ headobject <- function(bucket, object, ...) {
     if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
     r <- s3HTTP(verb = "HEAD", 
-                url = paste0("https://", bucket, ".s3.amazonaws.com/", object), 
+                bucket = bucket,
+                path = paste0("/", object),
+                # url = paste0("https://", bucket, ".s3.amazonaws.com/", object), 
                 headers = list(`x-amz-content-sha256` = ""), 
                 ...)
     if (inherits(r, "aws_error")) {
@@ -121,7 +127,9 @@ optsobject <- function(bucket, object, ...) {
     if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
     r <- s3HTTP(verb = "OPTIONS", 
-                url = paste0("https://", bucket, ".s3.amazonaws.com/", object), 
+                bucket = bucket,
+                path = paste0("/", object),
+                # url = paste0("https://", bucket, ".s3.amazonaws.com/", object), 
                 headers = list(`x-amz-content-sha256` = ""), 
                 ...)
     if (inherits(r, "aws_error")) {
@@ -140,7 +148,9 @@ postobject <- function(bucket, object, ...) {
     if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
     r <- s3HTTP(verb = "POST", 
-                url = paste0("https://", bucket, ".s3.amazonaws.com/", object), 
+                bucket = bucket,
+                path = paste0("/", object),
+                # url = paste0("https://", bucket, ".s3.amazonaws.com/", object), 
                 headers = list(`x-amz-content-sha256` = ""), 
                 ...)
     if (inherits(r, "aws_error")) {
@@ -175,7 +185,9 @@ putobject <- function(file, bucket, object, headers = list(), ...) {
     }
 
     r <- s3HTTP(verb = "PUT", 
-                url = paste0("https://", bucket, ".s3.amazonaws.com/", object), 
+                bucket = bucket,
+                path = paste0("/", object),
+                # url = paste0("https://", bucket, ".s3.amazonaws.com/", object), 
                 headers = c(headers, list(`Content-Length` = file.size(file), 
                                           `x-amz-content-sha256` = "")), 
                 request_body = file,
@@ -192,7 +204,8 @@ putobject_acl <- function(bucket, object, ...) {
         bucket <- bucket$Name
     if (missing(object)) {
         r <- s3HTTP(verb = "PUT", 
-                    url = paste0("https://", bucket, ".s3.amazonaws.com"),
+                    bucket = bucket,
+                    #url = paste0("https://", bucket, ".s3.amazonaws.com"),
                     path = "?acl",
                     headers = list(`x-amz-content-sha256` = ""), 
                     ...)
@@ -205,7 +218,9 @@ putobject_acl <- function(bucket, object, ...) {
         if (inherits(object, "s3_object"))
             object <- object$Key
         r <- s3HTTP(verb = "PUT", 
-                    url = paste0("https://", bucket, ".s3.amazonaws.com/", object), 
+                    bucket = bucket,
+                    path = paste0("/", object),
+                    # url = paste0("https://", bucket, ".s3.amazonaws.com/", object), 
                     headers = list(`x-amz-content-sha256` = ""), 
                     ...)
         if (inherits(r, "aws_error")) {
@@ -222,7 +237,9 @@ copyobject <- function(from_object, to_object, from_bucket, to_bucket, ...) {
     if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
     r <- s3HTTP(verb = "PUT", 
-                url = paste0("https://", bucket, ".s3.amazonaws.com/", object), 
+                bucket = bucket,
+                path = paste0("/", object),
+                #url = paste0("https://", bucket, ".s3.amazonaws.com/", object), 
                 headers = list(`x-amz-content-sha256` = ""), 
                 ...)
     if (inherits(r, "aws_error")) {
@@ -251,7 +268,10 @@ deleteobject <- function(bucket, object, ...) {
         bucket <- bucket$Name
     if (length(object) == 1) {
         r <- s3HTTP(verb = "DELETE", 
-                    url = paste0("https://", bucket, ".s3.amazonaws.com/", object), ...)
+                    bucket = bucket,
+                    path = paste0("/", object),
+                    # url = paste0("https://", bucket, ".s3.amazonaws.com/", object)
+                    ...)
         if (inherits(r, "aws_error")) {
             return(r)
         } else {
@@ -278,7 +298,8 @@ deleteobject <- function(bucket, object, ...) {
         b <- writeLines(paste0(b1, paste0("<Key>",object,"</Key>"), b2), tmpfile)
         md <- base64enc::base64encode(digest::digest(file = tmpfile, raw = TRUE))
         r <- s3HTTP(verb = "POST", 
-                    url = paste0("https://", bucket, ".s3.amazonaws.com"), 
+                    bucket = bucket,
+                    #url = paste0("https://", bucket, ".s3.amazonaws.com"), 
                     path = "?delete",
                     body = tmpfile,
                     headers = list(`Content-Length` = file.size(tmpfile), 
