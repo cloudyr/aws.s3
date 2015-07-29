@@ -8,7 +8,6 @@ utils::globalVariables(c("S"))
 #' In almost all cases, users do not need to access this directly.
 #' 
 #' @param verb A character string containing an HTTP verb, defaulting to \dQuote{GET}.
-#' @param url A character string containing the URL for the API endpoint.
 #' @param bucket Character string with the name of the bucket.
 #' @param path A character string with the name of the object to put in the bucket 
 #' (sometimes called the object or 'key name' in the AWS documentation.)
@@ -32,21 +31,22 @@ utils::globalVariables(c("S"))
 #' @export
 
 s3HTTP <- function(verb = "GET",
-                   url = "https://s3.amazonaws.com",
                    bucket = "", 
                    path = "", 
                    headers = list(), 
                    request_body = "",
-                   region = "us-east-1", 
+                   region = Sys.getenv("AWS_DEFAULT_REGION","us-east-1"), 
                    key = Sys.getenv("AWS_ACCESS_KEY_ID"), 
                    secret = Sys.getenv("AWS_SECRET_ACCESS_KEY"), 
                    parse_response = TRUE, 
                    ...) {
-    ## Endpoint must match region (the default s3.amazonaws.com is us-east-1 region only)
-    if (region != "us-east-1" && url == "https://s3.amazonaws.com")
-      url <- paste0("https://s3-", region, ".amazonaws.com")
+    if (region != "us-east-1"){
+      url <- paste0("https://s3-", region, ".amazonaws.com/")
+    } else {
+      url <- "https://s3.amazonaws.com/"
+    }
     if (bucket != "")
-      url <- paste0(url, "/", bucket)
+      url <- paste0(url, bucket)
     if (path != "")
       url <- paste0(url, path)
     current <- Sys.time()

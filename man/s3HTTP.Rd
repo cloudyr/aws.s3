@@ -4,15 +4,13 @@
 \alias{s3HTTP}
 \title{S3 HTTP Requests}
 \usage{
-s3HTTP(verb = "GET", url = "https://s3.amazonaws.com", bucket = "",
-  path = "", headers = list(), request_body = "", region = "us-east-1",
+s3HTTP(verb = "GET", bucket = "", path = "", headers = list(),
+  request_body = "", region = Sys.getenv("AWS_DEFAULT_REGION", "us-east-1"),
   key = Sys.getenv("AWS_ACCESS_KEY_ID"),
   secret = Sys.getenv("AWS_SECRET_ACCESS_KEY"), parse_response = TRUE, ...)
 }
 \arguments{
 \item{verb}{A character string containing an HTTP verb, defaulting to \dQuote{GET}.}
-
-\item{url}{A character string containing the URL for the API endpoint.}
 
 \item{bucket}{Character string with the name of the bucket.}
 
