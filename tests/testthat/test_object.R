@@ -6,7 +6,8 @@ test_that("basic usage of getobject for anonymous user", {
   expect_is(ex, "response")
   expect_true(
     all(c("url", "status_code", "headers", "all_headers", "cookies", 
-      "content", "date", "times", "request", "handle") %in% names(ex))
+      "content", "date", "times", "request") %in% names(ex))
+    #  "content", "date", "times", "request", "handle") %in% names(ex))
   )
   expect_equal(ex$status_code, 200)
 })
@@ -22,7 +23,8 @@ test_that("basic usage of getobject for signed in user", {
   expect_is(ex, "response")
   expect_true(
     all(c("url", "status_code", "headers", "all_headers", "cookies", 
-      "content", "date", "times", "request", "handle") %in% names(ex))
+      "content", "date", "times", "request") %in% names(ex))
+    #  "content", "date", "times", "request", "handle") %in% names(ex))
   )
   expect_equal(ex$status_code, 200)
 })
@@ -46,7 +48,7 @@ test_that("basic usage of putobject and deleteobject for signed in user", {
     key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
     secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY")
   )
-  expect_null(d)
+  expect_true(d)
   
   if (file.exists(tmp)) file.remove(tmp)
 })

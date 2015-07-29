@@ -87,7 +87,7 @@ get_cors <- function(bucket, ...){
         bucket <- bucket$Name
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
-                path = '?cors',
+                path = '/?cors',
                 headers = list(`x-amz-content-sha256` = ""), 
                 ...)
     if (inherits(r, "aws_error")) {
