@@ -2,10 +2,11 @@
 #' 
 #' @param bucket Character string with the name of the bucket.
 #' @param object Character string of the name of the object you want to get.
-#' @param headers List of request headers for the REST call.   
-#' @param ... additional arguments passed to \code{\link{s3HTTP}}
+#' @param headers List of request headers for the REST call.
+#' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
 #'
 #' @return A raw object.
+#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectGET.html}{API Documentation}
 #' @export
 
 getobject <- function(bucket, object, headers = list(), ...) {
@@ -74,6 +75,7 @@ get_acl <- function(bucket, object, ...) {
 #' @param ... additional arguments passed to \code{\link{s3HTTP}}.
 #'
 #' @return Something.
+#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectGETtorrent.html}{API Documentation}
 #' @export
 
 get_torrent <- function(bucket, object, ...) {
@@ -168,6 +170,7 @@ postobject <- function(bucket, object, ...) {
 #' @param ... additional arguments passed to \code{\link{s3HTTP}}
 #'
 #' @return If successful, \code{TRUE}, otherwise an aws_error object.
+#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPUT.html}{API Documentation}
 #' @export
 
 putobject <- function(file, bucket, object, headers = list(), ...) {
@@ -250,6 +253,7 @@ copyobject <- function(from_object, to_object, from_bucket, to_bucket, ...) {
 #' @param ... Additional arguments passed to \code{\link{s3HTTP}}
 #'
 #' @return TRUE if successful, aws_error details if not.
+#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectDELETE.html}{API Documentation}
 #' @export
 deleteobject <- function(bucket, object, ...) {
     if (inherits(object, "s3_object"))

@@ -19,4 +19,7 @@ Something.
 \description{
 Retrieves a Bencoded dictionary (BitTorrent) for an object from an S3 bucket.
 }
+\references{
+\href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectGETtorrent.html}{API Documentation}
+}
 

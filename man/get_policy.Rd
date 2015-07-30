@@ -17,4 +17,7 @@ A list with a policy, if one has been set.
 \description{
 Get the bucket access policy for a bucket.
 }
+\references{
+\href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETpolicy.html}{API Documentation}
+}
 

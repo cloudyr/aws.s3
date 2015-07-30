@@ -18,4 +18,7 @@ An \code{aws_error} object may be returned if the request failed.
 \description{
 Check whether a bucket exists and is accessible with the current authentication keys.
 }
+\references{
+\href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketHEAD.html}{API Documentation}
+}
 

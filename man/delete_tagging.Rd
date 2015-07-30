@@ -18,4 +18,7 @@ An \code{aws_error} object may be returned if the request failed.
 \description{
 Delete the tag set for a bucket.
 }
+\references{
+\href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETEtagging.html}{API Documentation}
+}
 

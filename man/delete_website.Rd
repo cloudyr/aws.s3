@@ -18,4 +18,7 @@ An \code{aws_error} object may be returned if the request failed.
 \description{
 Delete the website configuration for a bucket.
 }
+\references{
+\href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETEwebsite.html}{API Documentation}
+}
 

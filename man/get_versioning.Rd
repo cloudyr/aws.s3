@@ -18,4 +18,7 @@ Otherwise, the status is returned (either \dQuote{Enabled} or \dQuote{Suspended}
 \description{
 Get the versioning status of a bucket.
 }
+\references{
+\href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETversioningStatus.html}{API Documentation}
+}
 

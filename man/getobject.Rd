@@ -13,12 +13,15 @@ getobject(bucket, object, headers = list(), ...)
 
 \item{headers}{List of request headers for the REST call.}
 
-\item{...}{additional arguments passed to \code{\link{s3HTTP}}}
+\item{...}{Additional arguments passed to \code{\link{s3HTTP}}.}
 }
 \value{
 A raw object.
 }
 \description{
 Retrieves an object from an S3 bucket
+}
+\references{
+\href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectGET.html}{API Documentation}
 }
 

@@ -17,4 +17,7 @@ A list containing the tag set, if one has been set.
 \description{
 Get the tag set for a bucket.
 }
+\references{
+\href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETtagging.html}{API Documentation}
+}
 

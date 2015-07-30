@@ -17,4 +17,7 @@ A list.
 \description{
 Get versions of bucket objects.
 }
+\references{
+\href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETVersion.html}{API Documentation}
+}
 

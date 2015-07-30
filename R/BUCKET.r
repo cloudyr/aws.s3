@@ -16,8 +16,7 @@
 #' @return a list of objects in the bucket.  if parse_response = FALSE, a nested list with the
 #' complete contents of the AWS response.
 #'
-#' @references 
-#' {\href{https://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGET.html}{AWS Documentation}}
+#' @references \href{https://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGET.html}{API Documentation}
 #' @export
 
 getbucket <- function(bucket, 
@@ -80,6 +79,7 @@ get_acl <- function(bucket, ...){
 #' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
 #'
 #' @return A list with cors configuration and rules.
+#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETcors.html}{API Documentation}
 #' @export
 
 get_cors <- function(bucket, ...){
@@ -104,6 +104,7 @@ get_cors <- function(bucket, ...){
 #' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
 #'
 #' @return A list with lifecycle configuration, if it has been configured.
+#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETlifecycle.html}{API Documentation}
 #' @export
 
 get_lifecycle <- function(bucket, ...){
@@ -128,6 +129,7 @@ get_lifecycle <- function(bucket, ...){
 #' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
 #'
 #' @return A list with a policy, if one has been set.
+#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETpolicy.html}{API Documentation}
 #' @export
 
 get_policy <- function(bucket, ...){
@@ -151,6 +153,7 @@ get_policy <- function(bucket, ...){
 #' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
 #'
 #' @return A character string containing the region, if one has been set.
+#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETlocation.html}{API Documentation}
 #' @export
 
 get_location <- function(bucket, ...){
@@ -190,6 +193,7 @@ get_logging <- function(bucket, ...){
 #' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
 #'
 #' @return A list containing the notification configuration, if one has been set.
+#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETnotification.html}{API Documentation}
 #' @export
 
 get_notification <- function(bucket, ...){
@@ -214,6 +218,7 @@ get_notification <- function(bucket, ...){
 #' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
 #'
 #' @return A list containing the replication configuration, if one has been set.
+#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETreplication.html}{API Documentation}
 #' @export
 
 get_replication <- function(bucket, ...){
@@ -238,6 +243,7 @@ get_replication <- function(bucket, ...){
 #' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
 #'
 #' @return A list containing the tag set, if one has been set.
+#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETtagging.html}{API Documentation}
 #' @export
 
 get_tagging <- function(bucket, ...){
@@ -262,6 +268,7 @@ get_tagging <- function(bucket, ...){
 #' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
 #'
 #' @return A list.
+#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETVersion.html}{API Documentation}
 #' @export
 
 get_versions <- function(bucket, ...){
@@ -286,6 +293,7 @@ get_versions <- function(bucket, ...){
 #'
 #' @return If versioning has never been enabled or suspend, the value is \code{NULL}.
 #' Otherwise, the status is returned (either \dQuote{Enabled} or \dQuote{Suspended}).
+#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETversioningStatus.html}{API Documentation}
 #' @export
 
 get_versioning <- function(bucket, ...){
@@ -314,6 +322,7 @@ get_versioning <- function(bucket, ...){
 #' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
 #'
 #' @return A list containing the website configuration, if one has been set.
+#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETwebsite.html}{API Documentation}
 #' @export
 
 get_website <- function(bucket, ...){
@@ -337,6 +346,7 @@ get_website <- function(bucket, ...){
 #' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
 #'
 #' @return A list containing the multipart upload information.
+#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/mpUploadListMPUpload.html}{API Documentation}
 #' @export
 
 get_uploads <- function(bucket, ...){
@@ -360,6 +370,7 @@ get_uploads <- function(bucket, ...){
 #' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
 #'
 #' @return A list containing the requestPayment information, if set.
+#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTrequestPaymentGET.html}{API Documentation}
 #' @export
 
 get_requestpayment <- function(bucket, ...){
@@ -385,6 +396,7 @@ get_requestpayment <- function(bucket, ...){
 #'
 #' @return \code{TRUE} if successful, \code{FALSE} otherwise. 
 #' An \code{aws_error} object may be returned if the request failed.
+#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETE.html}{API Documentation}
 #' @export
 
 deletebucket <- function(bucket, ...){
@@ -408,6 +420,7 @@ deletebucket <- function(bucket, ...){
 #' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
 #'
 #' @return \code{TRUE} if successful, \code{FALSE} otherwise.
+#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETEcors.html}{API Documentation}
 #' @export
 
 delete_cors <- function(bucket, ...){
@@ -434,6 +447,7 @@ delete_cors <- function(bucket, ...){
 #'
 #' @return \code{TRUE} if successful, \code{FALSE} otherwise.
 #' An \code{aws_error} object may be returned if the request failed.
+#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETElifecycle.html}{API Documentation}
 #' @export
 
 delete_lifecycle <- function(bucket, ...){
@@ -460,6 +474,7 @@ delete_lifecycle <- function(bucket, ...){
 #'
 #' @return \code{TRUE} if successful, \code{FALSE} otherwise.
 #' An \code{aws_error} object may be returned if the request failed.
+#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETEpolicy.html}{API Documentation}
 #' @export
 
 delete_policy <- function(bucket, ...){
@@ -478,6 +493,31 @@ delete_policy <- function(bucket, ...){
     }
 }
 
+#' @title Delete the replication policy for a bucket.
+#'
+#' @param bucket Character string with the name of the bucket.
+#' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
+#'
+#' @return \code{TRUE} if successful, \code{FALSE} otherwise.
+#' An \code{aws_error} object may be returned if the request failed.
+#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETEreplication.html}{API Documentation}
+#' @export
+
+delete_replication <- function(bucket, ...){
+    if (inherits(bucket, "s3bucket"))
+        bucket <- bucket$Name
+    r <- s3HTTP(verb = "DELETE", 
+                bucket = bucket,
+                path = "?replication",
+                headers = list(`x-amz-content-sha256` = ""),
+                parse_response = FALSE,
+                ...)
+    if (inherits(r, "aws_error")) {
+        return(r)
+    } else {
+        return(r)
+    }
+}
 
 #' @title Delete the tag set for a bucket.
 #'
@@ -486,6 +526,7 @@ delete_policy <- function(bucket, ...){
 #'
 #' @return \code{TRUE} if successful, \code{FALSE} otherwise.
 #' An \code{aws_error} object may be returned if the request failed.
+#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETEtagging.html}{API Documentation}
 #' @export
 
 delete_tagging <- function(bucket, ...){
@@ -512,6 +553,7 @@ delete_tagging <- function(bucket, ...){
 #'
 #' @return \code{TRUE} if successful, \code{FALSE} otherwise.
 #' An \code{aws_error} object may be returned if the request failed.
+#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETEwebsite.html}{API Documentation}
 #' @export
 
 delete_website <- function(bucket, ...){
@@ -538,6 +580,7 @@ delete_website <- function(bucket, ...){
 #'
 #' @return \code{TRUE} if bucket exists and is accessible, else \code{FALSE}.
 #' An \code{aws_error} object may be returned if the request failed.
+#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketHEAD.html}{API Documentation}
 #' @export
 
 bucketexists <- function(bucket, ...){
@@ -561,6 +604,7 @@ bucketexists <- function(bucket, ...){
 #' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
 #'
 #' @return \code{TRUE} if successful, aws_error details if not.
+#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUT.html}{API Documentation}
 #' @export
 
 putbucket <- function(bucket, ...){
@@ -679,6 +723,7 @@ put_tagging <- function(bucket, ...){
 #'
 #' @return If versioning has never been enabled or suspend, the value is \code{NULL}.
 #' Otherwise, the status is returned (either \dQuote{Enabled} or \dQuote{Suspended}).
+#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUTVersioningStatus.html}{API Documentation}
 #' @export
 
 put_versioning <- function(bucket, status = c("Enabled", "Suspended"), ...){

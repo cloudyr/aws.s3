@@ -32,6 +32,6 @@ from the AWS doc: "This implementation of the GET operation returns some
  as selection criteria to return a subset of the objects in a bucket."
 }
 \references{
-{\href{https://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGET.html}{AWS Documentation}}
+\href{https://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGET.html}{API Documentation}
 }
 

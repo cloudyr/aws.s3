@@ -17,4 +17,7 @@ putbucket(bucket, ...)
 \description{
 Creates a new S3 bucket.
 }
+\references{
+\href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUT.html}{API Documentation}
+}
 

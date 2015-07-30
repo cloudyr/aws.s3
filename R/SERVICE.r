@@ -15,10 +15,7 @@
 #' the response will list the name and creationdate of all buckets owned by the request
 #' sender.
 #' 
-#' @author Thomas J. Leeper \email{thosjleeper@@gmail.com}
-#' 
-#' @references 
-#' {\href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTServiceGET.html}{AWS Documentation}}
+#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTServiceGET.html}{API Documentation}
 #' 
 #' @keywords service
 #' 

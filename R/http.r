@@ -24,8 +24,6 @@ utils::globalVariables(c("S"))
 #' @param ... Additional arguments passed to an HTTP request function, 
 #' such as \code{\link[httr]{GET}}.
 #'
-#' @author Thomas J. Leeper \email{thosjleeper@@gmail.com}
-#' 
 #' @return the S3 response, or the relevant error.
 #' 
 #' @export

@@ -17,4 +17,7 @@ A list containing the replication configuration, if one has been set.
 \description{
 Get the replication configuration for a bucket.
 }
+\references{
+\href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETreplication.html}{API Documentation}
+}
 

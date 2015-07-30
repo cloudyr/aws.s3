@@ -17,4 +17,7 @@ A list containing the website configuration, if one has been set.
 \description{
 Get the website configuration for a bucket.
 }
+\references{
+\href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETwebsite.html}{API Documentation}
+}
 
