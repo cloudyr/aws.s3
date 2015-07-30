@@ -225,20 +225,35 @@ putobject_acl <- function(bucket, object, ...) {
     }
 }
 
-copyobject <- function(from_object, to_object, from_bucket, to_bucket, ...) {
+#' @title Copy an object into another S3 bucket
+#'
+#' @param from_bucket A character string containing the name of the bucket you want to copy from.
+#' @param to_bucket A character string containing the name of the bucket you want to copy into.
+#' @param from_object A character string containing the name the object you want to copy.
+#' @param from_object A character string containing the name the object should have in the new bucket.
+#' @param headers List of request headers for the REST call.   
+#' @param ... additional arguments passed to \code{\link{s3HTTP}}
+#'
+#' @return Something...
+#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectCOPY.html}{API Documentation}
+#' @export
+
+copyobject <- function(from_object, to_object = from_object, from_bucket, to_bucket, headers = list(), ...) {
     if (inherits(object, "s3_object"))
         object <- object$Key
     if (inherits(bucket, "s3bucket"))
         bucket <- bucket$Name
     r <- s3HTTP(verb = "PUT", 
-                bucket = bucket,
+                bucket = to_bucket,
                 path = paste0("/", object),
-                headers = list(`x-amz-content-sha256` = ""), 
+                headers = c(headers, 
+                            `x-amz-content-sha256` = "",
+                            `x-amz-copy-source` = paste0("/",from_bucket,"/",from_object)), 
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
     } else {
-        return(r, class = "s3_object")
+        return(r)
     }
 }
 
