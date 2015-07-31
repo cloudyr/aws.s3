@@ -1,5 +1,3 @@
-utils::globalVariables(c("S"))
-
 #' @title S3 HTTP Requests
 #' 
 #' @description This is the workhorse function for executing API requests for S3.
@@ -54,6 +52,7 @@ s3HTTP <- function(verb = "GET",
     
     if (key == "") {
         headers$`x-amz-date` <- d_timestamp
+        Sig <- list()
         H <- do.call(httr::add_headers, headers)
     } else {
         Sig <- aws.signature::signature_v4_auth(
@@ -139,11 +138,9 @@ s3HTTP <- function(verb = "GET",
     }
     
     if (inherits(out, "aws_error")) {
-      if (exists("S")) {
-        attr(out, "request_canonical") <- S$CanonicalRequest
-        attr(out, "request_string_to_sign") <- S$StringToSign
-        attr(out, "request_signature") <- S$SignatureHeader
-      }
+      attr(out, "request_canonical") <- Sig$CanonicalRequest
+      attr(out, "request_string_to_sign") <- Sig$StringToSign
+      attr(out, "request_signature") <- Sig$SignatureHeader
     }
   out
 }
