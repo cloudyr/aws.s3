@@ -50,6 +50,9 @@ s3HTTP <- function(verb = "GET",
     p <- httr::parse_url(url)
     action <- if (p$path == "") "/" else paste0("/", p$path)
     
+    canonical_headers <- c(list(host = p$hostname,
+                              `x-amz-date` = d_timestamp), headers)
+    
     if (key == "") {
         headers$`x-amz-date` <- d_timestamp
         Sig <- list()
@@ -62,8 +65,7 @@ s3HTTP <- function(verb = "GET",
                verb = verb,
                action = action,
                query_args = p$query,
-               canonical_headers = list(host = p$hostname,
-                                        `x-amz-date` = d_timestamp),
+               canonical_headers = canonical_headers,
                request_body = request_body,
                key = key, secret = secret)
         headers$`x-amz-date` <- d_timestamp
