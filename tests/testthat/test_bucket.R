@@ -16,8 +16,9 @@ test_that("basic usage of getbucket for signed in user", {
 
 test_that("basic usage of getbucket for anonymous user", {
   ex <- getbucket(
-    bucket = '1000genomes'
-  )
+    bucket = '1000genomes',
+    key = "",
+    secret = "")
   
   expect_is(ex, "s3_bucket")
   expect_true(
