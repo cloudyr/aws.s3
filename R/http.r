@@ -29,6 +29,7 @@
 s3HTTP <- function(verb = "GET",
                    bucket = "", 
                    path = "", 
+                   query = NULL,
                    headers = list(), 
                    request_body = "",
                    region = Sys.getenv("AWS_DEFAULT_REGION","us-east-1"), 
@@ -75,9 +76,9 @@ s3HTTP <- function(verb = "GET",
     }
     
     if (verb == "GET") {
-      r <- httr::GET(url, H, ...)
+      r <- httr::GET(url, H, query = query, ...)
     } else if (verb == "HEAD") {
-      r <- httr::HEAD(url, H, ...)
+      r <- httr::HEAD(url, H, query = query, ...)
       s <- httr::http_status(r)
       if (s$category == "success") {
           return(TRUE)
@@ -86,7 +87,7 @@ s3HTTP <- function(verb = "GET",
           return(FALSE)
       }
     } else if (verb == "DELETE") {
-      r <- httr::DELETE(url, H, ...)
+      r <- httr::DELETE(url, H, query = query, ...)
       s <- httr::http_status(r)
       if (s$category == "success") {
           return(TRUE)
@@ -95,17 +96,17 @@ s3HTTP <- function(verb = "GET",
           return(FALSE)
       }
     } else if (verb == "POST") {
-      r <- httr::POST(url, H, ...)
+      r <- httr::POST(url, H, query = query, ...)
     } else if (verb == "PUT") {
       if(request_body == "") {
-        r <- httr::PUT(url, H, ...)
+        r <- httr::PUT(url, H, query = query, ...)
       } else if (file.exists(request_body)) {
-        r <- httr::PUT(url, H, body = httr::upload_file(request_body), ...)
+        r <- httr::PUT(url, H, body = httr::upload_file(request_body), query = query, ...)
       } else {
-        r <- httr::PUT(url, H, body = request_body, ...)
+        r <- httr::PUT(url, H, body = request_body, query = query, ...)
       }
     } else if (verb == "OPTIONS") {
-      r <- httr::VERB("OPTIONS", url, H, ...)
+      r <- httr::VERB("OPTIONS", url, H, query = query, ...)
     }
 
     #if parse_response, use httr's parsed method to extract as XML, then convert to list
