@@ -20,25 +20,18 @@
 #' @export
 
 getbucket <- function(bucket, 
-                      prefix , 
-                      delimiter,
-                      max,
-                      marker, 
+                      prefix = NULL, 
+                      delimiter = NULL,
+                      max = NULL,
+                      marker = NULL, 
                       ...){
   
     if (inherits(bucket, "s3_bucket"))
         bucket <- bucket$Name
     h <- list()
-    if (!missing(prefix))
-        h$prefix <- prefix
-    if (!missing(delimiter))
-        h$delimiter <- delimiter
-    if (!missing(max))
-        h$"max-keys" <- max
-    if (!missing(marker))
-        h$marker <- marker
+    query = list(prefix = prefix, delimiter = delimiter, max = max, marker = marker)
     h$`x-amz-content-sha256` <- ""
-    r <- s3HTTP(verb = "GET", bucket = bucket, headers = h, ...)
+    r <- s3HTTP(verb = "GET", bucket = bucket, headers = h, query = query, ...)
     if (inherits(r, "aws_error") | inherits(r, "response")) {
         return(r)
     } else {
