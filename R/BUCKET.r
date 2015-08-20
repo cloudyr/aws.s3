@@ -24,22 +24,24 @@ getbucket <- function(bucket,
                       delimiter = NULL,
                       max = NULL,
                       marker = NULL, 
+                      parse_response = TRUE,
                       ...){
-  
-    if (inherits(bucket, "s3_bucket"))
-        bucket <- bucket$Name
-    h <- list()
-    query = list(prefix = prefix, delimiter = delimiter, max = max, marker = marker)
-    h$`x-amz-content-sha256` <- ""
-    r <- s3HTTP(verb = "GET", bucket = bucket, headers = h, query = query, ...)
-    if (inherits(r, "aws_error") | inherits(r, "response")) {
-        return(r)
+    
+   
+    query = list(prefix = prefix, delimiter = delimiter, "max-keys" = max, marker = marker)
+    r <- s3HTTP(verb = "GET", bucket = bucket, query = query, parse_response = parse_response, ...)
+
+    if (!parse_response){
+      out <- r
+    } else if (inherits(r, "aws_error")) {
+      out <- r
     } else {
         for (i in which(names(r) == "Contents")) {
           attr(r[[i]], "class") <- "s3_object"
         }
-        structure(r, class = "s3_bucket")
+        out <- structure(r, class = "s3_bucket")
     }
+    out
 }
 
 

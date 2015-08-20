@@ -37,6 +37,10 @@ s3HTTP <- function(verb = "GET",
                    secret = Sys.getenv("AWS_SECRET_ACCESS_KEY"), 
                    parse_response = TRUE, 
                    ...) {
+    ## let users pass bucket objects as well as bucket names
+    if (inherits(bucket, "s3_bucket")){
+      bucket <- bucket$Name
+    }
     if (region != "us-east-1"){
       url <- paste0("https://s3-", region, ".amazonaws.com/")
     } else {
@@ -54,6 +58,12 @@ s3HTTP <- function(verb = "GET",
     canonical_headers <- c(list(host = p$hostname,
                               `x-amz-date` = d_timestamp), headers)
     
+    
+    if(is.null(query) && !is.null(p$query))
+      query <- p$query
+    if(all(sapply(query, is.null)))
+      query <- NULL
+    
     if (key == "") {
         headers$`x-amz-date` <- d_timestamp
         Sig <- list()
@@ -65,7 +75,7 @@ s3HTTP <- function(verb = "GET",
                service = "s3",
                verb = verb,
                action = action,
-               query_args = p$query,
+               query_args = query,
                canonical_headers = canonical_headers,
                request_body = request_body,
                key = key, secret = secret)
@@ -126,24 +136,24 @@ s3HTTP <- function(verb = "GET",
             response <- NULL
         }
       }
+      #raise errors if bad values are passed. 
+      if (httr::http_status(r)$category == "client error") {
+        httr::warn_for_status(r)
+        h <- httr::headers(r)
+        out <- structure(r, headers = h, class = "aws_error")
+      } else {
+        out <- r
+      }
+      
+      if (inherits(out, "aws_error")) {
+        attr(out, "request_canonical") <- Sig$CanonicalRequest
+        attr(out, "request_string_to_sign") <- Sig$StringToSign
+        attr(out, "request_signature") <- Sig$SignatureHeader
+      }
     #otherwise just return the raw response
     } else if (!parse_response) {
-      response <- r
+      out <- r
     }
     
-    #raise errors if bad values are passed. 
-    if (httr::http_status(r)$category == "client error") {
-      httr::warn_for_status(r)
-      h <- httr::headers(r)
-      out <- structure(response, headers = h, class = "aws_error")
-    } else {
-      out <- response
-    }
-    
-    if (inherits(out, "aws_error")) {
-      attr(out, "request_canonical") <- Sig$CanonicalRequest
-      attr(out, "request_string_to_sign") <- Sig$StringToSign
-      attr(out, "request_signature") <- Sig$SignatureHeader
-    }
   out
 }
