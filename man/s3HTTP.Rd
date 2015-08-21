@@ -4,8 +4,9 @@
 \alias{s3HTTP}
 \title{S3 HTTP Requests}
 \usage{
-s3HTTP(verb = "GET", bucket = "", path = "", headers = list(),
-  request_body = "", region = Sys.getenv("AWS_DEFAULT_REGION", "us-east-1"),
+s3HTTP(verb = "GET", bucket = "", path = "", query = NULL,
+  headers = list(), request_body = "",
+  region = Sys.getenv("AWS_DEFAULT_REGION", "us-east-1"),
   key = Sys.getenv("AWS_ACCESS_KEY_ID"),
   secret = Sys.getenv("AWS_SECRET_ACCESS_KEY"), parse_response = TRUE, ...)
 }
@@ -16,6 +17,8 @@ s3HTTP(verb = "GET", bucket = "", path = "", headers = list(),
 
 \item{path}{A character string with the name of the object to put in the bucket
 (sometimes called the object or 'key name' in the AWS documentation.)}
+
+\item{query}{any queries, passed as a named list}
 
 \item{headers}{a list of request headers for the REST call.}
 

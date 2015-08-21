@@ -9,6 +9,7 @@
 #' @param bucket Character string with the name of the bucket.
 #' @param path A character string with the name of the object to put in the bucket 
 #' (sometimes called the object or 'key name' in the AWS documentation.)
+#' @param query any queries, passed as a named list 
 #' @param headers a list of request headers for the REST call.   
 #' @param request_body character string of request body data.
 #' @param region A character string containing the AWS region.
@@ -139,6 +140,7 @@ parse_aws_s3_response <- function(r, Sig, verbose = getOption("verbose")){
     if(verbose){
       warning("Response has no body, nothing to parse")
     }
+    out <- NULL
   } else {
     if(r$headers$`content-type` == "application/xml"){
       response_contents <- try(httr::content(r, "parsed"), silent = TRUE)
@@ -155,7 +157,6 @@ parse_aws_s3_response <- function(r, Sig, verbose = getOption("verbose")){
     } else {
       response <- r
     }
-    
     #raise errors if bad values are passed. 
     if (httr::http_status(r)$category == "client error") {
       httr::warn_for_status(r)

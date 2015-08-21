@@ -1,5 +1,5 @@
 context("s3HTTP tests")
-
+library("httr")
 
 test_that("Simple GET bucket call to s3HTTP returns status code 200", {
 r <- s3HTTP(verb = "GET", 
@@ -8,7 +8,7 @@ r <- s3HTTP(verb = "GET",
             key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
             secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY"),
             parse_response = FALSE)
-  expect_equal(status_code(r), 200L)
+  expect_equal(httr::status_code(r), 200L)
   
   r2 <- s3HTTP(verb = "GET", 
                bucket = 'hpk', 
@@ -24,7 +24,7 @@ r2 <- s3HTTP(verb = "GET",
             key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
             secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY"),
             parse_response = FALSE)
-expect_equal(status_code(r2), 200L)
+expect_equal(httr::status_code(r2), 200L)
 })
 
 
@@ -37,7 +37,7 @@ test_that("Simple GET object call to s3HTTP returns code 200", {
               key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
               secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY"),
               parse_response = FALSE)
-  expect_equal(status_code(r), 200L)
+  expect_equal(httr::status_code(r), 200L)
   
   ## Should be response object even if we don't ask for parsing, since we cannot assume how to parse robots.txt
   r <- s3HTTP(verb = "GET", 
@@ -46,7 +46,7 @@ test_that("Simple GET object call to s3HTTP returns code 200", {
               region = "us-east-1",
               key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
               secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY"))
-  expect_equal(status_code(r), 200L)
+  expect_equal(httr::status_code(r), 200L)
   
 
 })
@@ -65,7 +65,7 @@ test_that("PUT works", {
     secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY"),
     parse_response = FALSE
   )
-  expect_equal(status_code(p), 200L)
+  expect_equal(httr::status_code(p), 200L)
   
   p <- s3HTTP(verb = "DELETE",
               path = paste0("/", basename(tmp)),
@@ -74,7 +74,7 @@ test_that("PUT works", {
               secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY"),
               parse_response = FALSE
   )
-#  expect_equal(status_code(p), 200L)
+#  expect_equal(httr::status_code(p), 200L)
   
 ## Currently doesn't return a response object even when asked not to parse  
   expect_true(p) 

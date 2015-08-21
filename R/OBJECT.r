@@ -210,7 +210,7 @@ putobject_acl <- function(bucket, object, ...) {
 #' @param from_bucket A character string containing the name of the bucket you want to copy from.
 #' @param to_bucket A character string containing the name of the bucket you want to copy into.
 #' @param from_object A character string containing the name the object you want to copy.
-#' @param from_object A character string containing the name the object should have in the new bucket.
+#' @param to_object A character string containing the name the object should have in the new bucket.
 #' @param headers List of request headers for the REST call.   
 #' @param ... additional arguments passed to \code{\link{s3HTTP}}
 #'

@@ -11,6 +11,7 @@
 #' @param marker Character string that pecifies the key to start with when 
 #' listing objects in a bucket. Amazon S3 returns object keys in alphabetical order, 
 #' starting with key after the marker in order.
+#' @param parse_response logical, should we attempt to parse the response?
 #' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
 #'
 #' @return a list of objects in the bucket.  if parse_response = FALSE, a nested list with the
