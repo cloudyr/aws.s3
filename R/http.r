@@ -119,41 +119,57 @@ s3HTTP <- function(verb = "GET",
       r <- httr::VERB("OPTIONS", url, H, query = query, ...)
     }
 
+    
     #if parse_response, use httr's parsed method to extract as XML, then convert to list
     if (parse_response) {
+      out <- parse_aws_s3_response(r, Sig)
+    #otherwise just return the raw response
+    } else {
+      out <- r
+    }
+  out
+}
+
+
+## This internal routine is a bit crude, the logic should really be cleaned up to make sure we cover all cases with a sensible decision tree
+
+parse_aws_s3_response <- function(r, Sig, verbose = getOption("verbose")){
+  ## Some objects have nothing to parse
+  if(is.null(r$headers$`content-type`)){
+    if(verbose){
+      warning("Response has no body, nothing to parse")
+    }
+  } else {
+    if(r$headers$`content-type` == "application/xml"){
       response_contents <- try(httr::content(r, "parsed"), silent = TRUE)
       if (!inherits(response_contents, "try-error")) {
         if (!is.null(response_contents)) {
-            response <- XML::xmlToList(response_contents)
+          response <- XML::xmlToList(response_contents)
         } else {
-            response <- NULL
+          response <- NULL
         }
       } else {
-        response_contents <- httr::content(r, "text")
-        if (!is.null(response_contents)) {
-            response <- XML::xmlToList(response_contents)
-        } else {
-            response <- NULL
-        }
+        ## We should only parse XML communications from Amazon, otherwise just give the response object
+        response <- r
       }
-      #raise errors if bad values are passed. 
-      if (httr::http_status(r)$category == "client error") {
-        httr::warn_for_status(r)
-        h <- httr::headers(r)
-        out <- structure(r, headers = h, class = "aws_error")
-      } else {
-        out <- r
-      }
-      
-      if (inherits(out, "aws_error")) {
-        attr(out, "request_canonical") <- Sig$CanonicalRequest
-        attr(out, "request_string_to_sign") <- Sig$StringToSign
-        attr(out, "request_signature") <- Sig$SignatureHeader
-      }
-    #otherwise just return the raw response
-    } else if (!parse_response) {
-      out <- r
+    } else {
+      response <- r
     }
     
+    #raise errors if bad values are passed. 
+    if (httr::http_status(r)$category == "client error") {
+      httr::warn_for_status(r)
+      h <- httr::headers(r)
+      out <- structure(response, headers = h, class = "aws_error")
+    } else {
+      out <- response
+    }
+    
+    if (inherits(out, "aws_error")) {
+      attr(out, "request_canonical") <- Sig$CanonicalRequest
+      attr(out, "request_string_to_sign") <- Sig$StringToSign
+      attr(out, "request_signature") <- Sig$SignatureHeader
+    }
+  }
   out
 }

@@ -22,7 +22,7 @@
 #' @export
 
 bucketlist <- function(...) {
-    r <- s3HTTP(verb = "GET", headers = list(`x-amz-content-sha256` = ""), ...)
+    r <- s3HTTP(verb = "GET", ...)
     #errors and unparsed
     if (inherits(r, "aws_error") | inherits(r, "response")) {
         return(r)

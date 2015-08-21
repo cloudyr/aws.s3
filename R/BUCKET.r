@@ -83,7 +83,6 @@ get_cors <- function(bucket, ...){
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = '/?cors',
-                headers = list(`x-amz-content-sha256` = ""), 
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -108,7 +107,6 @@ get_lifecycle <- function(bucket, ...){
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = '?lifecycle',
-                headers = list(`x-amz-content-sha256` = ""), 
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -133,7 +131,6 @@ get_policy <- function(bucket, ...){
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = "?policy",
-                headers = list(`x-amz-content-sha256` = ""), 
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -157,7 +154,6 @@ get_location <- function(bucket, ...){
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = "?location",
-                headers = list(`x-amz-content-sha256` = ""), 
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -172,7 +168,6 @@ get_logging <- function(bucket, ...){
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = "?logging",
-                headers = list(`x-amz-content-sha256` = ""), 
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -197,7 +192,6 @@ get_notification <- function(bucket, ...){
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = "?notification",
-                headers = list(`x-amz-content-sha256` = ""), 
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -222,7 +216,6 @@ get_replication <- function(bucket, ...){
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = "?notification",
-                headers = list(`x-amz-content-sha256` = ""), 
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -247,7 +240,6 @@ get_tagging <- function(bucket, ...){
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = "?tagging",
-                headers = list(`x-amz-content-sha256` = ""), 
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -272,7 +264,6 @@ get_versions <- function(bucket, ...){
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = "?versions",
-                headers = list(`x-amz-content-sha256` = ""), 
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -297,7 +288,6 @@ get_versioning <- function(bucket, ...){
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = "?versioning",
-                headers = list(`x-amz-content-sha256` = ""), 
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -326,7 +316,6 @@ get_website <- function(bucket, ...){
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = "?website",
-                headers = list(`x-amz-content-sha256` = ""), 
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -350,7 +339,6 @@ get_uploads <- function(bucket, ...){
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = "?uploads",
-                headers = list(`x-amz-content-sha256` = ""), 
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -374,7 +362,6 @@ get_requestpayment <- function(bucket, ...){
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = "?requestPayment",
-                headers = list(`x-amz-content-sha256` = ""), 
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -399,7 +386,6 @@ deletebucket <- function(bucket, ...){
       bucket <- bucket$Name
     r <- s3HTTP(verb = "DELETE", 
                 bucket = bucket,
-                headers = list(`x-amz-content-sha256` = ""),
                 parse_response = FALSE,
                 ...)
     if (inherits(r, "aws_error")) {
@@ -424,7 +410,6 @@ delete_cors <- function(bucket, ...){
     r <- s3HTTP(verb = "DELETE", 
                 bucket = bucket,
                 path = "?cors",
-                headers = list(`x-amz-content-sha256` = ""), 
                 parse_response = FALSE,
                 ...)
     if (inherits(r, "aws_error")) {
@@ -451,7 +436,6 @@ delete_lifecycle <- function(bucket, ...){
     r <- s3HTTP(verb = "DELETE", 
                 bucket = bucket,
                 path = "?lifecycle",
-                headers = list(`x-amz-content-sha256` = ""),
                 parse_response = FALSE,
                 ...)
     if (inherits(r, "aws_error")) {
@@ -478,7 +462,6 @@ delete_policy <- function(bucket, ...){
     r <- s3HTTP(verb = "DELETE", 
                 bucket = bucket,
                 path = "?policy",
-                headers = list(`x-amz-content-sha256` = ""),
                 parse_response = FALSE,
                 ...)
     if (inherits(r, "aws_error")) {
@@ -504,7 +487,6 @@ delete_replication <- function(bucket, ...){
     r <- s3HTTP(verb = "DELETE", 
                 bucket = bucket,
                 path = "?replication",
-                headers = list(`x-amz-content-sha256` = ""),
                 parse_response = FALSE,
                 ...)
     if (inherits(r, "aws_error")) {
@@ -530,7 +512,6 @@ delete_tagging <- function(bucket, ...){
     r <- s3HTTP(verb = "DELETE", 
                 bucket = bucket,
                 path = "?tagging",
-                headers = list(`x-amz-content-sha256` = ""), 
                 parse_response = FALSE,
                 ...)
     if (inherits(r, "aws_error")) {
@@ -557,7 +538,6 @@ delete_website <- function(bucket, ...){
     r <- s3HTTP(verb = "DELETE", 
                 bucket = bucket,
                 path = "?website",
-                headers = list(`x-amz-content-sha256` = ""), 
                 parse_response = FALSE,
                 ...)
     if (inherits(r, "aws_error")) {
@@ -583,7 +563,6 @@ bucketexists <- function(bucket, ...){
         bucket <- bucket$Name
     r <- s3HTTP(verb = "HEAD", 
                 bucket = bucket,
-                headers = list(`x-amz-content-sha256` = ""), 
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -607,7 +586,6 @@ putbucket <- function(bucket, ...){
         bucket <- bucket$Name
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
-                headers = list(`x-amz-content-sha256` = ""),
                 parse_response = FALSE,
                 ...)
     if (inherits(r, "aws_error")) {
@@ -625,7 +603,6 @@ put_cors <- function(bucket, ...){
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
                 path = "?cors",
-                headers = list(`x-amz-content-sha256` = ""), 
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -640,7 +617,6 @@ put_lifecycle <- function(bucket, ...){
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
                 action = "?lifecycle",
-                headers = list(`x-amz-content-sha256` = ""), 
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -655,7 +631,6 @@ put_policy <- function(bucket, ...){
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
                 path = "?policy",
-                headers = list(`x-amz-content-sha256` = ""), 
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -670,7 +645,6 @@ put_logging <- function(bucket, ...){
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
                 path = "?logging",
-                headers = list(`x-amz-content-sha256` = ""), 
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -685,7 +659,6 @@ put_notification <- function(bucket, ...){
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
                 path = "?notification",
-                headers = list(`x-amz-content-sha256` = ""), 
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -700,7 +673,6 @@ put_tagging <- function(bucket, ...){
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
                 path = "?tagging",
-                headers = list(`x-amz-content-sha256` = ""), 
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -732,7 +704,6 @@ put_versioning <- function(bucket, status = c("Enabled", "Suspended"), ...){
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
                 path = "?versioning",
-                headers = list(`x-amz-content-sha256` = ""), 
                 request_body = b,
                 ...)
     if (inherits(r, "aws_error")) {
@@ -752,7 +723,6 @@ put_website <- function(bucket, ...){
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
                 path = "?website",
-                headers = list(`x-amz-content-sha256` = ""), 
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -767,7 +737,6 @@ put_requestpayment <- function(bucket, ...){
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
                 path = "?requestPayment",
-                headers = list(`x-amz-content-sha256` = ""), 
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
