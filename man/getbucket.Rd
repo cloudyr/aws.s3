@@ -4,7 +4,8 @@
 \alias{getbucket}
 \title{List the contents of an S3 bucket}
 \usage{
-getbucket(bucket, prefix, delimiter, max, marker, ...)
+getbucket(bucket, prefix = NULL, delimiter = NULL, max = NULL,
+  marker = NULL, parse_response = TRUE, ...)
 }
 \arguments{
 \item{bucket}{Character string with the name of the bucket.}
@@ -19,6 +20,8 @@ with the specified prefix}
 \item{marker}{Character string that pecifies the key to start with when
 listing objects in a bucket. Amazon S3 returns object keys in alphabetical order,
 starting with key after the marker in order.}
+
+\item{parse_response}{logical, should we attempt to parse the response?}
 
 \item{...}{Additional arguments passed to \code{\link{s3HTTP}}.}
 }

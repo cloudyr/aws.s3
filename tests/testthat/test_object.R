@@ -1,7 +1,7 @@
 context("object tests")
 
 test_that("basic usage of getobject for anonymous user", {
-  ex <- getobject(bucket = '1000genomes', object = 'README.analysis_history')
+  ex <- getobject(bucket = '1000genomes', object = 'README.analysis_history', key="", secret="")
   
   expect_is(ex, "response")
   expect_true(
