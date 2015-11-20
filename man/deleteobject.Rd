@@ -7,8 +7,7 @@
 deleteobject(bucket, object, ...)
 }
 \arguments{
-\item{bucket}{A character string containing the name of the bucket you want
-to delete an object from.}
+\item{bucket}{A character string containing the name of the bucket you want to delete an object from.}
 
 \item{object}{A character string containing the name of the object.}
 

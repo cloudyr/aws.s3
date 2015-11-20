@@ -16,6 +16,7 @@ getobject <- function(bucket, object, headers = list(), ...) {
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = paste0("/", object),
+                headers = headers,
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -240,8 +241,7 @@ copyobject <- function(from_object, to_object = from_object, from_bucket, to_buc
 
 #' @title Deletes an object from an S3 bucket.
 #'
-#' @param bucket A character string containing the name of the bucket you want 
-#' to delete an object from.
+#' @param bucket A character string containing the name of the bucket you want to delete an object from.
 #' @param object A character string containing the name of the object.
 #' @param ... Additional arguments passed to \code{\link{s3HTTP}}
 #'
