@@ -109,9 +109,9 @@ s3HTTP <- function(verb = "GET",
     } else if (verb == "POST") {
       r <- httr::POST(url, H, query = query, ...)
     } else if (verb == "PUT") {
-      if(request_body == "") {
+      if(is.character(request_body) && request_body == "") {
         r <- httr::PUT(url, H, query = query, ...)
-      } else if (file.exists(request_body)) {
+      } else if (is.character(request_body) && file.exists(request_body)) {
         r <- httr::PUT(url, H, body = httr::upload_file(request_body), query = query, ...)
       } else {
         r <- httr::PUT(url, H, body = request_body, query = query, ...)
