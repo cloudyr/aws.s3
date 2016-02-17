@@ -169,7 +169,10 @@ putobject <- function(file, bucket, object, headers = list(), ...) {
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
                 path = paste0("/", object),
-                headers = c(headers, list(`Content-Length` = file.size(file))), 
+                headers = c(headers, list(
+                  `Content-Length` = ifelse(is.character(file) && file.exists(file), 
+                                                       file.size(file), length(file))
+                  )), 
                 request_body = file,
                 ...)
     if (inherits(r, "aws_error")) {
