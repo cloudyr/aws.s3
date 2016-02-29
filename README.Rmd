@@ -2,22 +2,6 @@
 
 **aws.s3** is a simple client package for the Amazon Web Services (AWS) Simple Storage Service (S3) REST API. While [other packages](https://github.com/ropensci/webservices#amazon) currently connect R to S3, they do so incompletely (mapping only some of the API endpoints to R) and most implementations rely on the AWS command-line tools, which users may not have installed on their system.
 
-## Installation ##
-
-[![CRAN](http://www.r-pkg.org/badges/version/aws.s3)](http://cran.r-project.org/package=aws.s3)
-[![Build Status](https://travis-ci.org/cloudyr/aws.s3.png?branch=master)](https://travis-ci.org/cloudyr/aws.s3) [![codecov.io](http://codecov.io/github/cloudyr/aws.s3/coverage.svg?branch=master)](http://codecov.io/github/cloudyr/aws.s3?branch=master)
-
-This package is not yet on CRAN. To install the latest development version from GitHub, run the following:
-
-```R
-if(!require("devtools")){
-    install.packages("devtools")
-    library("devtools")
-}
-install_github("cloudyr/aws.signature")
-install_github("cloudyr/aws.s3")
-```
-
 To use the package, you will need an AWS account and enter your credentials into R. Your keypair can be generated on the [IAM Management Console](https://console.aws.amazon.com/iam/home?#security_credential) under the heading *Access Keys*. Note that you only have access to your secret key once. After it is generated, you need to save it in a secure location. New keypairs can be generated at any time if yours has been lost, stolen, or forgotten. 
 
 By default, all **cloudyr** packages look for the access key ID and secret access key in environment variables. You can also use this to specify a default region. For example:
@@ -62,6 +46,29 @@ aws.s3::getbucket(
 ### Objects ###
 
 Coming soon...
+
+
+## Installation ##
+
+[![CRAN](http://www.r-pkg.org/badges/version/aws.s3)](http://cran.r-project.org/package=aws.s3)
+[![Build Status](https://travis-ci.org/cloudyr/aws.s3.png?branch=master)](https://travis-ci.org/cloudyr/aws.s3)
+[![codecov.io](http://codecov.io/github/cloudyr/aws.s3/coverage.svg?branch=master)](http://codecov.io/github/cloudyr/aws.s3?branch=master)
+
+This package is not yet on CRAN. To install the latest development version you can install from the cloudyr drat repository:
+
+```R
+# latest stable version
+install.packages("MTurkR", repos = c(getOption("repos"), "http://cloudyr.github.io/drat"))
+```
+
+Or, to pull a potentially unstable version directly from GitHub:
+
+```R
+if(!require("ghit")){
+    install.packages("ghit")
+}
+ghit::install_github("cloudyr/aws.s3")
+```
 
 
 ---
