@@ -143,10 +143,11 @@ parse_aws_s3_response <- function(r, Sig, verbose = getOption("verbose")){
     out <- NULL
   } else {
     if(r$headers$`content-type` == "application/xml"){
-      response_contents <- try(httr::content(r, "parsed"), silent = TRUE)
+      content <- httr::content(r, "text")
+      response_contents <- try(XML::xmlToList(content), silent = TRUE)
       if (!inherits(response_contents, "try-error")) {
         if (!is.null(response_contents)) {
-          response <- XML::xmlToList(response_contents)
+          response <- response_contents
         } else {
           response <- NULL
         }
