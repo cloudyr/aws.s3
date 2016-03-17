@@ -58,7 +58,7 @@ This package is not yet on CRAN. To install the latest development version you c
 
 ```R
 # latest stable version
-install.packages("MTurkR", repos = c(getOption("repos"), "http://cloudyr.github.io/drat"))
+install.packages("aws.s3", repos = c(getOption("repos"), "http://cloudyr.github.io/drat"))
 ```
 
 Or, to pull a potentially unstable version directly from GitHub:
