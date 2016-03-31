@@ -7,7 +7,7 @@ To use the package, you will need an AWS account and enter your credentials into
 By default, all **cloudyr** packages look for the access key ID and secret access key in environment variables. You can also use this to specify a default region. For example:
 
 ```R
-Sys.getenv("AWS_ACCESS_KEY_ID" = "mykey",
+Sys.setenv("AWS_ACCESS_KEY_ID" = "mykey",
            "AWS_SECRET_ACCESS_KEY" = "mysecretkey",
            "AWS_DEFAULT_REGION" = "us-east-1")
 ```
