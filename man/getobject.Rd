@@ -2,21 +2,42 @@
 % Please edit documentation in R/OBJECT.R
 \name{getobject}
 \alias{getobject}
-\title{Retrieves an object from an S3 bucket}
+\title{Get object}
 \usage{
-getobject(bucket, object, headers = list(), ...)
+getobject(object, bucket, headers = list(), file = NULL, ...)
 }
 \arguments{
-\item{bucket}{Character string with the name of the bucket.}
+\item{object}{Character string with the object key, or an object of class \dQuote{s3_object}. In most cases, if \code{object} is specified as the latter, \code{bucket} can be omitted because the bucket name will be extracted from \dQuote{Bucket} slot in \code{object}.}
 
-\item{object}{Character string of the name of the object you want to get.}
+\item{bucket}{Character string with the name of the bucket, or an object of class \dQuote{s3_bucket}.}
 
 \item{headers}{List of request headers for the REST call.}
 
-\item{...}{Additional arguments passed to \code{\link{s3HTTP}}.}
+\item{\dots}{Additional arguments passed to \code{\link{s3HTTP}}.}
 }
 \value{
-A raw object.
+If \code{file = NULL}, a raw object. Otherwise, a character string containing the file name that the object is saved to.
+}
+\description{
+Retrieves an object from an S3 bucket
+}
+\examples{
+\dontrun{
+# get an object in memory
+## create bucket
+b <- putbucket("myexamplebucket")
+## save a dataset to the bucket
+s3save(mtcars, bucket = b, object = "mtcars")
+obj <- getbucket(b)
+## get the object in memory
+x <- getobject(obj[[1]])
+load(rawConnection(x))
+"mtcars" \%in\% ls()
+
+# return parts of an object
+## use 'Range' header to specify bytes
+getobject(object = obj[[1]], headers = list('Range' = 'bytes=1-120'))
+}
 }
 \references{
 \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectGET.html}{API Documentation}

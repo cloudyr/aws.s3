@@ -1,27 +1,52 @@
-#' @title Retrieves an object from an S3 bucket
+#' @title Get object
+#' @description Retrieves an object from an S3 bucket
 #' 
-#' @param bucket Character string with the name of the bucket.
-#' @param object Character string of the name of the object you want to get.
+#' @template object
+#' @template bucket
 #' @param headers List of request headers for the REST call.
-#' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
-#'
-#' @return A raw object.
+#' @template dots
+#' @examples
+#' \dontrun{
+#' # get an object in memory
+#' ## create bucket
+#' b <- putbucket("myexamplebucket")
+#' ## save a dataset to the bucket
+#' s3save(mtcars, bucket = b, object = "mtcars")
+#' obj <- getbucket(b)
+#' ## get the object in memory
+#' x <- getobject(obj[[1]])
+#' load(rawConnection(x))
+#' "mtcars" %in% ls()
+#' 
+#' # return parts of an object
+#' ## use 'Range' header to specify bytes
+#' getobject(object = obj[[1]], headers = list('Range' = 'bytes=1-120'))
+#' }
+#' @return If \code{file = NULL}, a raw object. Otherwise, a character string containing the file name that the object is saved to.
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectGET.html}{API Documentation}
 #' @export
-# FIXME consider saving the object to a file?  
-getobject <- function(bucket, object, headers = list(), ...) {
-    if (inherits(object, "s3_object"))
-        object <- object$Key
-
+getobject <- function(object, bucket, headers = list(), file = NULL, ...) {
+    object <- get_objectkey(object)
+    if (missing(bucket)) {
+        bucket <- get_bucketname(object)
+    } else {
+        bucket <- get_bucketname(bucket)
+    }
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = paste0("/", object),
                 headers = headers,
                 ...)
     if (inherits(r, "aws_error")) {
-        return(r)
+      return(r)
     } else {
-        r
+      cont <- content(r, as = "raw")
+      if (is.null(file)) {
+        return(cont)
+      } else {
+        writeBin(cont, con = file)
+        return(file)
+      }
     }
 }
 
@@ -36,8 +61,9 @@ print.s3_object <- function(x, ...){
 }
 
 
-get_acl <- function(bucket, object, ...) {
-    if (missing(object)) {
+get_acl <- function(object, bucket, ...) {
+    if (!missing(bucket)) {
+        bucket <- get_bucketname(bucket)
         r <- s3HTTP(verb = "GET", 
                     bucket = bucket,
                     path = "?acl",
@@ -48,9 +74,8 @@ get_acl <- function(bucket, object, ...) {
         } else {
             structure(r, class = "s3_bucket")
         }
-    } else {
-        if (inherits(object, "s3_object"))
-            object <- object$Key
+    } else if (!missing(object)) {
+        object <- get_objectkey(object)
         r <- s3HTTP(verb = "GET", 
                     path = "/object?acl",
                     ...)
@@ -62,20 +87,24 @@ get_acl <- function(bucket, object, ...) {
     }
 }
 
-#' @title Retrieves a Bencoded dictionary (BitTorrent) for an object from an S3 bucket.
+#' @title Get object torrent
+#' @description Retrieves a Bencoded dictionary (BitTorrent) for an object from an S3 bucket.
 #' 
-#' @param bucket Character string with the name of the bucket.
-#' @param object Character string of the name of the object you want to get.
-#' @param ... additional arguments passed to \code{\link{s3HTTP}}.
+#' @template object
+#' @template bucket
+#' @template dots
 #'
 #' @return Something.
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectGETtorrent.html}{API Documentation}
 #' @export
 
-get_torrent <- function(bucket, object, ...) {
-    if (inherits(object, "s3_object"))
-        object <- object$Key
-
+get_torrent <- function(object, bucket, ...) {
+    if (missing(bucket)) {
+        bucket <- get_bucketname(object)
+    } else {
+        bucket <- get_bucketname(bucket)
+    }
+    object <- get_objectkey(object)
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = paste0("/", object, "?torrent"),
@@ -90,10 +119,9 @@ get_torrent <- function(bucket, object, ...) {
 
 # HEAD
 
-headobject <- function(bucket, object, ...) {
-    if (inherits(object, "s3_object"))
-        object <- object$Key
-
+headobject <- function(object, bucket, ...) {
+    bucket <- get_bucketname(bucket)
+    object <- get_objectkey(object)
     r <- s3HTTP(verb = "HEAD", 
                 bucket = bucket,
                 path = paste0("/", object),
@@ -108,10 +136,9 @@ headobject <- function(bucket, object, ...) {
 
 # OPTIONS
 
-optsobject <- function(bucket, object, ...) {
-    if (inherits(object, "s3_object"))
-        object <- object$Key
-
+optsobject <- function(object, bucket, ...) {
+    bucket <- get_bucketname(bucket)
+    object <- get_objectkey(object)
     r <- s3HTTP(verb = "OPTIONS", 
                 bucket = bucket,
                 path = paste0("/", object),
@@ -126,10 +153,9 @@ optsobject <- function(bucket, object, ...) {
 
 # POST
 
-postobject <- function(bucket, object, ...) {
-    if (inherits(object, "s3_object"))
-        object <- object$Key
-
+postobject <- function(object, bucket, ...) {
+    bucket <- get_bucketname(bucket)
+    object <- get_objectkey(object)
     r <- s3HTTP(verb = "POST", 
                 bucket = bucket,
                 path = paste0("/", object),
@@ -144,26 +170,26 @@ postobject <- function(bucket, object, ...) {
 
 # PUT
 
-#' @title Puts an object into an S3 bucket
+#' @title Put object
+#' @description Puts an object into an S3 bucket
 #'
 #' @param file A character string containing the filename (or full path) of 
 #' the file you want to upload to S3.
-#' @param bucket A character string containing the name of the bucket you want 
-#' to put an object into.
+#' @template bucket
 #' @param object A character string containing the name the object should 
 #' have in S3 (i.e., its "object key"). If missing, the filename is used.
+#' @template dots
 #' @param headers List of request headers for the REST call.   
-#' @param ... additional arguments passed to \code{\link{s3HTTP}}
 #'
 #' @return If successful, \code{TRUE}, otherwise an aws_error object.
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPUT.html}{API Documentation}
 #' @export
 
-putobject <- function(file, bucket, object, headers = list(), ...) {
-    if (!missing(object) && inherits(object, "s3_object"))
-        object <- object$Key
+putobject <- function(file, object, bucket, headers = list(), ...) {
     if (missing(object)) {
         object <- basename(file)
+    } else {
+        object <- get_objectkey(object)
     }
 
     r <- s3HTTP(verb = "PUT", 
@@ -182,8 +208,9 @@ putobject <- function(file, bucket, object, headers = list(), ...) {
     }
 }
 
-putobject_acl <- function(bucket, object, ...) {
-
+putobject_acl <- function(object, bucket, ...) {
+    bucket <- get_bucketname(bucket)
+    object <- get_objectkey(object)
     if (missing(object)) {
         r <- s3HTTP(verb = "PUT", 
                     bucket = bucket,
@@ -209,52 +236,22 @@ putobject_acl <- function(bucket, object, ...) {
     }
 }
 
-#' @title Copy an object into another S3 bucket
-#'
-#' @param from_bucket A character string containing the name of the bucket you want to copy from.
-#' @param to_bucket A character string containing the name of the bucket you want to copy into.
-#' @param from_object A character string containing the name the object you want to copy.
-#' @param to_object A character string containing the name the object should have in the new bucket.
-#' @param headers List of request headers for the REST call.   
-#' @param ... additional arguments passed to \code{\link{s3HTTP}}
-#'
-#' @return Something...
-#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectCOPY.html}{API Documentation}
-#' @export
-
-copyobject <- function(from_object, to_object = from_object, from_bucket, to_bucket, headers = list(), ...) {
-    if (inherits(object, "s3_object"))
-        object <- object$Key
-
-    r <- s3HTTP(verb = "PUT", 
-                bucket = to_bucket,
-                path = paste0("/", object),
-                headers = c(headers, 
-                            `x-amz-copy-source` = paste0("/",from_bucket,"/",from_object)), 
-                ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        return(r)
-    }
-}
-
 
 # DELETE
 
-#' @title Deletes an object from an S3 bucket.
+#' @title Delete object
+#' @description Deletes an object from an S3 bucket.
 #'
-#' @param bucket A character string containing the name of the bucket you want to delete an object from.
-#' @param object A character string containing the name of the object.
-#' @param ... Additional arguments passed to \code{\link{s3HTTP}}
+#' @template object
+#' @template bucket
+#' @template dots
 #'
 #' @return TRUE if successful, aws_error details if not.
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectDELETE.html}{API Documentation}
 #' @export
-deleteobject <- function(bucket, object, ...) {
-    if (inherits(object, "s3_object"))
-        object <- object$Key
-
+deleteobject <- function(object, bucket, ...) {
+    bucket <- get_bucketname(bucket)
+    object <- get_objectkey(object)
     if (length(object) == 1) {
         r <- s3HTTP(verb = "DELETE", 
                     bucket = bucket,
