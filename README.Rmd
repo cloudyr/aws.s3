@@ -39,16 +39,47 @@ Amazon maintains a listing of [Public Data Sets](https://aws.amazon.com/datasets
 To get a listing for all objects in a private bucket, pass your AWS key and secret in as parameters.  (As described above, all functions in `aws.s3` will look for your keys as environment variables by default, greatly simplifying the process of making a s3 request.)
 
 ```R
+# specify keys in-line
 get_bucket(
-  bucket = 'hpk',
+  bucket = 'my_bucket',
   key = YOUR_AWS_ACCESS_KEY,
   secret = YOUR_AWS_SECRET_ACCESS_KEY
 )
+
+# specify keys as environment variables
+Sys.setenv("AWS_ACCESS_KEY_ID" = "mykey",
+           "AWS_SECRET_ACCESS_KEY" = "mysecretkey")
+get_bucket("my_bucket")
 ```
 
 ### Objects ###
 
-Coming soon...
+There are five main functions that will be useful for working with objects in S3:
+
+ 1. `get_object()` returns a raw vector representation of an S3 object.
+ 2. `save_object()` saves an S3 object to a specified local file.
+ 3. `put_object()` stores a local file into an S3 bucket.
+ 4. `s3save()` saves one or more in-memory R objects to an .Rdata file in S3 (analogously to `save()`)
+ 5. `s3load()` loads one or more objects into memroy from an .Rdata file stored in S3 (analogously to `load()`)
+
+They behave as you would probably expect:
+
+```R
+# save an in-memory R object into S3
+s3save(mtcars, bucket = "my_bucket", object = "mtcars.Rdata")
+
+# `load()` R objects from the file
+s3load("mtcars.Rdata", bucket = "my_bucket")
+
+# get file as raw vector
+get_object("mtcars.Rdata", bucket = "my_bucket")
+
+# save file locally
+save_object("mtcars.Rdata", file = "mtcars.Rdata", bucket = "my_bucket")
+
+# put local file into S3
+put_object(file = "mtcars.Rdata", object = "mtcars2.Rdata", bucket = "my_bucket")
+```
 
 
 ## Installation ##
