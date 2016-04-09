@@ -1,7 +1,7 @@
 context("Authenticated bucket tests")
 
 test_that("basic usage of getbucket for signed in user", {
-  ex <- getbucket(
+  ex <- get_bucket(
     bucket = 'hpk',
     key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
     secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY")
@@ -9,13 +9,16 @@ test_that("basic usage of getbucket for signed in user", {
   
   expect_is(ex, "s3_bucket")
   expect_true(
-    all(c("Name", "Prefix", "Marker", "MaxKeys", "IsTruncated", "Contents") %in% names(ex))
+    all(c("Name", "Prefix", "Marker", "MaxKeys", "IsTruncated") %in% attributes(ex))
+  )
+  expect_true(
+    "Contents" %in% names(ex)
   )
 })
 
 
 test_that("unparsed getbucket", {
-  ex <- getbucket(
+  ex <- get_bucket(
     bucket = 'hpk',
     key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
     secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY"),
@@ -48,14 +51,14 @@ test_that("get_cors on a bucket with no cors setup", {
 test_that("putbucket and deletebucket", {
   test_name <- paste0('cloudyr_test_', gsub('\\s', '_', gsub('[-:]', '_', Sys.time())))
   
-  resp <- putbucket(
+  resp <- put_bucket(
     bucket = test_name,
     key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
     secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY")
   )
   expect_true(resp)
   
-  resp <- deletebucket(
+  resp <- delete_bucket(
     bucket = test_name,
     key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
     secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY")
@@ -66,7 +69,7 @@ test_that("putbucket and deletebucket", {
 test_that("bucket versioning", {
   test_name <- paste0('cloudyr_test_', gsub('\\s', '_', gsub('[-:]', '_', Sys.time())))
   
-  resp <- putbucket(
+  resp <- put_bucket(
     bucket = test_name,
     key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
     secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY")
@@ -98,7 +101,7 @@ test_that("bucket versioning", {
   #  secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY")), 
   #  "Suspended")
   
-  resp <- deletebucket(
+  resp <- delete_bucket(
     bucket = test_name,
     key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
     secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY")

@@ -1,8 +1,9 @@
 context("Authenticated object tests")
 
 test_that("basic usage of getobject for signed in user", {
-  ex <- getobject(bucket = 'hpk', 
+  ex <- get_object(
                   object = 'robots.txt',
+                  bucket = 'hpk', 
                   key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
                   secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY")
   )
@@ -20,18 +21,18 @@ test_that("basic usage of putobject and deleteobject for signed in user", {
   tmp <- tempfile(fileext = ".txt")
   writeLines(c("cloudyr", "test"), tmp)
 
-  p <- putobject(
+  p <- put_object(
     file = tmp,
-    bucket = 'hpk', 
     object = basename(tmp),
+    bucket = 'hpk', 
     key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
     secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY")
   )
   expect_true(p)
   
-  d <- deleteobject(
-    bucket = 'hpk',
+  d <- delete_object(
     object = basename(tmp),
+    bucket = 'hpk',
     key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
     secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY")
   )

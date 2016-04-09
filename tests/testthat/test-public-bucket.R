@@ -1,7 +1,7 @@
 context("Public bucket tests")
 
 test_that("basic usage of getbucket for anonymous user", {
-  ex <- getbucket(
+  ex <- get_bucket(
     bucket = '1000genomes',
     key = "",
     secret = "")
@@ -13,7 +13,7 @@ test_that("basic usage of getbucket for anonymous user", {
 })
 
 test_that("intentional bad keys", {
-  bad <- getbucket(
+  bad <- get_bucket(
     bucket = 'hpk', key = 'THIS IS A BAD KEY', secret = 'THIS IS A BAD SECRET'
   )
   expect_is(bad, "aws_error")
