@@ -49,6 +49,7 @@ get_object <- function(object, bucket, headers = list(), ...) {
         return(r)
     } else {
         cont <- httr::content(r, as = "raw")
+        attributes(cont) <- httr::headers(r)
         return(cont)
     }
 }

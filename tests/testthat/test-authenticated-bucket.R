@@ -9,7 +9,7 @@ test_that("basic usage of getbucket for signed in user", {
   
   expect_is(ex, "s3_bucket")
   expect_true(
-    all(c("Name", "Prefix", "Marker", "MaxKeys", "IsTruncated") %in% attributes(ex))
+    all(c("Name", "Prefix", "Marker", "MaxKeys", "IsTruncated") %in% names(attributes(ex)))
   )
   expect_true(
     "Contents" %in% names(ex)

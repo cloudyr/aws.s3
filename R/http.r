@@ -43,15 +43,15 @@ s3HTTP <- function(verb = "GET",
     bucket <- get_bucketname(bucket)
     if (region %in% c("", "us-east-1")){
       if (bucket != "") {
-        url <- paste0("https://", bucket, ".s3.amazonaws.com/")
+        url <- paste0("https://", bucket, ".s3.amazonaws.com")
       } else {
-        url <- paste0("https://s3.amazonaws.com/")
+        url <- paste0("https://s3.amazonaws.com")
       }
     } else {
       if (bucket != "") {
-        url <- paste0("https://", bucket, ".s3-", region, ".amazonaws.com/")
+        url <- paste0("https://", bucket, ".s3-", region, ".amazonaws.com")
       } else {
-        url <- paste0("https://s3-", region, ".amazonaws.com/")
+        url <- paste0("https://s3-", region, ".amazonaws.com")
       }
     }
     if (path != "") {
