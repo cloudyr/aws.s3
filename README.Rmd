@@ -20,6 +20,7 @@ These can alternatively be set on the command line or via an `Renviron.site` or 
 The package can be used to examine publicly accessible S3 buckets and publicly accessible S3 objects without registering an AWS account. If credentials have been generated in the AWS console and made available in R, you can find your available buckets using:
 
 ```R
+library("aws.s3")
 bucketlist()
 ```
 
@@ -30,7 +31,7 @@ If your credentials are incorrect, this function will return an error. Otherwise
 To get a listing of all objects in a public bucket, simply call
 
 ```R
-aws.s3::getbucket(bucket = '1000genomes')
+get_bucket(bucket = '1000genomes')
 ```
 
 Amazon maintains a listing of [Public Data Sets](https://aws.amazon.com/datasets) on S3.
@@ -38,7 +39,7 @@ Amazon maintains a listing of [Public Data Sets](https://aws.amazon.com/datasets
 To get a listing for all objects in a private bucket, pass your AWS key and secret in as parameters.  (As described above, all functions in `aws.s3` will look for your keys as environment variables by default, greatly simplifying the process of making a s3 request.)
 
 ```R
-aws.s3::getbucket(
+get_bucket(
   bucket = 'hpk',
   key = YOUR_AWS_ACCESS_KEY,
   secret = YOUR_AWS_SECRET_ACCESS_KEY

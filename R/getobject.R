@@ -6,34 +6,34 @@
 #' @param file An R connection, or file name specifying the local file to save the object into.
 #' @param headers List of request headers for the REST call.
 #' @template dots
-#' @details \code{getobject} retrieves an object into memory. \code{saveobject} saves an object to a local file. \code{headobject} checks whether an object exists by executing an HTTP HEAD request; this can be useful for checking object headers such as \dQuote{content-length} or \dQuote{content-type}.
+#' @details \code{get_object} retrieves an object into memory. \code{save_object} saves an object to a local file. \code{head_object} checks whether an object exists by executing an HTTP HEAD request; this can be useful for checking object headers such as \dQuote{content-length} or \dQuote{content-type}.
 #' @examples
 #' \dontrun{
 #' # get an object in memory
 #' ## create bucket
-#' b <- putbucket("myexamplebucket")
+#' b <- put_bucket("myexamplebucket")
 #' ## save a dataset to the bucket
 #' s3save(mtcars, bucket = b, object = "mtcars")
-#' obj <- getbucket(b)
+#' obj <- get_bucket(b)
 #' ## get the object in memory
-#' x <- getobject(obj[[1]])
+#' x <- get_object(obj[[1]])
 #' load(rawConnection(x))
 #' "mtcars" %in% ls()
 #'
 #' # save an object locally
-#' y <- getobject(obj[[1]], file = object[[1]][["Key"]])
+#' y <- get_object(obj[[1]], file = object[[1]][["Key"]])
 #' y %in% dir()
 #' 
 #' # return parts of an object
 #' ## use 'Range' header to specify bytes
-#' getobject(object = obj[[1]], headers = list('Range' = 'bytes=1-120'))
+#' get_object(object = obj[[1]], headers = list('Range' = 'bytes=1-120'))
 #' }
 #' @return If \code{file = NULL}, a raw object. Otherwise, a character string containing the file name that the object is saved to.
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectGET.html}{API Documentation: GET Object}
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectHEAD.html}{API Document: HEAD Object}
-#' @seealso \code{\link{getbucket}}
+#' @seealso \code{\link{get_bucket}}
 #' @export
-getobject <- function(object, bucket, headers = list(), ...) {
+get_object <- function(object, bucket, headers = list(), ...) {
     if (missing(bucket)) {
         bucket <- get_bucketname(object)
     } else {
@@ -55,7 +55,7 @@ getobject <- function(object, bucket, headers = list(), ...) {
 
 #' @rdname getobject
 #' @export
-saveobject <- function(object, bucket, file, headers = list(), ...) {
+save_object <- function(object, bucket, file, headers = list(), ...) {
     if (missing(file)) {
         stop('argument "file" is missing, with no default')
     }
@@ -80,7 +80,7 @@ saveobject <- function(object, bucket, file, headers = list(), ...) {
 
 #' @rdname getobject
 #' @export
-headobject <- function(object, bucket, ...) {
+head_object <- function(object, bucket, ...) {
     if (missing(bucket)) {
         bucket <- get_bucketname(object)
     } else {

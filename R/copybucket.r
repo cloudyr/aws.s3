@@ -1,7 +1,7 @@
 #' @rdname copyobject
-#' @title copyobject
-#' @description Copy object between S3 buckets
-#' @details \code{copyobject} copies an object from one bucket to another without bringing it into local memory. For \code{copybucket}, all objects from one bucket are copied to another (limit 1000 objects). The same keys are used in the old bucket as in the new bucket.
+#' @title Copy Objects
+#' @description Copy objects between S3 buckets
+#' @details \code{copy_object} copies an object from one bucket to another without bringing it into local memory. For \code{copy_bucket}, all objects from one bucket are copied to another (limit 1000 objects). The same keys are used in the old bucket as in the new bucket.
 #'
 #' @param from_bucket A character string containing the name of the bucket you want to copy from.
 #' @param to_bucket A character string containing the name of the bucket you want to copy into.
@@ -13,7 +13,7 @@
 #' @return Something...
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectCOPY.html}{API Documentation}
 #' @export
-copyobject <- function(from_object, to_object = from_object, from_bucket, to_bucket, headers = list(), ...) {
+copy_object <- function(from_object, to_object = from_object, from_bucket, to_bucket, headers = list(), ...) {
     from_bucket <- get_bucketname(from_bucket)
     to_bucket <- get_bucketname(to_bucket)
     from_object <- get_objectkey(from_object)
@@ -33,7 +33,7 @@ copyobject <- function(from_object, to_object = from_object, from_bucket, to_buc
 
 #' @rdname copyobject
 #' @export
-copybucket <- function(from_bucket, to_bucket, ...) {
+copy_bucket <- function(from_bucket, to_bucket, ...) {
     from_bucket <- get_bucketname(from_bucket)
     to_bucket <- get_bucketname(to_bucket)
     if (!to_bucket %in% sapply(bucketlist(...), `[[`, "Name")) { 

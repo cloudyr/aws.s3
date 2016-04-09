@@ -27,7 +27,7 @@
 #' 
 #' @import httr
 #' @import xml2
-#' @import xml.signature
+#' @import aws.signature
 #' @export
 s3HTTP <- function(verb = "GET",
                    bucket = "", 

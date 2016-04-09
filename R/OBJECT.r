@@ -12,7 +12,7 @@
 #' @return If successful, \code{TRUE}, otherwise an aws_error object.
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPUT.html}{API Documentation}
 #' @export
-putobject <- function(file, object, bucket, headers = list(), ...) {
+put_object <- function(file, object, bucket, headers = list(), ...) {
     if (missing(object)) {
         object <- basename(file)
     } else {
@@ -35,7 +35,7 @@ putobject <- function(file, object, bucket, headers = list(), ...) {
     }
 }
 
-postobject <- function(object, bucket, ...) {
+post_object <- function(object, bucket, ...) {
     if (missing(bucket)) {
         bucket <- get_bucketname(object)
     } else {
@@ -66,7 +66,7 @@ postobject <- function(object, bucket, ...) {
 #' @import digest
 #' @import base64enc
 #' @export
-deleteobject <- function(object, bucket, ...) {
+delete_object <- function(object, bucket, ...) {
     if (missing(bucket)) {
         bucket <- get_bucketname(object)
     } else {
@@ -123,7 +123,7 @@ deleteobject <- function(object, bucket, ...) {
 
 # OPTIONS
 
-optsobject <- function(object, bucket, ...) {
+opts_object <- function(object, bucket, ...) {
     if (missing(bucket)) {
         bucket <- get_bucketname(object)
     } else {

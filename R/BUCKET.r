@@ -20,7 +20,7 @@
 #'
 #' @references \href{https://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGET.html}{API Documentation}
 #' @export
-getbucket <- function(bucket, 
+get_bucket <- function(bucket, 
                       prefix = NULL, 
                       delimiter = NULL,
                       max = NULL,
@@ -60,7 +60,7 @@ getbucket <- function(bucket,
 #' An \code{aws_error} object may be returned if the request failed.
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETE.html}{API Documentation}
 #' @export
-deletebucket <- function(bucket, ...){
+delete_bucket <- function(bucket, ...){
     bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "DELETE", 
                 bucket = bucket,
@@ -78,7 +78,7 @@ deletebucket <- function(bucket, ...){
 #' @description Get the AWS region location of bucket.
 #'
 #' @template bucket
-#' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
+#' @template dots
 #'
 #' @return A character string containing the region, if one has been set.
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETlocation.html}{API Documentation}
@@ -129,7 +129,7 @@ get_uploads <- function(bucket, ...){
 #' @return \code{TRUE} if bucket exists and is accessible, else \code{FALSE}. An \code{aws_error} object may be returned if the request failed.
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketHEAD.html}{API Documentation}
 #' @export
-bucketexists <- function(bucket, ...){
+bucket_exists <- function(bucket, ...){
     bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "HEAD", 
                 bucket = bucket,
@@ -150,7 +150,7 @@ bucketexists <- function(bucket, ...){
 #' @return \code{TRUE} if successful, aws_error details if not.
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUT.html}{API Documentation}
 #' @export
-putbucket <- function(bucket, ...){
+put_bucket <- function(bucket, ...){
     bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
