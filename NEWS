@@ -1,5 +1,12 @@
+# CHANGES TO aws.s3 0.1.18 #
+
+* Separated authenticated and unauthenticated testthat tests, conditional on presence of AWS keys.
+* Numerous documentation fixes and consolidations.
+* Dropped XML dependency in favor of xml2. (#40)
+
 # CHANGES TO aws.s3 0.1.17 #
 
+* The structure of an object of class "s3_bucket" has changed. It now is simply a list of objects of class "s3_object" and bucket attributes are stored as attributes to the list.
 * The order of `bucket` and `object` names was swapped in most object-related functions and the Bucket name has been added to the object lists returned by `getbucket()`. This means that `bucket` can be omitted when `object` is an object of class "s3_object".
 
 # CHANGES TO aws.s3 0.1.1 #

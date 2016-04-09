@@ -20,7 +20,6 @@
 #'
 #' @references \href{https://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGET.html}{API Documentation}
 #' @export
-
 getbucket <- function(bucket, 
                       prefix = NULL, 
                       delimiter = NULL,
@@ -51,12 +50,6 @@ getbucket <- function(bucket,
     out
 }
 
-
-print.s3_bucket <- function(x, ...){
-    cat("Bucket:", attributes(x)[["Name"]], "\n\n")
-    print(x[names(x) == "Contents"])
-    invisible(x)
-}
 
 
 get_acl <- function(bucket, ...){

@@ -1,66 +1,3 @@
-#' @title Get object
-#' @description Retrieves an object from an S3 bucket
-#' 
-#' @template object
-#' @template bucket
-#' @param headers List of request headers for the REST call.
-#' @template dots
-#' @examples
-#' \dontrun{
-#' # get an object in memory
-#' ## create bucket
-#' b <- putbucket("myexamplebucket")
-#' ## save a dataset to the bucket
-#' s3save(mtcars, bucket = b, object = "mtcars")
-#' obj <- getbucket(b)
-#' ## get the object in memory
-#' x <- getobject(obj[[1]])
-#' load(rawConnection(x))
-#' "mtcars" %in% ls()
-#' 
-#' # return parts of an object
-#' ## use 'Range' header to specify bytes
-#' getobject(object = obj[[1]], headers = list('Range' = 'bytes=1-120'))
-#' }
-#' @return If \code{file = NULL}, a raw object. Otherwise, a character string containing the file name that the object is saved to.
-#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectGET.html}{API Documentation}
-#' @export
-getobject <- function(object, bucket, headers = list(), file = NULL, ...) {
-    object <- get_objectkey(object)
-    if (missing(bucket)) {
-        bucket <- get_bucketname(object)
-    } else {
-        bucket <- get_bucketname(bucket)
-    }
-    r <- s3HTTP(verb = "GET", 
-                bucket = bucket,
-                path = paste0("/", object),
-                headers = headers,
-                ...)
-    if (inherits(r, "aws_error")) {
-      return(r)
-    } else {
-      cont <- content(r, as = "raw")
-      if (is.null(file)) {
-        return(cont)
-      } else {
-        writeBin(cont, con = file)
-        return(file)
-      }
-    }
-}
-
-print.s3_object <- function(x, ...){
-    cat("Key:           ", x$Key, "\n")
-    cat("Modified:      ", x$LastModified, "\n")
-    cat("ETag:          ", x$ETag, "\n")
-    cat("Size (kb):     ", x$Size, "\n")
-    cat("Owner:         ", x$Owner$DisplayName, "\n")
-    cat("Storage class: ", x$StorageClass, "\n")
-    invisible(x)
-}
-
-
 get_acl <- function(object, bucket, ...) {
     if (!missing(bucket)) {
         bucket <- get_bucketname(bucket)
@@ -120,7 +57,11 @@ get_torrent <- function(object, bucket, ...) {
 # HEAD
 
 headobject <- function(object, bucket, ...) {
-    bucket <- get_bucketname(bucket)
+    if (missing(bucket)) {
+        bucket <- get_bucketname(object)
+    } else {
+        bucket <- get_bucketname(bucket)
+    }
     object <- get_objectkey(object)
     r <- s3HTTP(verb = "HEAD", 
                 bucket = bucket,
@@ -137,7 +78,11 @@ headobject <- function(object, bucket, ...) {
 # OPTIONS
 
 optsobject <- function(object, bucket, ...) {
-    bucket <- get_bucketname(bucket)
+    if (missing(bucket)) {
+        bucket <- get_bucketname(object)
+    } else {
+        bucket <- get_bucketname(bucket)
+    }
     object <- get_objectkey(object)
     r <- s3HTTP(verb = "OPTIONS", 
                 bucket = bucket,
@@ -154,7 +99,11 @@ optsobject <- function(object, bucket, ...) {
 # POST
 
 postobject <- function(object, bucket, ...) {
-    bucket <- get_bucketname(bucket)
+    if (missing(bucket)) {
+        bucket <- get_bucketname(object)
+    } else {
+        bucket <- get_bucketname(bucket)
+    }
     object <- get_objectkey(object)
     r <- s3HTTP(verb = "POST", 
                 bucket = bucket,
@@ -184,7 +133,6 @@ postobject <- function(object, bucket, ...) {
 #' @return If successful, \code{TRUE}, otherwise an aws_error object.
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPUT.html}{API Documentation}
 #' @export
-
 putobject <- function(file, object, bucket, headers = list(), ...) {
     if (missing(object)) {
         object <- basename(file)
@@ -194,7 +142,7 @@ putobject <- function(file, object, bucket, headers = list(), ...) {
 
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
-                path = paste0("/", object),
+                path = paste0(object),
                 headers = c(headers, list(
                   `Content-Length` = ifelse(is.character(file) && file.exists(file), 
                                                        file.size(file), length(file))
@@ -209,7 +157,11 @@ putobject <- function(file, object, bucket, headers = list(), ...) {
 }
 
 putobject_acl <- function(object, bucket, ...) {
-    bucket <- get_bucketname(bucket)
+    if (missing(bucket)) {
+        bucket <- get_bucketname(object)
+    } else {
+        bucket <- get_bucketname(bucket)
+    }
     object <- get_objectkey(object)
     if (missing(object)) {
         r <- s3HTTP(verb = "PUT", 
@@ -250,7 +202,11 @@ putobject_acl <- function(object, bucket, ...) {
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectDELETE.html}{API Documentation}
 #' @export
 deleteobject <- function(object, bucket, ...) {
-    bucket <- get_bucketname(bucket)
+    if (missing(bucket)) {
+        bucket <- get_bucketname(object)
+    } else {
+        bucket <- get_bucketname(bucket)
+    }
     object <- get_objectkey(object)
     if (length(object) == 1) {
         r <- s3HTTP(verb = "DELETE", 

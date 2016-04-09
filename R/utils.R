@@ -14,7 +14,7 @@ get_bucketname.s3_bucket <- function(x, ...) {
 }
 
 get_bucketname.s3_object <- function(x, ...) {
-    attributes(x)[["Bucket"]]
+    x[["Bucket"]]
 }
 
 
@@ -22,13 +22,12 @@ get_bucketname.s3_object <- function(x, ...) {
 
 get_objectkey <- function(x, ...) {
     UseMethod("get_objectkey")
-    
 }
 
 get_objectkey.character <- function(x, ...) {
-    x
+    gsub("^/{1}", "", x)
 }
 
 get_objectkey.s3_object <- function(x, ...) {
-    x[["Key"]]
+    gsub("^/{1}", "", x[["Key"]])
 }

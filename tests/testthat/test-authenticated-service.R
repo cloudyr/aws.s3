@@ -1,4 +1,4 @@
-context("service tests")
+context("Authenticated service tests")
 
 test_that("basic usage of bucketlist", {
   bl <- bucketlist(
@@ -23,16 +23,5 @@ test_that("unparsed bucketlist", {
   expect_true(
     all(c("url", "status_code", "headers", "all_headers", "cookies", 
     "content", "date", "times", "request", "handle") %in% names(bl))
-  )
-})
-
-
-test_that("intentional bad keys", {
-  bad <- bucketlist(key = 'THIS IS A BAD KEY', secret = 'THIS IS A BAD SECRET')
-  expect_is(bad, "aws_error")
-  expect_equal(bad$Code, "InvalidAccessKeyId")
-  expect_warning(
-    bucketlist(key = 'THIS IS A BAD KEY', secret = 'THIS IS A BAD SECRET'),
-    regexp = "client error: (403) Forbidden", fixed = TRUE
   )
 })

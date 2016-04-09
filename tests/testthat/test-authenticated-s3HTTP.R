@@ -1,5 +1,5 @@
-context("s3HTTP tests")
-library("httr")
+context("Authenticated s3HTTP tests")
+requireNamespace("httr")
 
 test_that("Simple GET bucket call to s3HTTP returns status code 200", {
 r <- s3HTTP(verb = "GET", 
@@ -82,5 +82,4 @@ test_that("PUT works", {
   
   
 })
-
 

@@ -38,10 +38,7 @@ s3HTTP <- function(verb = "GET",
                    secret = Sys.getenv("AWS_SECRET_ACCESS_KEY"), 
                    parse_response = TRUE, 
                    ...) {
-    ## let users pass bucket objects as well as bucket names
-    if (inherits(bucket, "s3_bucket")){
-      bucket <- bucket$Name
-    }
+    bucket <- get_bucketname(bucket)
     if (region %in% c("", "us-east-1")){
       if (bucket != "") {
         url <- paste0("https://", bucket, ".s3.amazonaws.com/")
@@ -55,7 +52,6 @@ s3HTTP <- function(verb = "GET",
         url <- paste0("https://s3-", region, ".amazonaws.com/")
       }
     }
-    
     if (path != "") {
       url <- paste0(url, path)
     }
@@ -63,7 +59,6 @@ s3HTTP <- function(verb = "GET",
     d_timestamp <- format(current, "%Y%m%dT%H%M%SZ", tz = "UTC")
     p <- httr::parse_url(url)
     action <- if (p$path == "") "/" else paste0("/", p$path)
-    
     canonical_headers <- c(list(host = p$hostname,
                               `x-amz-date` = d_timestamp), headers)
     
@@ -151,6 +146,7 @@ parse_aws_s3_response <- function(r, Sig, verbose = getOption("verbose")){
   } else {
     if (r$headers$`content-type` == "application/xml"){
       content <- httr::content(r, as = "text", encoding = "UTF-8")
+      
       response_contents <- try(XML::xmlToList(content), silent = TRUE)
       if (!inherits(response_contents, "try-error")) {
         if (!is.null(response_contents)) {
