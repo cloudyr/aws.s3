@@ -2,10 +2,8 @@ language: r
 sudo: required
 r_packages:
 - knitr
-r_github_packages:
-- cloudyr/aws.signature
-- jimhester/covr
-- eddelbuettel/drat
+- covr
+- drat
 after_failure:
   email: 
     recipients:
