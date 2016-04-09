@@ -2,7 +2,7 @@
 % Please edit documentation in R/BUCKET.R
 \name{get_location}
 \alias{get_location}
-\title{Get the AWS region location of bucket.}
+\title{Bucket location}
 \usage{
 get_location(bucket, ...)
 }
@@ -13,6 +13,9 @@ get_location(bucket, ...)
 }
 \value{
 A character string containing the region, if one has been set.
+}
+\description{
+Get the AWS region location of bucket.
 }
 \references{
 \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETlocation.html}{API Documentation}

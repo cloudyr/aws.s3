@@ -1,7 +1,7 @@
 Package: aws.s3
 Type: Package
 Title: AWS S3 Client Package
-Version: 0.1.17
+Version: 0.1.18
 Date: 2016-04-09
 Authors@R: c(person("Thomas J.", "Leeper", role = c("aut", "cre"),
                     email = "thosjleeper@gmail.com"),
@@ -16,7 +16,7 @@ URL: https://github.com/cloudyr/aws.s3
 BugReports: https://github.com/cloudyr/aws.s3/issues
 Imports:
     httr,
-    XML,
+    xml2,
     base64enc,
     digest,
     aws.signature

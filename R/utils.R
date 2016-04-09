@@ -31,3 +31,20 @@ get_objectkey.character <- function(x, ...) {
 get_objectkey.s3_object <- function(x, ...) {
     gsub("^/{1}", "", x[["Key"]])
 }
+
+
+flatten_list <- function(x) {
+    if (is.list(x)) {
+        if ((class(x) != "list") || (length(class(x)) > 1)) {
+            return(x)
+        } else {
+            if (length(x) == 1) {
+                return(flatten_list(x[[1]]))
+            } else {
+                return(lapply(x, flatten_list))
+            }
+        }
+    } else {
+        return(x)
+    }
+}

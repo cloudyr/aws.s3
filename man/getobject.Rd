@@ -2,12 +2,15 @@
 % Please edit documentation in R/getobject.R
 \name{getobject}
 \alias{getobject}
+\alias{headobject}
 \alias{saveobject}
 \title{Get object}
 \usage{
-getobject(object, bucket, headers = list(), file = NULL, ...)
+getobject(object, bucket, headers = list(), ...)
 
 saveobject(object, bucket, file, headers = list(), ...)
+
+headobject(object, bucket, ...)
 }
 \arguments{
 \item{object}{Character string with the object key, or an object of class \dQuote{s3_object}. In most cases, if \code{object} is specified as the latter, \code{bucket} can be omitted because the bucket name will be extracted from \dQuote{Bucket} slot in \code{object}.}
@@ -15,6 +18,8 @@ saveobject(object, bucket, file, headers = list(), ...)
 \item{bucket}{Character string with the name of the bucket, or an object of class \dQuote{s3_bucket}.}
 
 \item{headers}{List of request headers for the REST call.}
+
+\item{file}{An R connection, or file name specifying the local file to save the object into.}
 
 \item{\dots}{Additional arguments passed to \code{\link{s3HTTP}}.}
 }
@@ -25,7 +30,7 @@ If \code{file = NULL}, a raw object. Otherwise, a character string containing th
 Retrieve an object from an S3 bucket
 }
 \details{
-\code{getobject} retrieves an object into memory. \code{saveobject} saves an object to a local file.
+\code{getobject} retrieves an object into memory. \code{saveobject} saves an object to a local file. \code{headobject} checks whether an object exists by executing an HTTP HEAD request; this can be useful for checking object headers such as \dQuote{content-length} or \dQuote{content-type}.
 }
 \examples{
 \dontrun{
@@ -50,7 +55,9 @@ getobject(object = obj[[1]], headers = list('Range' = 'bytes=1-120'))
 }
 }
 \references{
-\href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectGET.html}{API Documentation}
+\href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectGET.html}{API Documentation: GET Object}
+
+\href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectHEAD.html}{API Document: HEAD Object}
 }
 \seealso{
 \code{\link{getbucket}}

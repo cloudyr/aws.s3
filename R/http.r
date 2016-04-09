@@ -25,8 +25,10 @@
 #'
 #' @return the S3 response, or the relevant error.
 #' 
+#' @import httr
+#' @import xml2
+#' @import xml.signature
 #' @export
-
 s3HTTP <- function(verb = "GET",
                    bucket = "", 
                    path = "", 
@@ -95,19 +97,27 @@ s3HTTP <- function(verb = "GET",
       r <- httr::HEAD(url, H, query = query, ...)
       s <- httr::http_status(r)
       if (s$category == "success") {
-          return(TRUE)
+          out <- TRUE
+          attributes(out) <- c(attributes(out), httr::headers(r))
+          return(out)
       } else {
           message(s$message)
-          return(FALSE)
+          out <- FALSE
+          attributes(out) <- c(attributes(out), httr::headers(r))
+          return(out)
       }
     } else if (verb == "DELETE") {
       r <- httr::DELETE(url, H, query = query, ...)
       s <- httr::http_status(r)
       if (s$category == "success") {
-          return(TRUE)
+          out <- TRUE
+          attributes(out) <- c(attributes(out), httr::headers(r))
+          return(out)
       } else {
           message(s$message)
-          return(FALSE)
+          out <- FALSE
+          attributes(out) <- c(attributes(out), httr::headers(r))
+          return(out)
       }
     } else if (verb == "POST") {
       r <- httr::POST(url, H, query = query, ...)
@@ -123,21 +133,16 @@ s3HTTP <- function(verb = "GET",
       r <- httr::VERB("OPTIONS", url, H, query = query, ...)
     }
     
-    #if parse_response, use httr's parsed method to extract as XML, then convert to list
     if (parse_response) {
       out <- parse_aws_s3_response(r, Sig)
-    #otherwise just return the raw response
     } else {
       out <- r
     }
-  out
+    attributes(out) <- c(attributes(out), httr::headers(r))
+    out
 }
 
-
-## This internal routine is a bit crude, the logic should really be cleaned up to make sure we cover all cases with a sensible decision tree
-
 parse_aws_s3_response <- function(r, Sig, verbose = getOption("verbose")){
-  ## Some objects have nothing to parse
   if (is.null(r$headers$`content-type`)){
     if (verbose){
       warning("Response has no body, nothing to parse")
@@ -146,22 +151,11 @@ parse_aws_s3_response <- function(r, Sig, verbose = getOption("verbose")){
   } else {
     if (r$headers$`content-type` == "application/xml"){
       content <- httr::content(r, as = "text", encoding = "UTF-8")
-      
-      response_contents <- try(XML::xmlToList(content), silent = TRUE)
-      if (!inherits(response_contents, "try-error")) {
-        if (!is.null(response_contents)) {
-          response <- response_contents
-        } else {
-          response <- NULL
-        }
-      } else {
-        ## We should only parse XML communications from Amazon, otherwise just give the response object
-        response <- r
-      }
+      response_contents <- xml2::as_list(xml2::read_xml(content))
+      response <- flatten_list(response_contents)
     } else {
       response <- r
     }
-    #raise errors if bad values are passed. 
     if (httr::http_error(r)) {
       httr::warn_for_status(r)
       h <- httr::headers(r)

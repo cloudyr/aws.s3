@@ -2,7 +2,7 @@
 % Please edit documentation in R/BUCKET.R
 \name{putbucket}
 \alias{putbucket}
-\title{Creates a new S3 bucket.}
+\title{Create bucket}
 \usage{
 putbucket(bucket, ...)
 }
@@ -13,6 +13,9 @@ putbucket(bucket, ...)
 }
 \value{
 \code{TRUE} if successful, aws_error details if not.
+}
+\description{
+Creates a new S3 bucket.
 }
 \references{
 \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUT.html}{API Documentation}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/BUCKET.R
 \name{get_uploads}
 \alias{get_uploads}
-\title{Get a list of multipart uploads for a bucket.}
+\title{Multipart uploads}
 \usage{
 get_uploads(bucket, ...)
 }
@@ -13,6 +13,9 @@ get_uploads(bucket, ...)
 }
 \value{
 A list containing the multipart upload information.
+}
+\description{
+Get a list of multipart uploads for a bucket.
 }
 \references{
 \href{http://docs.aws.amazon.com/AmazonS3/latest/API/mpUploadListMPUpload.html}{API Documentation}

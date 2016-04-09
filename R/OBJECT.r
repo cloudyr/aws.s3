@@ -1,124 +1,3 @@
-get_acl <- function(object, bucket, ...) {
-    if (!missing(bucket)) {
-        bucket <- get_bucketname(bucket)
-        r <- s3HTTP(verb = "GET", 
-                    bucket = bucket,
-                    path = "?acl",
-                    ...)
-        
-        if (inherits(r, "aws_error")) {
-            return(r)
-        } else {
-            structure(r, class = "s3_bucket")
-        }
-    } else if (!missing(object)) {
-        object <- get_objectkey(object)
-        r <- s3HTTP(verb = "GET", 
-                    path = "/object?acl",
-                    ...)
-        if (inherits(r, "aws_error")) {
-            return(r)
-        } else {
-            structure(r, class = "s3_object")
-        }
-    }
-}
-
-#' @title Get object torrent
-#' @description Retrieves a Bencoded dictionary (BitTorrent) for an object from an S3 bucket.
-#' 
-#' @template object
-#' @template bucket
-#' @template dots
-#'
-#' @return Something.
-#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectGETtorrent.html}{API Documentation}
-#' @export
-
-get_torrent <- function(object, bucket, ...) {
-    if (missing(bucket)) {
-        bucket <- get_bucketname(object)
-    } else {
-        bucket <- get_bucketname(bucket)
-    }
-    object <- get_objectkey(object)
-    r <- s3HTTP(verb = "GET", 
-                bucket = bucket,
-                path = paste0("/", object, "?torrent"),
-                ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        return(r)
-    }
-}
-
-
-# HEAD
-
-headobject <- function(object, bucket, ...) {
-    if (missing(bucket)) {
-        bucket <- get_bucketname(object)
-    } else {
-        bucket <- get_bucketname(bucket)
-    }
-    object <- get_objectkey(object)
-    r <- s3HTTP(verb = "HEAD", 
-                bucket = bucket,
-                path = paste0("/", object),
-                ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        structure(r, class = "HEAD")
-    }
-}
-
-
-# OPTIONS
-
-optsobject <- function(object, bucket, ...) {
-    if (missing(bucket)) {
-        bucket <- get_bucketname(object)
-    } else {
-        bucket <- get_bucketname(bucket)
-    }
-    object <- get_objectkey(object)
-    r <- s3HTTP(verb = "OPTIONS", 
-                bucket = bucket,
-                path = paste0("/", object),
-                ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        return(r)
-    }
-}
-
-
-# POST
-
-postobject <- function(object, bucket, ...) {
-    if (missing(bucket)) {
-        bucket <- get_bucketname(object)
-    } else {
-        bucket <- get_bucketname(bucket)
-    }
-    object <- get_objectkey(object)
-    r <- s3HTTP(verb = "POST", 
-                bucket = bucket,
-                path = paste0("/", object),
-                ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        structure(r, class = "s3_object")
-    }
-}
-
-
-# PUT
-
 #' @title Put object
 #' @description Puts an object into an S3 bucket
 #'
@@ -156,40 +35,24 @@ putobject <- function(file, object, bucket, headers = list(), ...) {
     }
 }
 
-putobject_acl <- function(object, bucket, ...) {
+postobject <- function(object, bucket, ...) {
     if (missing(bucket)) {
         bucket <- get_bucketname(object)
     } else {
         bucket <- get_bucketname(bucket)
     }
     object <- get_objectkey(object)
-    if (missing(object)) {
-        r <- s3HTTP(verb = "PUT", 
-                    bucket = bucket,
-                    path = "?acl",
-                    ...)
-        if (inherits(r, "aws_error")) {
-            return(r)
-        } else {
-            structure(r, class = "s3_bucket")
-        }
+    r <- s3HTTP(verb = "POST", 
+                bucket = bucket,
+                path = paste0("/", object),
+                ...)
+    if (inherits(r, "aws_error")) {
+        return(r)
     } else {
-        if (inherits(object, "s3_object"))
-            object <- object$Key
-        r <- s3HTTP(verb = "PUT", 
-                    bucket = bucket,
-                    path = paste0("/", object),
-                    ...)
-        if (inherits(r, "aws_error")) {
-            return(r)
-        } else {
-            structure(r, class = "s3_object")
-        }
+        structure(r, class = "s3_object")
     }
 }
 
-
-# DELETE
 
 #' @title Delete object
 #' @description Deletes an object from an S3 bucket.
@@ -200,6 +63,8 @@ putobject_acl <- function(object, bucket, ...) {
 #'
 #' @return TRUE if successful, aws_error details if not.
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectDELETE.html}{API Documentation}
+#' @import digest
+#' @import base64enc
 #' @export
 deleteobject <- function(object, bucket, ...) {
     if (missing(bucket)) {
@@ -254,4 +119,24 @@ deleteobject <- function(object, bucket, ...) {
         }
     }
     return(r)
+}
+
+# OPTIONS
+
+optsobject <- function(object, bucket, ...) {
+    if (missing(bucket)) {
+        bucket <- get_bucketname(object)
+    } else {
+        bucket <- get_bucketname(bucket)
+    }
+    object <- get_objectkey(object)
+    r <- s3HTTP(verb = "OPTIONS", 
+                bucket = bucket,
+                path = paste0("/", object),
+                ...)
+    if (inherits(r, "aws_error")) {
+        return(r)
+    } else {
+        return(r)
+    }
 }

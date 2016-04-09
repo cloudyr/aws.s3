@@ -2,7 +2,7 @@
 % Please edit documentation in R/BUCKET.R
 \name{bucketexists}
 \alias{bucketexists}
-\title{Check whether a bucket exists and is accessible with the current authentication keys.}
+\title{Bucket exists?}
 \usage{
 bucketexists(bucket, ...)
 }
@@ -12,8 +12,10 @@ bucketexists(bucket, ...)
 \item{\dots}{Additional arguments passed to \code{\link{s3HTTP}}.}
 }
 \value{
-\code{TRUE} if bucket exists and is accessible, else \code{FALSE}.
-An \code{aws_error} object may be returned if the request failed.
+\code{TRUE} if bucket exists and is accessible, else \code{FALSE}. An \code{aws_error} object may be returned if the request failed.
+}
+\description{
+Check whether a bucket exists and is accessible with the current authentication keys.
 }
 \references{
 \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketHEAD.html}{API Documentation}

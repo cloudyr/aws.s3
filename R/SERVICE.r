@@ -1,4 +1,4 @@
-#' @title bucketlist
+#' @title List Buckets
 #' @description List buckets for authenticated user
 #' @details \code{bucketlist} performs a GET operation on the base s3 endpoint 
 #' and returns a list of all buckets owned by the authenticated 
@@ -27,11 +27,4 @@ bucketlist <- function(...) {
     } else {
         structure(r$Buckets, class = "s3_bucketlist")
     }
-}
-
-print.s3_bucketlist <- function(object, ...) {
-    x <- do.call("rbind.data.frame", object)
-    rownames(x) <- 1:nrow(x)
-    print(x)
-    invisible(object)
 }

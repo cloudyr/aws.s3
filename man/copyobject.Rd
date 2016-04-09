@@ -8,7 +8,7 @@
 copyobject(from_object, to_object = from_object, from_bucket, to_bucket,
   headers = list(), ...)
 
-copybucket(bucket, newbucket, ...)
+copybucket(from_bucket, to_bucket, ...)
 }
 \arguments{
 \item{from_object}{A character string containing the name the object you want to copy.}

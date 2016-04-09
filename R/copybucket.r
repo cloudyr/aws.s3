@@ -33,15 +33,15 @@ copyobject <- function(from_object, to_object = from_object, from_bucket, to_buc
 
 #' @rdname copyobject
 #' @export
-copybucket <- function(bucket, newbucket, ...) {
-    bucket <- get_bucketname(bucket)
-    newbucket <- get_bucketname(newbucket)
-    if (!newbucket %in% sapply(bucketlist(...), `[[`, "Name")) { 
-        n <- putbucket(newbucket)
+copybucket <- function(from_bucket, to_bucket, ...) {
+    from_bucket <- get_bucketname(from_bucket)
+    to_bucket <- get_bucketname(to_bucket)
+    if (!to_bucket %in% sapply(bucketlist(...), `[[`, "Name")) { 
+        n <- putbucket(to_bucket, ...)
     }
-    b <- getbucket(bucket)
+    b <- getbucket(from_bucket, ...)
     # need to create a list of all objects (`getbucket` will return only 1000
     lapply(b, function(x) {
-        copyobject(from_object = b, to_object = b, from_bucket = bucket, to_bucket = newbucket, ...)
+        copyobject(from_object = x, to_object = get_objectkey(x), from_bucket = from_bucket, to_bucket = to_bucket, ...)
     })
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/BUCKET.R
 \name{deletebucket}
 \alias{deletebucket}
-\title{Deletes an S3 bucket.}
+\title{Delete Bucket}
 \usage{
 deletebucket(bucket, ...)
 }
@@ -14,6 +14,9 @@ deletebucket(bucket, ...)
 \value{
 \code{TRUE} if successful, \code{FALSE} otherwise. 
 An \code{aws_error} object may be returned if the request failed.
+}
+\description{
+Deletes an S3 bucket.
 }
 \references{
 \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETE.html}{API Documentation}

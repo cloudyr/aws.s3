@@ -3,7 +3,7 @@
 \name{s3save}
 \alias{s3load}
 \alias{s3save}
-\title{Save/load R object(s) to/from S3}
+\title{Save/load}
 \usage{
 s3save(..., bucket, object, opts = NULL)
 
@@ -16,10 +16,15 @@ s3load(bucket, object, envir = parent.frame(), ...)
 
 \item{object}{For \code{s3save}, a character string of the name of the object you want to save to. For \code{s3load}, a character string of the name of teh object you want to load from S3.}
 
+\item{opts}{Additional arguments passed to \code{\link{s3HTTP}}.}
+
 \item{envir}{An R environment to load objects into. Default is the \code{parent.frame()} from which the function is called.}
 }
 \value{
 If successful, \code{NULL}, otherwise an error object.
+}
+\description{
+Save/load R object(s) to/from S3
 }
 \examples{
 \dontrun{

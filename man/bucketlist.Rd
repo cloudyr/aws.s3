@@ -2,7 +2,7 @@
 % Please edit documentation in R/SERVICE.R
 \name{bucketlist}
 \alias{bucketlist}
-\title{bucketlist}
+\title{List Buckets}
 \usage{
 bucketlist(...)
 }

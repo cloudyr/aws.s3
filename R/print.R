@@ -1,3 +1,10 @@
+print.s3_bucketlist <- function(object, ...) {
+    x <- do.call("rbind.data.frame", object)
+    rownames(x) <- 1:nrow(x)
+    print(x, right = FALSE, row.names = FALSE)
+    invisible(object)
+}
+
 print.s3_bucket <- function(x, ...){
     cat("Bucket:", attributes(x)[["Name"]], "\n\n")
     print(x[names(x) == "Contents"])
