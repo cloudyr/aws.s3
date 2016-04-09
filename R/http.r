@@ -42,15 +42,23 @@ s3HTTP <- function(verb = "GET",
     if (inherits(bucket, "s3_bucket")){
       bucket <- bucket$Name
     }
-    if (region != "us-east-1"){
-      url <- paste0("https://s3-", region, ".amazonaws.com/")
+    if (region %in% c("", "us-east-1")){
+      if (bucket != "") {
+        url <- paste0("https://", bucket, ".s3.amazonaws.com/")
+      } else {
+        url <- paste0("https://s3.amazonaws.com/")
+      }
     } else {
-      url <- "https://s3.amazonaws.com/"
+      if (bucket != "") {
+        url <- paste0("https://", bucket, ".s3-", region, ".amazonaws.com/")
+      } else {
+        url <- paste0("https://s3-", region, ".amazonaws.com/")
+      }
     }
-    if (bucket != "")
-      url <- paste0(url, bucket)
-    if (path != "")
+    
+    if (path != "") {
       url <- paste0(url, path)
+    }
     current <- Sys.time()
     d_timestamp <- format(current, "%Y%m%dT%H%M%SZ", tz = "UTC")
     p <- httr::parse_url(url)
@@ -59,12 +67,12 @@ s3HTTP <- function(verb = "GET",
     canonical_headers <- c(list(host = p$hostname,
                               `x-amz-date` = d_timestamp), headers)
     
-    
-    if(is.null(query) && !is.null(p$query))
+    if (is.null(query) && !is.null(p$query)) {
       query <- p$query
-    if(all(sapply(query, is.null)))
+    }
+    if (all(sapply(query, is.null))) {
       query <- NULL
-    
+    }
     if (key == "") {
         headers$`x-amz-date` <- d_timestamp
         Sig <- list()
@@ -72,7 +80,7 @@ s3HTTP <- function(verb = "GET",
     } else {
         Sig <- aws.signature::signature_v4_auth(
                datetime = d_timestamp,
-               region = region,
+               region = if (region == "") Sys.getenv("AWS_DEFAULT_REGION","us-east-1") else region,
                service = "s3",
                verb = verb,
                action = action,
@@ -109,7 +117,7 @@ s3HTTP <- function(verb = "GET",
     } else if (verb == "POST") {
       r <- httr::POST(url, H, query = query, ...)
     } else if (verb == "PUT") {
-      if(is.character(request_body) && request_body == "") {
+      if (is.character(request_body) && request_body == "") {
         r <- httr::PUT(url, H, query = query, ...)
       } else if (is.character(request_body) && file.exists(request_body)) {
         r <- httr::PUT(url, H, body = httr::upload_file(request_body), query = query, ...)
@@ -119,7 +127,6 @@ s3HTTP <- function(verb = "GET",
     } else if (verb == "OPTIONS") {
       r <- httr::VERB("OPTIONS", url, H, query = query, ...)
     }
-
     
     #if parse_response, use httr's parsed method to extract as XML, then convert to list
     if (parse_response) {
@@ -136,14 +143,14 @@ s3HTTP <- function(verb = "GET",
 
 parse_aws_s3_response <- function(r, Sig, verbose = getOption("verbose")){
   ## Some objects have nothing to parse
-  if(is.null(r$headers$`content-type`)){
-    if(verbose){
+  if (is.null(r$headers$`content-type`)){
+    if (verbose){
       warning("Response has no body, nothing to parse")
     }
     out <- NULL
   } else {
-    if(r$headers$`content-type` == "application/xml"){
-      content <- httr::content(r, "text")
+    if (r$headers$`content-type` == "application/xml"){
+      content <- httr::content(r, as = "text", encoding = "UTF-8")
       response_contents <- try(XML::xmlToList(content), silent = TRUE)
       if (!inherits(response_contents, "try-error")) {
         if (!is.null(response_contents)) {
@@ -159,7 +166,7 @@ parse_aws_s3_response <- function(r, Sig, verbose = getOption("verbose")){
       response <- r
     }
     #raise errors if bad values are passed. 
-    if (httr::http_status(r)$category == "client error") {
+    if (httr::http_error(r)) {
       httr::warn_for_status(r)
       h <- httr::headers(r)
       out <- structure(response, headers = h, class = "aws_error")

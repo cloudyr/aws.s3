@@ -32,7 +32,7 @@ getbucket <- function(bucket,
     query = list(prefix = prefix, delimiter = delimiter, "max-keys" = max, marker = marker)
     r <- s3HTTP(verb = "GET", bucket = bucket, query = query, parse_response = parse_response, ...)
 
-    if (!parse_response){
+    if (!parse_response) {
       out <- r
     } else if (inherits(r, "aws_error")) {
       out <- r
