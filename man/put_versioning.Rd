@@ -7,12 +7,12 @@
 put_versioning(bucket, status = c("Enabled", "Suspended"), ...)
 }
 \arguments{
-\item{bucket}{Character string with the name of the bucket.}
+\item{bucket}{Character string with the name of the bucket, or an object of class \dQuote{s3_bucket}.}
 
 \item{status}{Character string specifying whether versioning should be
 \dQuote{Enabled} or \dQuote{Suspended}.}
 
-\item{...}{Additional arguments passed to \code{\link{s3HTTP}}.}
+\item{\dots}{Additional arguments passed to \code{\link{s3HTTP}}.}
 }
 \value{
 If versioning has never been enabled or suspend, the value is \code{NULL}.

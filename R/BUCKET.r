@@ -1,9 +1,10 @@
-#' @title List the contents of an S3 bucket
-#' @description from the AWS doc: "This implementation of the GET operation returns some
+#' @title Get bucket
+#' @description List the contents of an S3 bucket
+#' @details from the AWS doc: \dQuote{This implementation of the GET operation returns some
 #'  or all (up to 1000) of the objects in a bucket. You can use the request parameters 
-#'  as selection criteria to return a subset of the objects in a bucket."
+#'  as selection criteria to return a subset of the objects in a bucket.}
 #' 
-#' @param bucket Character string with the name of the bucket.
+#' @template bucket
 #' @param prefix Character string that limits the response to keys that begin 
 #' with the specified prefix
 #' @param delimiter Character string used to group keys.  Read the AWS doc for more detail.
@@ -12,9 +13,9 @@
 #' listing objects in a bucket. Amazon S3 returns object keys in alphabetical order, 
 #' starting with key after the marker in order.
 #' @param parse_response logical, should we attempt to parse the response?
-#' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
+#' @template dots
 #'
-#' @return a list of objects in the bucket.  if parse_response = FALSE, a nested list with the
+#' @return A list of objects in the bucket. If \code{parse_response = FALSE}, a nested list with the
 #' complete contents of the AWS response.
 #'
 #' @references \href{https://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGET.html}{API Documentation}
@@ -29,7 +30,8 @@ getbucket <- function(bucket,
                       ...){
     
    
-    query = list(prefix = prefix, delimiter = delimiter, "max-keys" = max, marker = marker)
+    bucket <- get_bucketname(bucket)
+    query <- list(prefix = prefix, delimiter = delimiter, "max-keys" = max, marker = marker)
     r <- s3HTTP(verb = "GET", bucket = bucket, query = query, parse_response = parse_response, ...)
 
     if (!parse_response) {
@@ -38,24 +40,27 @@ getbucket <- function(bucket,
       out <- r
     } else {
         for (i in which(names(r) == "Contents")) {
+          r[[i]][["Bucket"]] <- bucket
           attr(r[[i]], "class") <- "s3_object"
         }
+        att <- r[names(r) != "Contents"]
+        r[names(r) != "Contents"] <- NULL
         out <- structure(r, class = "s3_bucket")
+        attributes(out) <- c(attributes(out), att)
     }
     out
 }
 
 
 print.s3_bucket <- function(x, ...){
-    cat("Bucket:", x$Name, "\n\n")
+    cat("Bucket:", attributes(x)[["Name"]], "\n\n")
     print(x[names(x) == "Contents"])
     invisible(x)
 }
 
 
 get_acl <- function(bucket, ...){
-    if (inherits(bucket, "s3bucket"))
-        bucket <- bucket$Name
+    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = '/?acl',
@@ -71,16 +76,15 @@ get_acl <- function(bucket, ...){
 
 #' @title Get the cross origin resource sharing configuration information for a bucket.
 #'
-#' @param bucket Character string with the name of the bucket.
-#' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
+#' @template bucket
+#' @template dots
 #'
 #' @return A list with cors configuration and rules.
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETcors.html}{API Documentation}
 #' @export
 
 get_cors <- function(bucket, ...){
-    if (inherits(bucket, "s3bucket"))
-        bucket <- bucket$Name
+    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = '/?cors',
@@ -95,16 +99,15 @@ get_cors <- function(bucket, ...){
 
 #' @title Get the lifecycle configuration information for a bucket.
 #'
-#' @param bucket Character string with the name of the bucket.
-#' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
+#' @template bucket
+#' @template dots
 #'
 #' @return A list with lifecycle configuration, if it has been configured.
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETlifecycle.html}{API Documentation}
 #' @export
 
 get_lifecycle <- function(bucket, ...){
-    if (inherits(bucket, "s3bucket"))
-        bucket <- bucket$Name
+    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = '?lifecycle',
@@ -119,16 +122,15 @@ get_lifecycle <- function(bucket, ...){
 
 #' @title Get the bucket access policy for a bucket.
 #'
-#' @param bucket Character string with the name of the bucket.
-#' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
+#' @template bucket
+#' @template dots
 #'
 #' @return A list with a policy, if one has been set.
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETpolicy.html}{API Documentation}
 #' @export
 
 get_policy <- function(bucket, ...){
-    if (inherits(bucket, "s3bucket"))
-        bucket <- bucket$Name
+    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = "?policy",
@@ -142,7 +144,7 @@ get_policy <- function(bucket, ...){
 
 #' @title Get the AWS region location of bucket.
 #'
-#' @param bucket Character string with the name of the bucket.
+#' @template bucket
 #' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
 #'
 #' @return A character string containing the region, if one has been set.
@@ -150,8 +152,7 @@ get_policy <- function(bucket, ...){
 #' @export
 
 get_location <- function(bucket, ...){
-    if (inherits(bucket, "s3bucket"))
-        bucket <- bucket$Name
+    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = "?location",
@@ -164,8 +165,7 @@ get_location <- function(bucket, ...){
 }
 
 get_logging <- function(bucket, ...){
-    if (inherits(bucket, "s3bucket"))
-        bucket <- bucket$Name
+    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = "?logging",
@@ -180,16 +180,15 @@ get_logging <- function(bucket, ...){
 
 #' @title Get the notification configuration for a bucket.
 #'
-#' @param bucket Character string with the name of the bucket.
-#' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
+#' @template bucket
+#' @template dots
 #'
 #' @return A list containing the notification configuration, if one has been set.
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETnotification.html}{API Documentation}
 #' @export
 
 get_notification <- function(bucket, ...){
-    if (inherits(bucket, "s3bucket"))
-        bucket <- bucket$Name
+    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = "?notification",
@@ -204,16 +203,15 @@ get_notification <- function(bucket, ...){
 
 #' @title Get the replication configuration for a bucket.
 #'
-#' @param bucket Character string with the name of the bucket.
-#' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
+#' @template bucket
+#' @template dots
 #'
 #' @return A list containing the replication configuration, if one has been set.
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETreplication.html}{API Documentation}
 #' @export
 
 get_replication <- function(bucket, ...){
-    if (inherits(bucket, "s3bucket"))
-        bucket <- bucket$Name
+    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = "?notification",
@@ -228,16 +226,15 @@ get_replication <- function(bucket, ...){
 
 #' @title Get the tag set for a bucket.
 #'
-#' @param bucket Character string with the name of the bucket.
-#' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
+#' @template bucket
+#' @template dots
 #'
 #' @return A list containing the tag set, if one has been set.
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETtagging.html}{API Documentation}
 #' @export
 
 get_tagging <- function(bucket, ...){
-    if (inherits(bucket, "s3bucket"))
-        bucket <- bucket$Name
+    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = "?tagging",
@@ -252,16 +249,15 @@ get_tagging <- function(bucket, ...){
 
 #' @title Get versions of bucket objects.
 #'
-#' @param bucket Character string with the name of the bucket.
-#' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
+#' @template bucket
+#' @template dots
 #'
 #' @return A list.
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETVersion.html}{API Documentation}
 #' @export
 
 get_versions <- function(bucket, ...){
-    if (inherits(bucket, "s3bucket"))
-        bucket <- bucket$Name
+    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = "?versions",
@@ -275,8 +271,8 @@ get_versions <- function(bucket, ...){
 
 #' @title Get the versioning status of a bucket.
 #'
-#' @param bucket Character string with the name of the bucket.
-#' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
+#' @template bucket
+#' @template dots
 #'
 #' @return If versioning has never been enabled or suspend, the value is \code{NULL}.
 #' Otherwise, the status is returned (either \dQuote{Enabled} or \dQuote{Suspended}).
@@ -284,8 +280,7 @@ get_versions <- function(bucket, ...){
 #' @export
 
 get_versioning <- function(bucket, ...){
-    if (inherits(bucket, "s3bucket"))
-        bucket <- bucket$Name
+    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = "?versioning",
@@ -304,16 +299,15 @@ get_versioning <- function(bucket, ...){
 
 #' @title Get the website configuration for a bucket.
 #'
-#' @param bucket Character string with the name of the bucket.
-#' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
+#' @template bucket
+#' @template dots
 #'
 #' @return A list containing the website configuration, if one has been set.
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETwebsite.html}{API Documentation}
 #' @export
 
 get_website <- function(bucket, ...){
-    if (inherits(bucket, "s3bucket"))
-        bucket <- bucket$Name
+    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = "?website",
@@ -327,16 +321,15 @@ get_website <- function(bucket, ...){
 
 #' @title Get a list of multipart uploads for a bucket.
 #'
-#' @param bucket Character string with the name of the bucket.
-#' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
+#' @template bucket
+#' @template dots
 #'
 #' @return A list containing the multipart upload information.
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/mpUploadListMPUpload.html}{API Documentation}
 #' @export
 
 get_uploads <- function(bucket, ...){
-    if (inherits(bucket, "s3bucket"))
-        bucket <- bucket$Name
+    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = "?uploads",
@@ -350,16 +343,15 @@ get_uploads <- function(bucket, ...){
 
 #' @title Get the requestPayment subresource for a bucket.
 #'
-#' @param bucket Character string with the name of the bucket.
-#' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
+#' @template bucket
+#' @template dots
 #'
 #' @return A list containing the requestPayment information, if set.
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTrequestPaymentGET.html}{API Documentation}
 #' @export
 
 get_requestpayment <- function(bucket, ...){
-    if (inherits(bucket, "s3bucket"))
-        bucket <- bucket$Name
+    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = "?requestPayment",
@@ -374,8 +366,8 @@ get_requestpayment <- function(bucket, ...){
 
 #' @title Deletes an S3 bucket.
 #'
-#' @param bucket Character string with the name of the bucket.
-#' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
+#' @template bucket
+#' @template dots
 #'
 #' @return \code{TRUE} if successful, \code{FALSE} otherwise. 
 #' An \code{aws_error} object may be returned if the request failed.
@@ -383,8 +375,7 @@ get_requestpayment <- function(bucket, ...){
 #' @export
 
 deletebucket <- function(bucket, ...){
-    if (inherits(bucket, "s3bucket"))
-      bucket <- bucket$Name
+    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "DELETE", 
                 bucket = bucket,
                 parse_response = FALSE,
@@ -398,16 +389,15 @@ deletebucket <- function(bucket, ...){
 
 #' @title Delete the cross origin resource sharing configuration information for a bucket.
 #'
-#' @param bucket Character string with the name of the bucket.
-#' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
+#' @template bucket
+#' @template dots
 #'
 #' @return \code{TRUE} if successful, \code{FALSE} otherwise.
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETEcors.html}{API Documentation}
 #' @export
 
 delete_cors <- function(bucket, ...){
-    if (inherits(bucket, "s3bucket"))
-        bucket <- bucket$Name
+    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "DELETE", 
                 bucket = bucket,
                 path = "?cors",
@@ -423,8 +413,8 @@ delete_cors <- function(bucket, ...){
 
 #' @title Delete the lifecycle configuration information for a bucket.
 #'
-#' @param bucket Character string with the name of the bucket.
-#' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
+#' @template bucket
+#' @template dots
 #'
 #' @return \code{TRUE} if successful, \code{FALSE} otherwise.
 #' An \code{aws_error} object may be returned if the request failed.
@@ -432,8 +422,7 @@ delete_cors <- function(bucket, ...){
 #' @export
 
 delete_lifecycle <- function(bucket, ...){
-    if (inherits(bucket, "s3bucket"))
-        bucket <- bucket$Name
+    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "DELETE", 
                 bucket = bucket,
                 path = "?lifecycle",
@@ -449,8 +438,8 @@ delete_lifecycle <- function(bucket, ...){
 
 #' @title Delete the bucket access policy for a bucket.
 #'
-#' @param bucket Character string with the name of the bucket.
-#' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
+#' @template bucket
+#' @template dots
 #'
 #' @return \code{TRUE} if successful, \code{FALSE} otherwise.
 #' An \code{aws_error} object may be returned if the request failed.
@@ -458,8 +447,7 @@ delete_lifecycle <- function(bucket, ...){
 #' @export
 
 delete_policy <- function(bucket, ...){
-    if (inherits(bucket, "s3bucket"))
-        bucket <- bucket$Name
+    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "DELETE", 
                 bucket = bucket,
                 path = "?policy",
@@ -474,8 +462,8 @@ delete_policy <- function(bucket, ...){
 
 #' @title Delete the replication policy for a bucket.
 #'
-#' @param bucket Character string with the name of the bucket.
-#' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
+#' @template bucket
+#' @template dots
 #'
 #' @return \code{TRUE} if successful, \code{FALSE} otherwise.
 #' An \code{aws_error} object may be returned if the request failed.
@@ -483,8 +471,7 @@ delete_policy <- function(bucket, ...){
 #' @export
 
 delete_replication <- function(bucket, ...){
-    if (inherits(bucket, "s3bucket"))
-        bucket <- bucket$Name
+    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "DELETE", 
                 bucket = bucket,
                 path = "?replication",
@@ -499,8 +486,8 @@ delete_replication <- function(bucket, ...){
 
 #' @title Delete the tag set for a bucket.
 #'
-#' @param bucket Character string with the name of the bucket.
-#' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
+#' @template bucket
+#' @template dots
 #'
 #' @return \code{TRUE} if successful, \code{FALSE} otherwise.
 #' An \code{aws_error} object may be returned if the request failed.
@@ -508,8 +495,7 @@ delete_replication <- function(bucket, ...){
 #' @export
 
 delete_tagging <- function(bucket, ...){
-    if (inherits(bucket, "s3bucket"))
-        bucket <- bucket$Name
+    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "DELETE", 
                 bucket = bucket,
                 path = "?tagging",
@@ -525,8 +511,8 @@ delete_tagging <- function(bucket, ...){
 
 #' @title Delete the website configuration for a bucket.
 #'
-#' @param bucket Character string with the name of the bucket.
-#' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
+#' @template bucket
+#' @template dots
 #'
 #' @return \code{TRUE} if successful, \code{FALSE} otherwise.
 #' An \code{aws_error} object may be returned if the request failed.
@@ -534,8 +520,7 @@ delete_tagging <- function(bucket, ...){
 #' @export
 
 delete_website <- function(bucket, ...){
-    if (inherits(bucket, "s3bucket"))
-        bucket <- bucket$Name
+    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "DELETE", 
                 bucket = bucket,
                 path = "?website",
@@ -551,8 +536,8 @@ delete_website <- function(bucket, ...){
 
 #' @title Check whether a bucket exists and is accessible with the current authentication keys.
 #'
-#' @param bucket Character string with the name of the bucket.
-#' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
+#' @template bucket
+#' @template dots
 #'
 #' @return \code{TRUE} if bucket exists and is accessible, else \code{FALSE}.
 #' An \code{aws_error} object may be returned if the request failed.
@@ -560,8 +545,7 @@ delete_website <- function(bucket, ...){
 #' @export
 
 bucketexists <- function(bucket, ...){
-    if (inherits(bucket, "s3bucket"))
-        bucket <- bucket$Name
+    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "HEAD", 
                 bucket = bucket,
                 ...)
@@ -575,16 +559,15 @@ bucketexists <- function(bucket, ...){
 
 #' @title Creates a new S3 bucket.
 #'
-#' @param bucket Character string with the name of the bucket you want to create.
-#' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
+#' @template bucket
+#' @template dots
 #'
 #' @return \code{TRUE} if successful, aws_error details if not.
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUT.html}{API Documentation}
 #' @export
 
 putbucket <- function(bucket, ...){
-    if (inherits(bucket, "s3bucket"))
-        bucket <- bucket$Name
+    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
                 parse_response = FALSE,
@@ -599,8 +582,7 @@ putbucket <- function(bucket, ...){
 # put_acl listed in OBJECT.r
 
 put_cors <- function(bucket, ...){
-    if (inherits(bucket, "s3bucket"))
-        bucket <- bucket$Name
+    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
                 path = "?cors",
@@ -613,8 +595,7 @@ put_cors <- function(bucket, ...){
 }
 
 put_lifecycle <- function(bucket, ...){
-    if (inherits(bucket, "s3bucket"))
-        bucket <- bucket$Name
+    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
                 action = "?lifecycle",
@@ -627,8 +608,7 @@ put_lifecycle <- function(bucket, ...){
 }
 
 put_policy <- function(bucket, ...){
-    if (inherits(bucket, "s3bucket"))
-        bucket <- bucket$Name
+    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
                 path = "?policy",
@@ -641,8 +621,7 @@ put_policy <- function(bucket, ...){
 }
 
 put_logging <- function(bucket, ...){
-    if (inherits(bucket, "s3bucket"))
-        bucket <- bucket$Name
+    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
                 path = "?logging",
@@ -655,8 +634,7 @@ put_logging <- function(bucket, ...){
 }
 
 put_notification <- function(bucket, ...){
-    if (inherits(bucket, "s3bucket"))
-        bucket <- bucket$Name
+    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
                 path = "?notification",
@@ -669,8 +647,7 @@ put_notification <- function(bucket, ...){
 }
 
 put_tagging <- function(bucket, ...){
-    if (inherits(bucket, "s3bucket"))
-        bucket <- bucket$Name
+    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
                 path = "?tagging",
@@ -684,10 +661,10 @@ put_tagging <- function(bucket, ...){
 
 #' @title Set the versioning status of a bucket.
 #'
-#' @param bucket Character string with the name of the bucket.
+#' @template bucket
 #' @param status Character string specifying whether versioning should be
 #' \dQuote{Enabled} or \dQuote{Suspended}.
-#' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
+#' @template dots
 #'
 #' @return If versioning has never been enabled or suspend, the value is \code{NULL}.
 #' Otherwise, the status is returned (either \dQuote{Enabled} or \dQuote{Suspended}).
@@ -695,8 +672,7 @@ put_tagging <- function(bucket, ...){
 #' @export
 
 put_versioning <- function(bucket, status = c("Enabled", "Suspended"), ...){
-    if (inherits(bucket, "s3bucket"))
-        bucket <- bucket$Name
+    bucket <- get_bucketname(bucket)
     b <- paste0(
 '<VersioningConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/"> 
   <Status>',match.arg(status),'</Status> 
@@ -719,8 +695,7 @@ put_versioning <- function(bucket, status = c("Enabled", "Suspended"), ...){
 }
 
 put_website <- function(bucket, ...){
-    if (inherits(bucket, "s3bucket"))
-        bucket <- bucket$Name
+    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
                 path = "?website",
@@ -733,8 +708,7 @@ put_website <- function(bucket, ...){
 }
 
 put_requestpayment <- function(bucket, ...){
-    if (inherits(bucket, "s3bucket"))
-        bucket <- bucket$Name
+    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
                 path = "?requestPayment",

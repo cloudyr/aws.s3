@@ -2,19 +2,22 @@
 % Please edit documentation in R/OBJECT.R
 \name{get_torrent}
 \alias{get_torrent}
-\title{Retrieves a Bencoded dictionary (BitTorrent) for an object from an S3 bucket.}
+\title{Get object torrent}
 \usage{
-get_torrent(bucket, object, ...)
+get_torrent(object, bucket, ...)
 }
 \arguments{
-\item{bucket}{Character string with the name of the bucket.}
+\item{object}{Character string with the object key, or an object of class \dQuote{s3_object}. In most cases, if \code{object} is specified as the latter, \code{bucket} can be omitted because the bucket name will be extracted from \dQuote{Bucket} slot in \code{object}.}
 
-\item{object}{Character string of the name of the object you want to get.}
+\item{bucket}{Character string with the name of the bucket, or an object of class \dQuote{s3_bucket}.}
 
-\item{...}{additional arguments passed to \code{\link{s3HTTP}}.}
+\item{\dots}{Additional arguments passed to \code{\link{s3HTTP}}.}
 }
 \value{
 Something.
+}
+\description{
+Retrieves a Bencoded dictionary (BitTorrent) for an object from an S3 bucket.
 }
 \references{
 \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectGETtorrent.html}{API Documentation}

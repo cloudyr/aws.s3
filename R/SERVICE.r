@@ -1,15 +1,13 @@
-#' @title List buckets for authenticated user
-#'
-#' @description bucketlist performs a GET operation on the base s3 endpoint 
+#' @title bucketlist
+#' @description List buckets for authenticated user
+#' @details \code{bucketlist} performs a GET operation on the base s3 endpoint 
 #' and returns a list of all buckets owned by the authenticated 
-#' sender of the request.
-#' 
-#' @details If authentication is successful, this function provides a list of 
+#' sender of the request. If authentication is successful, this function provides a list of 
 #' buckets available to the authenticated user. In this way, it can serve as 
 #' a \dQuote{hello world!} function, to confirm that one's authentication 
 #' credentials are working correctly.
 #' 
-#' @param ... additional arguments passed to \code{\link{s3HTTP}}
+#' @template dots
 #'
 #' @return a list of buckets.  if passed with default settings \dQuote{parse_response = TRUE}
 #' the response will list the name and creationdate of all buckets owned by the request
@@ -20,7 +18,6 @@
 #' @keywords service
 #' 
 #' @export
-
 bucketlist <- function(...) {
     r <- s3HTTP(verb = "GET", ...)
     #errors and unparsed

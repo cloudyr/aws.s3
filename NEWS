@@ -1,3 +1,7 @@
-# CHANGES TO aws.s3 0.1 #
+# CHANGES TO aws.s3 0.1.17 #
+
+* The order of `bucket` and `object` names was swapped in most object-related functions and the Bucket name has been added to the object lists returned by `getbucket()`. This means that `bucket` can be omitted when `object` is an object of class "s3_object".
+
+# CHANGES TO aws.s3 0.1.1 #
 
 * Initial release.

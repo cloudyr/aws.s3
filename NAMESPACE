@@ -2,6 +2,7 @@
 
 export(bucketexists)
 export(bucketlist)
+export(copybucket)
 export(copyobject)
 export(delete_cors)
 export(delete_lifecycle)

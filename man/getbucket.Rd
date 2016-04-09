@@ -2,13 +2,13 @@
 % Please edit documentation in R/BUCKET.R
 \name{getbucket}
 \alias{getbucket}
-\title{List the contents of an S3 bucket}
+\title{Get bucket}
 \usage{
 getbucket(bucket, prefix = NULL, delimiter = NULL, max = NULL,
   marker = NULL, parse_response = TRUE, ...)
 }
 \arguments{
-\item{bucket}{Character string with the name of the bucket.}
+\item{bucket}{Character string with the name of the bucket, or an object of class \dQuote{s3_bucket}.}
 
 \item{prefix}{Character string that limits the response to keys that begin 
 with the specified prefix}
@@ -23,16 +23,19 @@ starting with key after the marker in order.}
 
 \item{parse_response}{logical, should we attempt to parse the response?}
 
-\item{...}{Additional arguments passed to \code{\link{s3HTTP}}.}
+\item{\dots}{Additional arguments passed to \code{\link{s3HTTP}}.}
 }
 \value{
-a list of objects in the bucket.  if parse_response = FALSE, a nested list with the
+A list of objects in the bucket. If \code{parse_response = FALSE}, a nested list with the
 complete contents of the AWS response.
 }
 \description{
-from the AWS doc: "This implementation of the GET operation returns some
+List the contents of an S3 bucket
+}
+\details{
+from the AWS doc: \dQuote{This implementation of the GET operation returns some
  or all (up to 1000) of the objects in a bucket. You can use the request parameters 
- as selection criteria to return a subset of the objects in a bucket."
+ as selection criteria to return a subset of the objects in a bucket.}
 }
 \references{
 \href{https://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGET.html}{API Documentation}
