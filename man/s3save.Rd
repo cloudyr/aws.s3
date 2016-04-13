@@ -29,11 +29,11 @@ Save/load R object(s) to/from S3
 \examples{
 \dontrun{
 # create bucket
-b <- putbucket("myexamplebucket")
+b <- put_bucket("myexamplebucket")
 
 # save a dataset to the bucket
 s3save(mtcars, bucket = b, object = "mtcars")
-getbucket(b)
+get_bucket(b)
 
 # load the data from bucket
 s3load(bucket = b, object = "mtcars")
