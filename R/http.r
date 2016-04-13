@@ -57,22 +57,22 @@ s3HTTP <- function(verb = "GET",
     }
     if (region %in% c("us-east-1")){
       if (bucketname != "") {
-        url <- paste0("https://", bucketname, ".s3.amazonaws.com/")
+        url <- paste0("https://", bucketname, ".s3.amazonaws.com")
       } else {
-        url <- paste0("https://s3.amazonaws.com/")
+        url <- paste0("https://s3.amazonaws.com")
       }
     } else {
       if(Sys.getenv("AWS_DEFAULT_REGION") == ""){
         
       }
       if (bucketname != "") {
-        url <- paste0("https://", bucketname, ".s3-", region, ".amazonaws.com/")
+        url <- paste0("https://", bucketname, ".s3-", region, ".amazonaws.com")
       } else {
-        url <- paste0("https://s3-", region, ".amazonaws.com/")
+        url <- paste0("https://s3-", region, ".amazonaws.com")
       }
     }
     if (path != "") {
-      url <- paste0(url, path)
+      url <- paste(url, path, sep = '/')
     }
     current <- Sys.time()
     d_timestamp <- format(current, "%Y%m%dT%H%M%SZ", tz = "UTC")
@@ -107,8 +107,6 @@ s3HTTP <- function(verb = "GET",
         headers$Authorization <- Sig$SignatureHeader
         H <- do.call(httr::add_headers, headers)
     }
-    
-    message(url)
     
     if (verb == "GET") {
       r <- httr::GET(url, H, query = query)
