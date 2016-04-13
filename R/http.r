@@ -71,7 +71,6 @@ s3HTTP <- function(verb = "GET",
         url <- paste0("https://s3-", region, ".amazonaws.com")
       }
     }
-    message(url)
     if (path != "") {
       # first character is a /
       if(grepl('^[\\/].*', path)){
@@ -115,7 +114,7 @@ s3HTTP <- function(verb = "GET",
     }
     
     if (verb == "GET") {
-      r <- httr::GET(url, H, query = query)
+      r <- httr::GET(url, H, query = query, ...)
     } else if (verb == "HEAD") {
       r <- httr::HEAD(url, H, query = query, ...)
       s <- httr::http_status(r)
