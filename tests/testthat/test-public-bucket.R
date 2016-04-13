@@ -4,7 +4,8 @@ test_that("basic usage of get_bucket for anonymous user", {
   ex <- get_bucket(
     bucket = '1000genomes',
     key = "",
-    secret = "")
+    secret = "",
+    region = 'us-east-1')
   
   expect_is(ex, "s3_bucket")
   expect_true(
@@ -17,7 +18,10 @@ test_that("basic usage of get_bucket for anonymous user", {
 
 test_that("intentional bad keys", {
   suppressWarnings(bad <- get_bucket(
-    bucket = 'hpk', key = 'THIS IS A BAD KEY', secret = 'THIS IS A BAD SECRET'
+    bucket = 'hpk',
+    key = 'THIS IS A BAD KEY',
+    secret = 'THIS IS A BAD SECRET',
+    region = 'us-east-1'
   ))
   expect_is(bad, "aws_error")
   expect_equal(bad$Code, "InvalidAccessKeyId")
