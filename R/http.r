@@ -40,16 +40,16 @@ s3HTTP <- function(verb = "GET",
                    secret = Sys.getenv("AWS_SECRET_ACCESS_KEY"), 
                    parse_response = TRUE, 
                    ...) {
-    bucket <- get_bucketname(bucket)
+    bucketname <- get_bucketname(bucket)
     if (region %in% c("", "us-east-1")){
-      if (bucket != "") {
-        url <- paste0("https://", bucket, ".s3.amazonaws.com")
+      if (bucketname != "") {
+        url <- paste0("https://", bucketname, ".s3.amazonaws.com")
       } else {
         url <- paste0("https://s3.amazonaws.com")
       }
     } else {
-      if (bucket != "") {
-        url <- paste0("https://", bucket, ".s3-", region, ".amazonaws.com")
+      if (bucketname != "") {
+        url <- paste0("https://", bucketname, ".s3-", region, ".amazonaws.com")
       } else {
         url <- paste0("https://s3-", region, ".amazonaws.com")
       }
