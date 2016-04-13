@@ -44,12 +44,12 @@ s3HTTP <- function(verb = "GET",
     # deterimining the region that should be used
     bucketregion <- attr(bucket, "x-amz-bucket-region")
     if(is.null(region)){
-      if(Sys.getenv("AWS_DEFAULT_REGION") != ""){
+      if(!is.null(bucketregion)){
         # if it is null then try the environmental settings
-        region <- Sys.getenv("AWS_DEFAULT_REGION")
-      } else if(!is.null(bucketregion)) {
-        # if that is blank the use the bucket region
         region = bucketregion
+      } else if(Sys.getenv("AWS_DEFAULT_REGION") != "") {
+        # if that is blank the use the bucket region
+        region <- Sys.getenv("AWS_DEFAULT_REGION")
       } else {
         # then used us-east-1
         region = "us-east-1"
