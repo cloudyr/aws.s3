@@ -71,8 +71,14 @@ s3HTTP <- function(verb = "GET",
         url <- paste0("https://s3-", region, ".amazonaws.com")
       }
     }
+    message(url)
     if (path != "") {
-      url <- paste(url, path, sep = '/')
+      # first character is a /
+      if(grepl('^[\\/].*', path)){
+        url <- paste0(url, path)
+      } else {
+        url <- paste(url, path, sep = '/')
+      }
     }
     current <- Sys.time()
     d_timestamp <- format(current, "%Y%m%dT%H%M%SZ", tz = "UTC")
