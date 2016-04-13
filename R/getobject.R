@@ -35,13 +35,13 @@
 #' @export
 get_object <- function(object, bucket, headers = list(), ...) {
     if (missing(bucket)) {
-        bucket <- get_bucketname(object)
+        bucketname <- get_bucketname(object)
     } else {
-        bucket <- get_bucketname(bucket)
+        bucketname <- get_bucketname(bucket)
     }
     object <- get_objectkey(object)
     r <- s3HTTP(verb = "GET", 
-                bucket = bucket,
+                bucket = bucketname,
                 path = paste0("/", object),
                 headers = headers,
                 ...)
