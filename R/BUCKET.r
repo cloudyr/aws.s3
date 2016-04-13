@@ -29,9 +29,9 @@ get_bucket <- function(bucket,
                       ...){
     
    
-    bucket <- get_bucketname(bucket)
+    bucketname <- get_bucketname(bucket)
     query <- list(prefix = prefix, delimiter = delimiter, "max-keys" = max, marker = marker)
-    r <- s3HTTP(verb = "GET", bucket = bucket, query = query, parse_response = parse_response, ...)
+    r <- s3HTTP(verb = "GET", bucket = bucketname, query = query, parse_response = parse_response, ...)
 
     if (!parse_response) {
       out <- r
@@ -61,9 +61,9 @@ get_bucket <- function(bucket,
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETE.html}{API Documentation}
 #' @export
 delete_bucket <- function(bucket, ...){
-    bucket <- get_bucketname(bucket)
+    bucketname <- get_bucketname(bucket)
     r <- s3HTTP(verb = "DELETE", 
-                bucket = bucket,
+                bucket = bucketname,
                 parse_response = FALSE,
                 ...)
     if (inherits(r, "aws_error")) {
@@ -84,9 +84,9 @@ delete_bucket <- function(bucket, ...){
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETlocation.html}{API Documentation}
 #' @export
 get_location <- function(bucket, ...){
-    bucket <- get_bucketname(bucket)
+    bucketname <- get_bucketname(bucket)
     r <- s3HTTP(verb = "GET", 
-                bucket = bucket,
+                bucket = bucketname,
                 path = "?location",
                 ...)
     if (inherits(r, "aws_error")) {
@@ -107,9 +107,9 @@ get_location <- function(bucket, ...){
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/mpUploadListMPUpload.html}{API Documentation}
 #' @export
 get_uploads <- function(bucket, ...){
-    bucket <- get_bucketname(bucket)
+    bucketname <- get_bucketname(bucket)
     r <- s3HTTP(verb = "GET", 
-                bucket = bucket,
+                bucket = bucketname,
                 path = "?uploads",
                 ...)
     if (inherits(r, "aws_error")) {
@@ -130,9 +130,9 @@ get_uploads <- function(bucket, ...){
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketHEAD.html}{API Documentation}
 #' @export
 bucket_exists <- function(bucket, ...){
-    bucket <- get_bucketname(bucket)
+    bucketname <- get_bucketname(bucket)
     r <- s3HTTP(verb = "HEAD", 
-                bucket = bucket,
+                bucket = bucketname,
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -151,9 +151,9 @@ bucket_exists <- function(bucket, ...){
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUT.html}{API Documentation}
 #' @export
 put_bucket <- function(bucket, ...){
-    bucket <- get_bucketname(bucket)
+    bucketname <- get_bucketname(bucket)
     r <- s3HTTP(verb = "PUT", 
-                bucket = bucket,
+                bucket = bucketname,
                 parse_response = FALSE,
                 ...)
     if (inherits(r, "aws_error")) {
