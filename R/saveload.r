@@ -31,9 +31,9 @@ s3save <- function(..., bucket, object, opts = NULL) {
     on.exit(unlink(tmp))
     save(..., file = tmp)
     if (is.null(opts)) {
-        r <- put_object(file = tmp, bucket = bucketname, object = object)
+        r <- put_object(file = tmp, bucket = bucket, object = object)
     } else {
-        r <- do.call("put_object", c(list(file = tmp, bucket = bucketname, object = object), opts))
+        r <- do.call("put_object", c(list(file = tmp, bucket = bucket, object = object), opts))
     }
     if (inherits(r, "aws-error")) {
         return(r)
