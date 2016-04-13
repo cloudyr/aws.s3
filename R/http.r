@@ -48,6 +48,9 @@ s3HTTP <- function(verb = "GET",
         url <- paste0("https://s3.amazonaws.com")
       }
     } else {
+      if(Sys.getenv("AWS_DEFAULT_REGION") == ""){
+        region = attr(bucket, "x-amz-bucket-region")
+      }
       if (bucketname != "") {
         url <- paste0("https://", bucketname, ".s3-", region, ".amazonaws.com")
       } else {
