@@ -35,27 +35,49 @@ s3HTTP <- function(verb = "GET",
                    query = NULL,
                    headers = list(), 
                    request_body = "",
-                   region = Sys.getenv("AWS_DEFAULT_REGION","us-east-1"), 
+                   region = NULL, 
                    key = Sys.getenv("AWS_ACCESS_KEY_ID"), 
                    secret = Sys.getenv("AWS_SECRET_ACCESS_KEY"), 
                    parse_response = TRUE, 
                    ...) {
-    bucket <- get_bucketname(bucket)
-    if (region %in% c("", "us-east-1")){
-      if (bucket != "") {
-        url <- paste0("https://", bucket, ".s3.amazonaws.com")
+    bucketname <- get_bucketname(bucket)
+    # deterimining the region that should be used
+    bucketregion <- attr(bucket, "x-amz-bucket-region")
+    if(is.null(region)){
+      if(!is.null(bucketregion)){
+        # if it is null then try the environmental settings
+        region = bucketregion
+      } else if(Sys.getenv("AWS_DEFAULT_REGION") != "") {
+        # if that is blank the use the bucket region
+        region <- Sys.getenv("AWS_DEFAULT_REGION")
+      } else {
+        # then used us-east-1
+        region = "us-east-1"
+      }
+    }
+    if (region %in% c("us-east-1")){
+      if (bucketname != "") {
+        url <- paste0("https://", bucketname, ".s3.amazonaws.com")
       } else {
         url <- paste0("https://s3.amazonaws.com")
       }
     } else {
-      if (bucket != "") {
-        url <- paste0("https://", bucket, ".s3-", region, ".amazonaws.com")
+      if(Sys.getenv("AWS_DEFAULT_REGION") == ""){
+        
+      }
+      if (bucketname != "") {
+        url <- paste0("https://", bucketname, ".s3-", region, ".amazonaws.com")
       } else {
         url <- paste0("https://s3-", region, ".amazonaws.com")
       }
     }
     if (path != "") {
-      url <- paste0(url, path)
+      # first character is a /
+      if(grepl('^[\\/].*', path)){
+        url <- paste0(url, path)
+      } else {
+        url <- paste(url, path, sep = '/')
+      }
     }
     current <- Sys.time()
     d_timestamp <- format(current, "%Y%m%dT%H%M%SZ", tz = "UTC")
@@ -77,7 +99,7 @@ s3HTTP <- function(verb = "GET",
     } else {
         Sig <- aws.signature::signature_v4_auth(
                datetime = d_timestamp,
-               region = if (region == "") Sys.getenv("AWS_DEFAULT_REGION","us-east-1") else region,
+               region = region,
                service = "s3",
                verb = verb,
                action = action,
