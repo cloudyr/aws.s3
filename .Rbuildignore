@@ -2,5 +2,6 @@
 README.Rmd
 drat.sh
 knitreadme.sh
+man-roxygen/
 ^.*\.Rproj$
 ^\.Rproj\.user$
