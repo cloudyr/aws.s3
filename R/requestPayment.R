@@ -9,7 +9,6 @@
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTrequestPaymentGET.html}{API Documentation}
 #' @export
 get_requestpayment <- function(bucket, ...){
-    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = "?requestPayment",
@@ -24,7 +23,6 @@ get_requestpayment <- function(bucket, ...){
 #' @rdname requestpayment
 #' @export
 put_requestpayment <- function(bucket, ...){
-    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
                 path = "?requestPayment",

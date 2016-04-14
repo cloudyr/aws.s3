@@ -26,7 +26,6 @@ s3save <- function(..., bucket, object, opts = NULL) {
     if (inherits(object, "s3_object")) {
         object <- object$Key
     }
-    bucketname <- get_bucketname(bucket)
     tmp <- tempfile(fileext = ".Rdata")
     on.exit(unlink(tmp))
     save(..., file = tmp)
@@ -45,10 +44,9 @@ s3save <- function(..., bucket, object, opts = NULL) {
 #' @rdname s3save
 #' @export
 s3load <- function(bucket, object, envir = parent.frame(), ...) {
-    bucketname <- get_bucketname(bucket)
     tmp <- tempfile(fileext = ".Rdata")
     on.exit(unlink(tmp))
-    r <- getobject(bucket = bucketname, object = object, ...)
+    r <- get_object(bucket = bucket, object = object, ...)
     if (inherits(r, "aws-error")) {
         return(r)
     } else {

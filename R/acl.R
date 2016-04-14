@@ -1,6 +1,5 @@
 get_acl <- function(object, bucket, ...) {
     if (!missing(bucket)) {
-        bucket <- get_bucketname(bucket)
         r <- s3HTTP(verb = "GET", 
                     bucket = bucket,
                     path = "?acl",
@@ -27,8 +26,6 @@ get_acl <- function(object, bucket, ...) {
 putobject_acl <- function(object, bucket, ...) {
     if (missing(bucket)) {
         bucket <- get_bucketname(object)
-    } else {
-        bucket <- get_bucketname(bucket)
     }
     object <- get_objectkey(object)
     if (missing(object)) {

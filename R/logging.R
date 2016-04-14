@@ -1,5 +1,4 @@
 get_logging <- function(bucket, ...){
-    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = "?logging",
@@ -12,7 +11,6 @@ get_logging <- function(bucket, ...){
 }
 
 put_logging <- function(bucket, ...){
-    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
                 path = "?logging",

@@ -35,13 +35,11 @@
 #' @export
 get_object <- function(object, bucket, headers = list(), ...) {
     if (missing(bucket)) {
-        bucketname <- get_bucketname(object)
-    } else {
-        bucketname <- get_bucketname(bucket)
-    }
+        bucket <- get_bucketname(object)
+    } 
     object <- get_objectkey(object)
     r <- s3HTTP(verb = "GET", 
-                bucket = bucketname,
+                bucket = bucket,
                 path = paste0("/", object),
                 headers = headers,
                 ...)
@@ -62,9 +60,7 @@ save_object <- function(object, bucket, file, headers = list(), ...) {
     }
     if (missing(bucket)) {
         bucket <- get_bucketname(object)
-    } else {
-        bucket <- get_bucketname(bucket)
-    }
+    } 
     object <- get_objectkey(object)
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
@@ -84,9 +80,7 @@ save_object <- function(object, bucket, file, headers = list(), ...) {
 head_object <- function(object, bucket, ...) {
     if (missing(bucket)) {
         bucket <- get_bucketname(object)
-    } else {
-        bucket <- get_bucketname(bucket)
-    }
+    } 
     object <- get_objectkey(object)
     r <- s3HTTP(verb = "HEAD", 
                 bucket = bucket,
@@ -112,9 +106,7 @@ head_object <- function(object, bucket, ...) {
 get_torrent <- function(object, bucket, ...) {
     if (missing(bucket)) {
         bucket <- get_bucketname(object)
-    } else {
-        bucket <- get_bucketname(bucket)
-    }
+    } 
     object <- get_objectkey(object)
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,

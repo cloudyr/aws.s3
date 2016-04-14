@@ -11,7 +11,6 @@
 #' \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETcors.html}{API Documentation}
 #' @export
 get_cors <- function(bucket, ...){
-    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = '/?cors',
@@ -26,7 +25,6 @@ get_cors <- function(bucket, ...){
 #' @rdname cors
 #' @export
 put_cors <- function(bucket, ...){
-    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
                 path = "?cors",
@@ -41,7 +39,6 @@ put_cors <- function(bucket, ...){
 #' @rdname cors
 #' @export
 delete_cors <- function(bucket, ...){
-    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "DELETE", 
                 bucket = bucket,
                 path = "?cors",

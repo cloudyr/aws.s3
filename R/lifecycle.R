@@ -12,7 +12,6 @@
 #' \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETElifecycle.html}{API Documentation}
 #' @export
 get_lifecycle <- function(bucket, ...){
-    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = '?lifecycle',
@@ -27,7 +26,6 @@ get_lifecycle <- function(bucket, ...){
 #' @rdname lifecycle
 #' @export
 put_lifecycle <- function(bucket, ...){
-    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
                 action = "?lifecycle",
@@ -42,7 +40,6 @@ put_lifecycle <- function(bucket, ...){
 #' @rdname lifecycle
 #' @export
 delete_lifecycle <- function(bucket, ...){
-    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "DELETE", 
                 bucket = bucket,
                 path = "?lifecycle",

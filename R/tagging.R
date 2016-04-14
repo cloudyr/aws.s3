@@ -12,7 +12,6 @@
 #' \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETEtagging.html}{API Documentation}
 #' @export
 get_tagging <- function(bucket, ...){
-    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = "?tagging",
@@ -27,7 +26,6 @@ get_tagging <- function(bucket, ...){
 #' @rdname tagging
 #' @export
 put_tagging <- function(bucket, ...){
-    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
                 path = "?tagging",
@@ -42,7 +40,6 @@ put_tagging <- function(bucket, ...){
 #' @rdname tagging
 #' @export
 delete_tagging <- function(bucket, ...){
-    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "DELETE", 
                 bucket = bucket,
                 path = "?tagging",

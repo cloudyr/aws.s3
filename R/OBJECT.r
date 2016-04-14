@@ -18,7 +18,6 @@ put_object <- function(file, object, bucket, headers = list(), ...) {
     } else {
         object <- get_objectkey(object)
     }
-
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
                 path = paste0(object),
@@ -38,9 +37,7 @@ put_object <- function(file, object, bucket, headers = list(), ...) {
 post_object <- function(object, bucket, ...) {
     if (missing(bucket)) {
         bucket <- get_bucketname(object)
-    } else {
-        bucket <- get_bucketname(bucket)
-    }
+    } 
     object <- get_objectkey(object)
     r <- s3HTTP(verb = "POST", 
                 bucket = bucket,
@@ -69,9 +66,8 @@ post_object <- function(object, bucket, ...) {
 delete_object <- function(object, bucket, ...) {
     if (missing(bucket)) {
         bucket <- get_bucketname(object)
-    } else {
-        bucket <- get_bucketname(bucket)
     }
+    regionname <- get_region(bucket)
     object <- get_objectkey(object)
     if (length(object) == 1) {
         r <- s3HTTP(verb = "DELETE", 
@@ -126,9 +122,7 @@ delete_object <- function(object, bucket, ...) {
 opts_object <- function(object, bucket, ...) {
     if (missing(bucket)) {
         bucket <- get_bucketname(object)
-    } else {
-        bucket <- get_bucketname(bucket)
-    }
+    } 
     object <- get_objectkey(object)
     r <- s3HTTP(verb = "OPTIONS", 
                 bucket = bucket,

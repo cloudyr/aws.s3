@@ -2,7 +2,6 @@
 
 get_bucketname <- function(x, ...) {
     UseMethod("get_bucketname")
-    
 }
 
 get_bucketname.character <- function(x, ...) {
@@ -18,7 +17,22 @@ get_bucketname.s3_object <- function(x, ...) {
 }
 
 
-# get_bucketname
+# get_region
+
+get_region <- function(x, ...) {
+    UseMethod("get_region")
+}
+
+get_region.default <- function(x, ...) {
+    NULL
+}
+
+get_region.s3_bucket <- function(x, ...) {
+    attributes(x)[["x-amz-bucket-region"]]
+}
+
+
+# get_objectkey
 
 get_objectkey <- function(x, ...) {
     UseMethod("get_objectkey")

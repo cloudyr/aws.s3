@@ -12,7 +12,6 @@
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETEwebsite.html}{API Documentation}
 #' @export
 delete_website <- function(bucket, ...){
-    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "DELETE", 
                 bucket = bucket,
                 path = "?website",
@@ -28,7 +27,6 @@ delete_website <- function(bucket, ...){
 #' @rdname website
 #' @export
 put_website <- function(bucket, ...){
-    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
                 path = "?website",
@@ -43,7 +41,6 @@ put_website <- function(bucket, ...){
 #' @rdname website
 #' @export
 get_website <- function(bucket, ...){
-    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = "?website",

@@ -1,3 +1,7 @@
+# CHANGES TO aws.s3 0.1.21 #
+
+* Operations on non-default buckets (outside "us-east-1") now infer bucket region from bucket object. Some internals were simplified to better handle this. (h/t Tyler Hunt, #47)
+
 # CHANGES TO aws.s3 0.1.18 #
 
 * All functions now use snake case (e.g., `get_object()`). Previously available functions that did not conform to this format have been deprecated. They continue to work, but issue a warning. (#28)

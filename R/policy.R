@@ -11,7 +11,6 @@
 #' \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETEpolicy.html}{API Documentation}
 #' @export
 get_policy <- function(bucket, ...){
-    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = "?policy",
@@ -26,7 +25,6 @@ get_policy <- function(bucket, ...){
 #' @rdname policy
 #' @export
 put_policy <- function(bucket, ...){
-    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
                 path = "?policy",
@@ -41,7 +39,6 @@ put_policy <- function(bucket, ...){
 #' @rdname policy
 #' @export
 delete_policy <- function(bucket, ...){
-    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "DELETE", 
                 bucket = bucket,
                 path = "?policy",

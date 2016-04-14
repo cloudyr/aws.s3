@@ -2,10 +2,10 @@ context("Public bucket tests")
 
 test_that("basic usage of get_bucket for anonymous user", {
   ex <- get_bucket(
-    bucket = '1000genomes',
+    bucket = "1000genomes",
     key = "",
     secret = "",
-    region = 'us-east-1')
+    region = "us-east-1")
   
   expect_is(ex, "s3_bucket")
   expect_true(
@@ -18,15 +18,15 @@ test_that("basic usage of get_bucket for anonymous user", {
 
 test_that("intentional bad keys", {
   suppressWarnings(bad <- get_bucket(
-    bucket = 'hpk',
-    key = 'THIS IS A BAD KEY',
-    secret = 'THIS IS A BAD SECRET',
-    region = 'us-east-1'
+    bucket = "hpk",
+    key = "THIS IS A BAD KEY",
+    secret = "THIS IS A BAD SECRET",
+    region = "us-east-1"
   ))
   expect_is(bad, "aws_error")
   expect_equal(bad$Code, "InvalidAccessKeyId")
   expect_warning(
-    bucketlist(key = 'THIS IS A BAD KEY', secret = 'THIS IS A BAD SECRET'),
+    bucketlist(key = "THIS IS A BAD KEY", secret = "THIS IS A BAD SECRET"),
     regexp = "Forbidden (HTTP 403)", fixed = TRUE
   )
 })

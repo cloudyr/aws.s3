@@ -12,7 +12,6 @@
 #' \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETEreplication.html}{API Documentation}
 #' @export
 get_replication <- function(bucket, ...){
-    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = "?notification",
@@ -27,7 +26,6 @@ get_replication <- function(bucket, ...){
 #' @rdname replication
 #' @export
 delete_replication <- function(bucket, ...){
-    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "DELETE", 
                 bucket = bucket,
                 path = "?replication",

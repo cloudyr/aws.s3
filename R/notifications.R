@@ -11,7 +11,6 @@
 #' \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUTnotification.html}{API Documentation: PUT}
 #' @export
 get_notification <- function(bucket, ...){
-    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = "?notification",
@@ -26,7 +25,6 @@ get_notification <- function(bucket, ...){
 #' @rdname notifications
 #' @export
 put_notification <- function(bucket, ...){
-    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
                 path = "?notification",

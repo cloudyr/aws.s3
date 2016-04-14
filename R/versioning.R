@@ -16,7 +16,6 @@
 #' \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUTVersioningStatus.html}{API Documentation}
 #' @export
 get_versions <- function(bucket, ...){
-    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = "?versions",
@@ -31,7 +30,6 @@ get_versions <- function(bucket, ...){
 #' @rdname versions
 #' @export
 get_versioning <- function(bucket, ...){
-    bucket <- get_bucketname(bucket)
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = "?versioning",
@@ -50,7 +48,6 @@ get_versioning <- function(bucket, ...){
 #' @rdname versions
 #' @export
 put_versioning <- function(bucket, status = c("Enabled", "Suspended"), ...){
-    bucket <- get_bucketname(bucket)
     b <- paste0(
 '<VersioningConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/"> 
   <Status>',match.arg(status),'</Status> 

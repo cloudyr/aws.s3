@@ -6,13 +6,13 @@
 #' In almost all cases, users do not need to access this directly.
 #' 
 #' @param verb A character string containing an HTTP verb, defaulting to \dQuote{GET}.
-#' @param bucket Character string with the name of the bucket.
+#' @param bucket A character string with the name of the bucket, or an object of class \dQuote{s3_bucket}. If the latter and a region can be inferred from the bucket object attributes, then that region is used instead of \code{region}.
 #' @param path A character string with the name of the object to put in the bucket 
 #' (sometimes called the object or 'key name' in the AWS documentation.)
 #' @param query any queries, passed as a named list 
 #' @param headers a list of request headers for the REST call.   
 #' @param request_body character string of request body data.
-#' @param region A character string containing the AWS region.
+#' @param region A character string containing the AWS region. Ignored if region can be inferred from \code{bucket}.
 #' If missing, defaults to \dQuote{us-east-1}.
 #' @param key A character string containing an AWS Access Key ID. 
 #' If missing, defaults to value stored in environment variable \dQuote{AWS_ACCESS_KEY_ID}.
@@ -35,50 +35,36 @@ s3HTTP <- function(verb = "GET",
                    query = NULL,
                    headers = list(), 
                    request_body = "",
-                   region = NULL, 
+                   region = Sys.getenv("AWS_DEFAULT_REGION", "us-east-1"), 
                    key = Sys.getenv("AWS_ACCESS_KEY_ID"), 
                    secret = Sys.getenv("AWS_SECRET_ACCESS_KEY"), 
                    parse_response = TRUE, 
                    ...) {
+    
     bucketname <- get_bucketname(bucket)
-    # deterimining the region that should be used
-    bucketregion <- attr(bucket, "x-amz-bucket-region")
-    if(is.null(region)){
-      if(!is.null(bucketregion)){
-        # if it is null then try the environmental settings
-        region = bucketregion
-      } else if(Sys.getenv("AWS_DEFAULT_REGION") != "") {
-        # if that is blank the use the bucket region
-        region <- Sys.getenv("AWS_DEFAULT_REGION")
-      } else {
-        # then used us-east-1
-        region = "us-east-1"
-      }
+    
+    bucketregion <- get_region(bucket)
+    if (!is.null(bucketregion)) {
+        region <- bucketregion
     }
-    if (region %in% c("us-east-1")){
-      if (bucketname != "") {
-        url <- paste0("https://", bucketname, ".s3.amazonaws.com")
-      } else {
-        url <- paste0("https://s3.amazonaws.com")
-      }
+    if (region == "") {
+        region <- "us-east-1"
+    }
+    if (bucketname == "") {
+        if (region == "us-east-1") {
+            url <- paste0("https://s3.amazonaws.com")
+        } else {
+            url <- paste0("https://s3-", region, ".amazonaws.com")
+        }
     } else {
-      if(Sys.getenv("AWS_DEFAULT_REGION") == ""){
-        
-      }
-      if (bucketname != "") {
-        url <- paste0("https://", bucketname, ".s3-", region, ".amazonaws.com")
-      } else {
-        url <- paste0("https://s3-", region, ".amazonaws.com")
-      }
+        if (region == "us-east-1") {
+            url <- paste0("https://", bucketname, ".s3.amazonaws.com")
+        } else {
+            url <- paste0("https://", bucketname, ".s3-", region, ".amazonaws.com")
+        }
     }
-    if (path != "") {
-      # first character is a /
-      if(grepl('^[\\/].*', path)){
-        url <- paste0(url, path)
-      } else {
-        url <- paste(url, path, sep = '/')
-      }
-    }
+    message(url)
+    url <- if (grepl('^[\\/].*', path)) { paste0(url, path) } else { paste(url, path, sep = "/") }
     current <- Sys.time()
     d_timestamp <- format(current, "%Y%m%dT%H%M%SZ", tz = "UTC")
     p <- httr::parse_url(url)
@@ -87,10 +73,10 @@ s3HTTP <- function(verb = "GET",
                               `x-amz-date` = d_timestamp), headers)
     
     if (is.null(query) && !is.null(p$query)) {
-      query <- p$query
+        query <- p$query
     }
     if (all(sapply(query, is.null))) {
-      query <- NULL
+        query <- NULL
     }
     if (key == "") {
         headers$`x-amz-date` <- d_timestamp
