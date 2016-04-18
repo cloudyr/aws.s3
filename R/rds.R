@@ -1,7 +1,7 @@
 #' @title Serialization Interface for Single Objects
 #' @description Functions to read and write single R objects in Amazon S3.
 #' 
-#' @param object For \code{s3saveRDS}, one or more R objects to be saved via \code{\link[base]{saveRDS}} and uploaded to S3. For \code{s3loadRDS} see \code{opts}.
+#' @param object For \code{s3saveRDS}, one or more R objects to be saved via \code{\link[base]{saveRDS}} and uploaded to S3
 #' @template bucket
 #' @param object_name For \code{s3saveRDS}, a character string of the name of the object you want to save to. For \code{s3loadRDS}, a character string of the name of teh object you want to load from S3.
 #' @param opts Additional arguments passed to \code{\link{s3HTTP}}.
@@ -43,10 +43,14 @@ s3saveRDS <- function(object, bucket, object_name, opts = NULL) {
 
 #' @rdname s3saveRDS
 #' @export
-s3readRDS <- function(bucket, object_name, ...) {
+s3readRDS <- function(bucket, object_name, opts = NULL {
     tmp <- tempfile(fileext = ".Rdata")
     on.exit(unlink(tmp))
-    r <- get_object(bucket = bucket, object = object_name, ...)
+    if (is.null(opts)) {
+        r <- get_object(bucket = bucket, object = object_name)
+    } else {
+        r <- do.call("get_object", c(list(file = tmp, bucket = bucket, object = object_name), opts))
+    }
     if (inherits(r, "aws-error")) {
         return(r)
     } else {
