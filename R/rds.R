@@ -1,5 +1,6 @@
 #' @title Serialization Interface for Single Objects
 #' @description Functions to read and write single R objects in Amazon S3.
+#' @author Steven Akins <skawesome@gmail.com>
 #' 
 #' @param object For \code{s3saveRDS}, one or more R objects to be saved via \code{\link[base]{saveRDS}} and uploaded to S3
 #' @template bucket

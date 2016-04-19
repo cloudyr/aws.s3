@@ -38,6 +38,9 @@ mtcars2 <- s3readRDS(bucket = b, object = "mtcars.rds")
 identical(mtcars, mtcars2)
 }
 }
+\author{
+Steven Akins <skawesome@gmail.com>
+}
 \references{
 \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectGET.html}{API Documentation}
 }

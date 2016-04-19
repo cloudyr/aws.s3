@@ -8,7 +8,8 @@ Authors@R: c(person("Thomas J.", "Leeper", role = c("aut", "cre"),
              person("Boettiger", "Carl", role = "ctb"),
              person("Andrew", "Martin", role = "ctb"),
              person("Mark", "Thompson", role = "ctb"),
-             person("Tyler", "Hunt", role = "ctb"))
+             person("Tyler", "Hunt", role = "ctb"),
+             person("Steven", "Akins", role = "ctb"))
 Maintainer: Thomas J. Leeper <thosjleeper@gmail.com>
 Description: A simple client package for the Amazon Web Services (AWS) Simple
     Storage Service (S3) REST API.
