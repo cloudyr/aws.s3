@@ -5,9 +5,9 @@
 \alias{s3saveRDS}
 \title{Serialization Interface for Single Objects}
 \usage{
-s3saveRDS(object, bucket, object_name, opts = NULL)
+s3saveRDS(object, bucket, object_name, ...)
 
-s3readRDS(bucket, object_name, opts = NULL)
+s3readRDS(bucket, object_name, ...)
 }
 \arguments{
 \item{object}{For \code{s3saveRDS}, one or more R objects to be saved via \code{\link[base]{saveRDS}} and uploaded to S3}
@@ -16,7 +16,7 @@ s3readRDS(bucket, object_name, opts = NULL)
 
 \item{object_name}{For \code{s3saveRDS}, a character string of the name of the object you want to save to. For \code{s3loadRDS}, a character string of the name of teh object you want to load from S3.}
 
-\item{opts}{Additional arguments passed to \code{\link{s3HTTP}}.}
+\item{...}{Additional arguments passed to \code{\link{s3HTTP}}.}
 }
 \value{
 for \code{s3readRDS}, an R object.

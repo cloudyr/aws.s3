@@ -5,7 +5,7 @@
 #' @param object For \code{s3saveRDS}, one or more R objects to be saved via \code{\link[base]{saveRDS}} and uploaded to S3
 #' @template bucket
 #' @param object_name For \code{s3saveRDS}, a character string of the name of the object you want to save to. For \code{s3loadRDS}, a character string of the name of teh object you want to load from S3.
-#' @param opts Additional arguments passed to \code{\link{s3HTTP}}.
+#' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
 #'
 #' @return for \code{s3readRDS}, an R object.
 #'  For \code{s3saveRDS}, NULL invisibly.
@@ -23,18 +23,14 @@
 #' identical(mtcars, mtcars2)
 #' }
 #' @export
-s3saveRDS <- function(object, bucket, object_name, opts = NULL) {
+s3saveRDS <- function(object, bucket, object_name, ...) {
     if (inherits(object_name, "s3_object")) {
         object_name <- object_name$Key
     }
     tmp <- tempfile(fileext = ".Rdata")
     on.exit(unlink(tmp))
     saveRDS(object, file = tmp)
-    if (is.null(opts)) {
-        r <- put_object(file = tmp, bucket = bucket, object = object_name)
-    } else {
-        r <- do.call("put_object", c(list(file = tmp, bucket = bucket, object = object_name), opts))
-    }
+    r <- put_object(file = tmp, bucket = bucket, object = object_name, ...)
     if (inherits(r, "aws-error")) {
         return(r)
     } else {
@@ -44,14 +40,10 @@ s3saveRDS <- function(object, bucket, object_name, opts = NULL) {
 
 #' @rdname s3saveRDS
 #' @export
-s3readRDS <- function(bucket, object_name, opts = NULL) {
+s3readRDS <- function(bucket, object_name, ...) {
     tmp <- tempfile(fileext = ".Rdata")
     on.exit(unlink(tmp))
-    if (is.null(opts)) {
-        r <- get_object(bucket = bucket, object = object_name)
-    } else {
-        r <- do.call("get_object", c(list(file = tmp, bucket = bucket, object = object_name), opts))
-    }
+    r <- get_object(bucket = bucket, object = object_name, ...)
     if (typeof(r) == 'raw') {
         writeBin(as.vector(r), con = tmp)
         return(readRDS(tmp))
