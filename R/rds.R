@@ -27,10 +27,8 @@ s3saveRDS <- function(object, bucket, object_name, ...) {
     if (inherits(object_name, "s3_object")) {
         object_name <- object_name$Key
     }
-    tmp <- tempfile(fileext = ".Rdata")
-    on.exit(unlink(tmp))
-    saveRDS(object, file = tmp)
-    r <- put_object(file = tmp, bucket = bucket, object = object_name, ...)
+    body <- memCompress(from = serialize(object, connection = NULL), type = 'gzip')
+    r <- put_object(file = body, bucket = bucket, object = object_name, ...)
     if (inherits(r, "aws-error")) {
         return(r)
     } else {
@@ -41,12 +39,9 @@ s3saveRDS <- function(object, bucket, object_name, ...) {
 #' @rdname s3saveRDS
 #' @export
 s3readRDS <- function(bucket, object_name, ...) {
-    tmp <- tempfile(fileext = ".Rdata")
-    on.exit(unlink(tmp))
     r <- get_object(bucket = bucket, object = object_name, ...)
     if (typeof(r) == 'raw') {
-        writeBin(as.vector(r), con = tmp)
-        return(readRDS(tmp))
+        return(unserialize(memDecompress(from = as.vector(r), type = 'gzip')))
     } else {
         return(r)
     }
