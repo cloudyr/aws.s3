@@ -5,7 +5,7 @@
 \title{S3 HTTP Requests}
 \usage{
 s3HTTP(verb = "GET", bucket = "", path = "", query = NULL,
-  headers = list(), request_body = "",
+  headers = list(), request_body = "", accelerate = FALSE,
   region = Sys.getenv("AWS_DEFAULT_REGION", "us-east-1"),
   key = Sys.getenv("AWS_ACCESS_KEY_ID"),
   secret = Sys.getenv("AWS_SECRET_ACCESS_KEY"), parse_response = TRUE, ...)
@@ -23,6 +23,8 @@ s3HTTP(verb = "GET", bucket = "", path = "", query = NULL,
 \item{headers}{a list of request headers for the REST call.}
 
 \item{request_body}{character string of request body data.}
+
+\item{accelerate}{A logical indicating whether to use AWS transfer acceleration, which can produce significant speed improvements for cross-country transfers. Acceleration only works with buckets that do not have dots in bucket name.}
 
 \item{region}{A character string containing the AWS region. Ignored if region can be inferred from \code{bucket}.
 If missing, defaults to \dQuote{us-east-1}.}

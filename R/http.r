@@ -12,6 +12,7 @@
 #' @param query any queries, passed as a named list 
 #' @param headers a list of request headers for the REST call.   
 #' @param request_body character string of request body data.
+#' @param accelerate A logical indicating whether to use AWS transfer acceleration, which can produce significant speed improvements for cross-country transfers. Acceleration only works with buckets that do not have dots in bucket name.
 #' @param region A character string containing the AWS region. Ignored if region can be inferred from \code{bucket}.
 #' If missing, defaults to \dQuote{us-east-1}.
 #' @param key A character string containing an AWS Access Key ID. 
@@ -35,6 +36,7 @@ s3HTTP <- function(verb = "GET",
                    query = NULL,
                    headers = list(), 
                    request_body = "",
+                   accelerate = FALSE,
                    region = Sys.getenv("AWS_DEFAULT_REGION", "us-east-1"), 
                    key = Sys.getenv("AWS_ACCESS_KEY_ID"), 
                    secret = Sys.getenv("AWS_SECRET_ACCESS_KEY"), 
@@ -57,10 +59,17 @@ s3HTTP <- function(verb = "GET",
             url <- paste0("https://s3-", region, ".amazonaws.com")
         }
     } else {
-        if (region == "us-east-1") {
-            url <- paste0("https://", bucketname, ".s3.amazonaws.com")
+        if (accelerate) {
+            if (grepl("\\.", bucketname)) {
+                stop("To use accelerate, bucket name must not contain dots (.)")
+            }
+            url <- paste0("https://", bucketname, ".s3-accelerate.amazonaws.com")
         } else {
-            url <- paste0("https://", bucketname, ".s3-", region, ".amazonaws.com")
+            if (region == "us-east-1") {
+                url <- paste0("https://", bucketname, ".s3.amazonaws.com")
+            } else {
+                url <- paste0("https://", bucketname, ".s3-", region, ".amazonaws.com")
+            }
         }
     }
     url <- if (grepl('^[\\/].*', path)) { paste0(url, path) } else { paste(url, path, sep = "/") }
@@ -150,32 +159,28 @@ s3HTTP <- function(verb = "GET",
 }
 
 parse_aws_s3_response <- function(r, Sig, verbose = getOption("verbose")){
-  if (is.null(r$headers$`content-type`)){
-    if (verbose){
-      warning("Response has no body, nothing to parse")
-    }
-    out <- NULL
-  } else {
-    if (r$headers$`content-type` == "application/xml"){
-      content <- httr::content(r, as = "text", encoding = "UTF-8")
-      response_contents <- xml2::as_list(xml2::read_xml(content))
-      response <- flatten_list(response_contents)
+    ctype <- headers(r)$"content-type"
+    if (is.null(ctype) || ctype == "application/xml"){
+        content <- httr::content(r, as = "text", encoding = "UTF-8")
+        if (content != "") {
+            response_contents <- xml2::as_list(xml2::read_xml(content))
+            response <- flatten_list(response_contents)
+        } else {
+            response <- NULL
+        }
     } else {
-      response <- r
+        response <- r
     }
     if (httr::http_error(r)) {
-      httr::warn_for_status(r)
-      h <- httr::headers(r)
-      out <- structure(response, headers = h, class = "aws_error")
+        httr::warn_for_status(r)
+        h <- httr::headers(r)
+        out <- structure(response, headers = h, class = "aws_error")
+        attr(out, "request_canonical") <- Sig$CanonicalRequest
+        attr(out, "request_string_to_sign") <- Sig$StringToSign
+        attr(out, "request_signature") <- Sig$SignatureHeader
     } else {
-      out <- response
+        out <- response
     }
     
-    if (inherits(out, "aws_error")) {
-      attr(out, "request_canonical") <- Sig$CanonicalRequest
-      attr(out, "request_string_to_sign") <- Sig$StringToSign
-      attr(out, "request_signature") <- Sig$SignatureHeader
-    }
-  }
-  out
+    return(out)
 }
