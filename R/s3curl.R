@@ -12,11 +12,9 @@
 #' @param secret A character string containing an AWS Secret Access Key. 
 #' If missing, defaults to value stored in environment variable \dQuote{AWS_SECRET_ACCESS_KEY}.
 #' @details This function creates a \code{\link[curl]{curl}} connection to be used for asynchronous reading from an S3 object.
-#' @examples
-#' \dontrun{
-#' }
 #' @return If \code{file = NULL}, a raw object. Otherwise, a character string containing the file name that the object is saved to.
 #' @seealso \code{\link{get_object}}, \code{\link{save_object}}, \code{\link[curl]{curl}}
+#' @importFrom httr build_url
 #' @importFrom curl curl new_handle handle_setheaders handle_reset
 s3curl <- function(object, bucket, open = "rb",                
                    accelerate = FALSE,

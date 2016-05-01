@@ -38,7 +38,7 @@ If missing, defaults to value stored in environment variable \dQuote{AWS_SECRET_
 \item{parse_response}{return the response as is, or parse and return as a list?
 default is TRUE.}
 
-\item{...}{Additional arguments passed to an HTTP request function, 
+\item{...}{Additional arguments passed to an HTTP request function.
 such as \code{\link[httr]{GET}}.}
 }
 \value{

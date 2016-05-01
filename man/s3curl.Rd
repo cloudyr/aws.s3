@@ -36,10 +36,6 @@ Create an s3curl connection
 \details{
 This function creates a \code{\link[curl]{curl}} connection to be used for asynchronous reading from an S3 object.
 }
-\examples{
-\dontrun{
-}
-}
 \seealso{
 \code{\link{get_object}}, \code{\link{save_object}}, \code{\link[curl]{curl}}
 }

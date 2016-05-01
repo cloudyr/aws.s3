@@ -21,12 +21,13 @@
 #' If missing, defaults to value stored in environment variable \dQuote{AWS_SECRET_ACCESS_KEY}.
 #' @param parse_response return the response as is, or parse and return as a list?  
 #' default is TRUE.
-#' @param ... Additional arguments passed to an HTTP request function, 
+#' @param ... Additional arguments passed to an HTTP request function.
 #' such as \code{\link[httr]{GET}}.
 #'
 #' @return the S3 response, or the relevant error.
 #' 
-#' @import httr
+#' @importFrom httr GET POST PUT HEAD DELETE VERB upload_file parse_url add_headers
+#' @importFrom httr http_error http_status warn_for_status content headers
 #' @importFrom xml2 read_xml as_list
 #' @import aws.signature
 #' @export
@@ -52,7 +53,7 @@ s3HTTP <- function(verb = "GET",
         region <- "us-east-1"
     }
     url <- setup_s3_url(bucketname, region, path, accelerate)
-    p <- httr::parse_url(url)
+    p <- parse_url(url)
     
     current <- Sys.time()
     d_timestamp <- format(current, "%Y%m%dT%H%M%SZ", tz = "UTC")
@@ -69,7 +70,7 @@ s3HTTP <- function(verb = "GET",
     if (key == "") {
         headers$`x-amz-date` <- d_timestamp
         Sig <- list()
-        H <- do.call(httr::add_headers, headers)
+        H <- do.call(add_headers, headers)
     } else {
         Sig <- aws.signature::signature_v4_auth(
                datetime = d_timestamp,
@@ -84,49 +85,49 @@ s3HTTP <- function(verb = "GET",
         headers$`x-amz-date` <- d_timestamp
         headers$`x-amz-content-sha256` <- Sig$BodyHash
         headers$Authorization <- Sig$SignatureHeader
-        H <- do.call(httr::add_headers, headers)
+        H <- do.call(add_headers, headers)
     }
     
     if (verb == "GET") {
-      r <- httr::GET(url, H, query = query, ...)
+      r <- GET(url, H, query = query, ...)
     } else if (verb == "HEAD") {
-      r <- httr::HEAD(url, H, query = query, ...)
-      s <- httr::http_status(r)
+      r <- HEAD(url, H, query = query, ...)
+      s <- http_status(r)
       if (s$category == "success") {
           out <- TRUE
-          attributes(out) <- c(attributes(out), httr::headers(r))
+          attributes(out) <- c(attributes(out), headers(r))
           return(out)
       } else {
           message(s$message)
           out <- FALSE
-          attributes(out) <- c(attributes(out), httr::headers(r))
+          attributes(out) <- c(attributes(out), headers(r))
           return(out)
       }
     } else if (verb == "DELETE") {
-      r <- httr::DELETE(url, H, query = query, ...)
-      s <- httr::http_status(r)
+      r <- DELETE(url, H, query = query, ...)
+      s <- http_status(r)
       if (s$category == "success") {
           out <- TRUE
-          attributes(out) <- c(attributes(out), httr::headers(r))
+          attributes(out) <- c(attributes(out), headers(r))
           return(out)
       } else {
           message(s$message)
           out <- FALSE
-          attributes(out) <- c(attributes(out), httr::headers(r))
+          attributes(out) <- c(attributes(out), headers(r))
           return(out)
       }
     } else if (verb == "POST") {
-      r <- httr::POST(url, H, query = query, ...)
+      r <- POST(url, H, query = query, ...)
     } else if (verb == "PUT") {
       if (is.character(request_body) && request_body == "") {
-        r <- httr::PUT(url, H, query = query, ...)
+        r <- PUT(url, H, query = query, ...)
       } else if (is.character(request_body) && file.exists(request_body)) {
-        r <- httr::PUT(url, H, body = httr::upload_file(request_body), query = query, ...)
+        r <- PUT(url, H, body = upload_file(request_body), query = query, ...)
       } else {
-        r <- httr::PUT(url, H, body = request_body, query = query, ...)
+        r <- PUT(url, H, body = request_body, query = query, ...)
       }
     } else if (verb == "OPTIONS") {
-      r <- httr::VERB("OPTIONS", url, H, query = query, ...)
+      r <- VERB("OPTIONS", url, H, query = query, ...)
     }
     
     if (parse_response) {
@@ -134,16 +135,16 @@ s3HTTP <- function(verb = "GET",
     } else {
       out <- r
     }
-    attributes(out) <- c(attributes(out), httr::headers(r))
+    attributes(out) <- c(attributes(out), headers(r))
     out
 }
 
 parse_aws_s3_response <- function(r, Sig, verbose = getOption("verbose")){
     ctype <- headers(r)$"content-type"
     if (is.null(ctype) || ctype == "application/xml"){
-        content <- httr::content(r, as = "text", encoding = "UTF-8")
+        content <- content(r, as = "text", encoding = "UTF-8")
         if (content != "") {
-            response_contents <- xml2::as_list(xml2::read_xml(content))
+            response_contents <- as_list(read_xml(content))
             response <- flatten_list(response_contents)
         } else {
             response <- NULL
@@ -151,9 +152,9 @@ parse_aws_s3_response <- function(r, Sig, verbose = getOption("verbose")){
     } else {
         response <- r
     }
-    if (httr::http_error(r)) {
-        httr::warn_for_status(r)
-        h <- httr::headers(r)
+    if (http_error(r)) {
+        warn_for_status(r)
+        h <- headers(r)
         out <- structure(response, headers = h, class = "aws_error")
         attr(out, "request_canonical") <- Sig$CanonicalRequest
         attr(out, "request_string_to_sign") <- Sig$StringToSign
