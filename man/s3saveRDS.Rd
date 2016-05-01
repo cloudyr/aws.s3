@@ -3,27 +3,26 @@
 \name{s3saveRDS}
 \alias{s3readRDS}
 \alias{s3saveRDS}
-\title{Serialization Interface for Single Objects}
+\title{saveRDS/readRDS}
 \usage{
-s3saveRDS(object, bucket, object_name, ...)
+s3saveRDS(x, bucket, object, ...)
 
-s3readRDS(bucket, object_name, ...)
+s3readRDS(bucket, object, ...)
 }
 \arguments{
-\item{object}{For \code{s3saveRDS}, one or more R objects to be saved via \code{\link[base]{saveRDS}} and uploaded to S3}
+\item{x}{For \code{s3saveRDS}, a single R object to be saved via \code{\link[base]{saveRDS}} and uploaded to S3. \code{x} is analogous to the \code{object} argument in \code{saveRDS}.}
 
 \item{bucket}{Character string with the name of the bucket, or an object of class \dQuote{s3_bucket}.}
 
-\item{object_name}{For \code{s3saveRDS}, a character string of the name of the object you want to save to. For \code{s3loadRDS}, a character string of the name of teh object you want to load from S3.}
+\item{object}{Character string with the object key, or an object of class \dQuote{s3_object}. In most cases, if \code{object} is specified as the latter, \code{bucket} can be omitted because the bucket name will be extracted from \dQuote{Bucket} slot in \code{object}.}
 
 \item{...}{Additional arguments passed to \code{\link{s3HTTP}}.}
 }
 \value{
-for \code{s3readRDS}, an R object.
- For \code{s3saveRDS}, NULL invisibly.
+For \code{s3saveRDS}, a logical. For \code{s3readRDS}, an R object.
 }
 \description{
-Functions to read and write single R objects in Amazon S3.
+Serialization interface to read/write R objects to S3
 }
 \examples{
 \dontrun{
@@ -31,17 +30,21 @@ Functions to read and write single R objects in Amazon S3.
 b <- put_bucket("myexamplebucket")
 
 # save a single object to s3
-s3saveRDS(object = mtcars, bucket = b, object_name = "mtcars.rds")
+s3saveRDS(x = mtcars, bucket = "myexamplebucket", object = "mtcars.rds")
 
 # restore it under a different name
-mtcars2 <- s3readRDS(bucket = b, object = "mtcars.rds")
+mtcars2 <- s3readRDS(object = "mtcars.rds", bucket = "myexamplebucket")
 identical(mtcars, mtcars2)
+
+# cleanup
+delete_object(object = "mtcars.rds", bucket = "myexamplebucket")
+delete_bucket("myexamplebucket")
 }
 }
 \author{
 Steven Akins <skawesome@gmail.com>
 }
-\references{
-\href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectGET.html}{API Documentation}
+\seealso{
+\code{\link{s3save}},\code{\link{s3load}}
 }
 

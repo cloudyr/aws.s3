@@ -23,5 +23,6 @@ Imports:
     digest,
     aws.signature
 Suggests:
-    testthat
+    testthat,
+    datasets
 RoxygenNote: 5.0.1

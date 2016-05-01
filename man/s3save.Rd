@@ -3,25 +3,25 @@
 \name{s3save}
 \alias{s3load}
 \alias{s3save}
-\title{Save/load}
+\title{save/load}
 \usage{
-s3save(..., bucket, object, opts = NULL)
+s3save(..., object, bucket, opts = NULL)
 
-s3load(bucket, object, envir = parent.frame(), ...)
+s3load(object, bucket, envir = parent.frame(), ...)
 }
 \arguments{
 \item{...}{For \code{s3save}, one or more R objects to be saved via \code{\link[base]{save}} and uploaded to S3. For \code{s3load}, see \code{opts}.}
 
-\item{bucket}{Character string with the name of the bucket, or an object of class \dQuote{s3_bucket}.}
-
 \item{object}{For \code{s3save}, a character string of the name of the object you want to save to. For \code{s3load}, a character string of the name of teh object you want to load from S3.}
+
+\item{bucket}{Character string with the name of the bucket, or an object of class \dQuote{s3_bucket}.}
 
 \item{opts}{Additional arguments passed to \code{\link{s3HTTP}}.}
 
 \item{envir}{An R environment to load objects into. Default is the \code{parent.frame()} from which the function is called.}
 }
 \value{
-If successful, \code{NULL}, otherwise an error object.
+For \code{s3save}, a logical, invisibly, otherwise an error object. For \code{s3load}, \code{NULL} invisibly, otherwise an error object.
 }
 \description{
 Save/load R object(s) to/from S3
@@ -32,14 +32,24 @@ Save/load R object(s) to/from S3
 b <- put_bucket("myexamplebucket")
 
 # save a dataset to the bucket
-s3save(mtcars, bucket = b, object = "mtcars")
+s3save(mtcars, iris, object = "somedata.Rdata", bucket = b)
 get_bucket(b)
 
 # load the data from bucket
-s3load(bucket = b, object = "mtcars")
+e <- new.env()
+s3load(object = "somedata.Rdata", bucket = b, envir = e)
+ls(e)
+
+# cleanup
+rm(e)
+delete_object(object = "somedata.Rdata", bucket = "myexamplebucket")
+delete_bucket("myexamplebucket")
 }
 }
 \references{
 \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectGET.html}{API Documentation}
+}
+\seealso{
+\code{\link{s3saveRDS}},\code{\link{s3readRDS}}
 }
 

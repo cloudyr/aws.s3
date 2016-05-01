@@ -33,7 +33,6 @@ get_region.s3_bucket <- function(x, ...) {
 
 
 # get_objectkey
-
 get_objectkey <- function(x, ...) {
     UseMethod("get_objectkey")
 }
@@ -45,6 +44,7 @@ get_objectkey.character <- function(x, ...) {
 get_objectkey.s3_object <- function(x, ...) {
     gsub("^/{1}", "", x[["Key"]])
 }
+
 
 
 flatten_list <- function(x) {

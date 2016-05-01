@@ -1,5 +1,7 @@
 context("Authenticated object tests")
 
+require("datasets")
+
 test_that("basic usage of getobject for signed in user", {
   ex <- get_object(
                   object = 'robots.txt',
@@ -40,3 +42,50 @@ test_that("basic usage of putobject and deleteobject for signed in user", {
   
   if (file.exists(tmp)) file.remove(tmp)
 })
+
+test_that("basic usage of s3save and s3load", {
+  
+  p <- s3save(
+    iris,
+    object = "iris-dataset",
+    bucket = 'hpk', 
+    key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
+    secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY")
+  )
+  expect_true(inherits(p, "s3")
+  
+  e <- new.env()
+  s3load(p, envir = e)
+  expect_true("iris" %in% ls(e))
+  
+  d <- delete_object(
+    object = p,
+    key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
+    secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY")
+  )
+  
+})
+
+test_that("basic usage of s3saveRDS and s3readRDS", {
+  
+  p <- s3saveRDS(
+    iris,
+    object = "iris-dataset",
+    bucket = 'hpk', 
+    key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
+    secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY")
+  )
+  expect_true(inherits(p, "s3")
+  
+  e <- new.env()
+  s3load(p, envir = e)
+  expect_true("iris" %in% ls(e))
+  
+  d <- delete_object(
+    object = p,
+    key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
+    secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY")
+  )
+  
+})
+

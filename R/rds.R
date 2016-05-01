@@ -1,45 +1,45 @@
-#' @title Serialization Interface for Single Objects
-#' @description Functions to read and write single R objects in Amazon S3.
+#' @title saveRDS/readRDS
+#' @description Serialization interface to read/write R objects to S3
 #' @author Steven Akins <skawesome@gmail.com>
 #' 
-#' @param object For \code{s3saveRDS}, one or more R objects to be saved via \code{\link[base]{saveRDS}} and uploaded to S3
+#' @param x For \code{s3saveRDS}, a single R object to be saved via \code{\link[base]{saveRDS}} and uploaded to S3. \code{x} is analogous to the \code{object} argument in \code{saveRDS}.
 #' @template bucket
-#' @param object_name For \code{s3saveRDS}, a character string of the name of the object you want to save to. For \code{s3loadRDS}, a character string of the name of teh object you want to load from S3.
+#' @template object
 #' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
 #'
-#' @return for \code{s3readRDS}, an R object.
-#'  For \code{s3saveRDS}, NULL invisibly.
-#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectGET.html}{API Documentation}
+#' @return For \code{s3saveRDS}, a logical. For \code{s3readRDS}, an R object.
 #' @examples
 #' \dontrun{
 #' # create bucket
 #' b <- put_bucket("myexamplebucket")
 #'
 #' # save a single object to s3
-#' s3saveRDS(object = mtcars, bucket = b, object_name = "mtcars.rds")
+#' s3saveRDS(x = mtcars, bucket = "myexamplebucket", object = "mtcars.rds")
 #'
 #' # restore it under a different name
-#' mtcars2 <- s3readRDS(bucket = b, object = "mtcars.rds")
+#' mtcars2 <- s3readRDS(object = "mtcars.rds", bucket = "myexamplebucket")
 #' identical(mtcars, mtcars2)
+#' 
+#' # cleanup
+#' delete_object(object = "mtcars.rds", bucket = "myexamplebucket")
+#' delete_bucket("myexamplebucket")
 #' }
+#' @seealso \code{\link{s3save}},\code{\link{s3load}}
 #' @export
-s3saveRDS <- function(object, bucket, object_name, ...) {
-    if (inherits(object_name, "s3_object")) {
-        object_name <- object_name$Key
-    }
-    body <- memCompress(from = serialize(object, connection = NULL), type = 'gzip')
-    r <- put_object(file = body, bucket = bucket, object = object_name, ...)
+s3saveRDS <- function(x, bucket, object, ...) {
+    body <- memCompress(from = serialize(x, connection = NULL), type = 'gzip')
+    r <- put_object(file = body, bucket = bucket, object = object, ...)
     if (inherits(r, "aws-error")) {
         return(r)
     } else {
-        return(invisible())
+        return(invisible(r))
     }
 }
 
 #' @rdname s3saveRDS
 #' @export
-s3readRDS <- function(bucket, object_name, ...) {
-    r <- get_object(bucket = bucket, object = object_name, ...)
+s3readRDS <- function(bucket, object, ...) {
+    r <- get_object(bucket = bucket, object = object, ...)
     if (typeof(r) == 'raw') {
         return(unserialize(memDecompress(from = as.vector(r), type = 'gzip')))
     } else {

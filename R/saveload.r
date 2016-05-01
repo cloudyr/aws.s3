@@ -1,4 +1,4 @@
-#' @title Save/load
+#' @title save/load
 #' @description Save/load R object(s) to/from S3
 #' 
 #' @param ... For \code{s3save}, one or more R objects to be saved via \code{\link[base]{save}} and uploaded to S3. For \code{s3load}, see \code{opts}.
@@ -7,7 +7,7 @@
 #' @param opts Additional arguments passed to \code{\link{s3HTTP}}.
 #' @param envir An R environment to load objects into. Default is the \code{parent.frame()} from which the function is called.
 #'
-#' @return If successful, \code{NULL}, otherwise an error object.
+#' @return For \code{s3save}, a logical, invisibly, otherwise an error object. For \code{s3load}, \code{NULL} invisibly, otherwise an error object.
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectGET.html}{API Documentation}
 #' @examples
 #' \dontrun{
@@ -15,42 +15,46 @@
 #' b <- put_bucket("myexamplebucket")
 #'
 #' # save a dataset to the bucket
-#' s3save(mtcars, bucket = b, object = "mtcars")
+#' s3save(mtcars, iris, object = "somedata.Rdata", bucket = b)
 #' get_bucket(b)
 #'
 #' # load the data from bucket
-#' s3load(bucket = b, object = "mtcars")
+#' e <- new.env()
+#' s3load(object = "somedata.Rdata", bucket = b, envir = e)
+#' ls(e)
+#'
+#' # cleanup
+#' rm(e)
+#' delete_object(object = "somedata.Rdata", bucket = "myexamplebucket")
+#' delete_bucket("myexamplebucket")
 #' }
+#' @seealso \code{\link{s3saveRDS}},\code{\link{s3readRDS}}
 #' @export
-s3save <- function(..., bucket, object, opts = NULL) {
-    if (inherits(object, "s3_object")) {
-        object <- object$Key
-    }
-    tmp <- tempfile(fileext = ".Rdata")
-    on.exit(unlink(tmp))
+s3save <- function(..., object, bucket, opts = NULL) {
+    tmp <- rawConnection(raw(0), "r+")
+    on.exit(close(tmp))
     save(..., file = tmp)
     if (is.null(opts)) {
-        r <- put_object(file = tmp, bucket = bucket, object = object)
+        r <- put_object(file = rawConnectionValue(tmp), bucket = bucket, object = object)
     } else {
-        r <- do.call("put_object", c(list(file = tmp, bucket = bucket, object = object), opts))
+        r <- do.call("put_object", c(list(file = rawConnectionValue(tmp), bucket = bucket, object = object), opts))
     }
     if (inherits(r, "aws-error")) {
         return(r)
     } else {
-        return(invisible())
+        return(invisible(r))
     }
 }
 
 #' @rdname s3save
 #' @export
-s3load <- function(bucket, object, envir = parent.frame(), ...) {
-    tmp <- tempfile(fileext = ".Rdata")
-    on.exit(unlink(tmp))
-    r <- get_object(bucket = bucket, object = object, ...)
+s3load <- function(object, bucket, envir = parent.frame(), ...) {
+    r <- get_object(bucket = bucket, object = object, parse_response = FALSE, ...)
     if (inherits(r, "aws-error")) {
         return(r)
     } else {
-        writeBin(httr::content(r, "raw"), con = tmp)
+        tmp <- rawConnection(r, "r")
+        on.exit(close(tmp))
         load(tmp, envir = envir)
         return(invisible())
     }

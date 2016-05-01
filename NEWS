@@ -1,6 +1,7 @@
 # CHANGES TO aws.s3 0.1.23 #
 
 * Added support for S3 "Acceleration" endpoints, enabling faster cross-region file transfers. (#52)
+* `s3save()`, `s3load()`, `s3saveRDS()`, and `s3readRDS()` no longer write to disk, improving performance. (#51)
 
 # CHANGES TO aws.s3 0.1.22 #
 
