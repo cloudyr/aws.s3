@@ -60,6 +60,6 @@ get_object(object = obj[[1]], headers = list('Range' = 'bytes=1-120'))
 \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectHEAD.html}{API Document: HEAD Object}
 }
 \seealso{
-\code{\link{get_bucket}}
+\code{\link{get_bucket}}, \code{\link{s3curl}}
 }
 

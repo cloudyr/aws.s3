@@ -27,7 +27,7 @@
 #' @return the S3 response, or the relevant error.
 #' 
 #' @import httr
-#' @import xml2
+#' @importFrom xml2 read_xml as_list
 #' @import aws.signature
 #' @export
 s3HTTP <- function(verb = "GET",
@@ -44,7 +44,6 @@ s3HTTP <- function(verb = "GET",
                    ...) {
     
     bucketname <- get_bucketname(bucket)
-    
     bucketregion <- get_region(bucket)
     if (!is.null(bucketregion)) {
         region <- bucketregion
@@ -52,30 +51,11 @@ s3HTTP <- function(verb = "GET",
     if (region == "") {
         region <- "us-east-1"
     }
-    if (bucketname == "") {
-        if (region == "us-east-1") {
-            url <- paste0("https://s3.amazonaws.com")
-        } else {
-            url <- paste0("https://s3-", region, ".amazonaws.com")
-        }
-    } else {
-        if (accelerate) {
-            if (grepl("\\.", bucketname)) {
-                stop("To use accelerate, bucket name must not contain dots (.)")
-            }
-            url <- paste0("https://", bucketname, ".s3-accelerate.amazonaws.com")
-        } else {
-            if (region == "us-east-1") {
-                url <- paste0("https://", bucketname, ".s3.amazonaws.com")
-            } else {
-                url <- paste0("https://", bucketname, ".s3-", region, ".amazonaws.com")
-            }
-        }
-    }
-    url <- if (grepl('^[\\/].*', path)) { paste0(url, path) } else { paste(url, path, sep = "/") }
+    url <- setup_s3_url(bucketname, region, path, accelerate)
+    p <- httr::parse_url(url)
+    
     current <- Sys.time()
     d_timestamp <- format(current, "%Y%m%dT%H%M%SZ", tz = "UTC")
-    p <- httr::parse_url(url)
     action <- if (p$path == "") "/" else paste0("/", p$path)
     canonical_headers <- c(list(host = p$hostname,
                               `x-amz-date` = d_timestamp), headers)
@@ -183,4 +163,29 @@ parse_aws_s3_response <- function(r, Sig, verbose = getOption("verbose")){
     }
     
     return(out)
+}
+
+setup_s3_url <- function(bucketname, region, path, accelerate) {
+    if (bucketname == "") {
+        if (region == "us-east-1") {
+            url <- paste0("https://s3.amazonaws.com")
+        } else {
+            url <- paste0("https://s3-", region, ".amazonaws.com")
+        }
+    } else {
+        if (accelerate) {
+            if (grepl("\\.", bucketname)) {
+                stop("To use accelerate, bucket name must not contain dots (.)")
+            }
+            url <- paste0("https://", bucketname, ".s3-accelerate.amazonaws.com")
+        } else {
+            if (region == "us-east-1") {
+                url <- paste0("https://", bucketname, ".s3.amazonaws.com")
+            } else {
+                url <- paste0("https://", bucketname, ".s3-", region, ".amazonaws.com")
+            }
+        }
+    }
+    url <- if (grepl('^[\\/].*', path)) { paste0(url, path) } else { paste(url, path, sep = "/") }
+    return(url)
 }

@@ -31,7 +31,7 @@
 #' @return If \code{file = NULL}, a raw object. Otherwise, a character string containing the file name that the object is saved to.
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectGET.html}{API Documentation: GET Object}
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectHEAD.html}{API Document: HEAD Object}
-#' @seealso \code{\link{get_bucket}}
+#' @seealso \code{\link{get_bucket}}, \code{\link{s3curl}}
 #' @export
 get_object <- function(object, bucket, headers = list(), ...) {
     if (missing(bucket)) {
