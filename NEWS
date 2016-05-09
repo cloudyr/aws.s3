@@ -1,3 +1,7 @@
+# CHANGES TO aws.s3 0.1.25 #
+
+* Added function `s3source()` as a convenience function to source an R script directly from S3. (#54)
+
 # CHANGES TO aws.s3 0.1.23 #
 
 * Added support for S3 "Acceleration" endpoints, enabling faster cross-region file transfers. (#52)

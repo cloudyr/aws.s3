@@ -54,13 +54,14 @@ get_bucket("my_bucket")
 
 ### Objects ###
 
-There are five main functions that will be useful for working with objects in S3:
+There are six main functions that will be useful for working with objects in S3:
 
  1. `get_object()` returns a raw vector representation of an S3 object.
  2. `save_object()` saves an S3 object to a specified local file.
  3. `put_object()` stores a local file into an S3 bucket.
  4. `s3save()` saves one or more in-memory R objects to an .Rdata file in S3 (analogously to `save()`). `s3saveRDS()` is an analogue for `saveRDS()`.
- 5. `s3load()` loads one or more objects into memroy from an .Rdata file stored in S3 (analogously to `load()`). `s3readRDS()` is an analogue for `saveRDS()`.
+ 5. `s3load()` loads one or more objects into memory from an .Rdata file stored in S3 (analogously to `load()`). `s3readRDS()` is an analogue for `saveRDS()`.
+ 6. `s3source()` sources an R script directly from S3.
 
 They behave as you would probably expect:
 
