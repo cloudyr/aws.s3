@@ -66,7 +66,7 @@ s3sync <- function(files = dir(recursive = TRUE), bucket, headers = list(), ...)
             save_object(object = tosync[i], bucket = b, file = tosync[i], ...)
             rm(thisdir)
         } else {
-            warning(paste0("Object and file '", tosync[i], "' differ but have same LastModified time")
+            warning(paste0("Object and file '", tosync[i], "' differ but have same LastModified time"))
         }
     }
     return(TRUE) # this should probably be a directory listing with some note on what action was performed
