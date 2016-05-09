@@ -13,7 +13,7 @@ print.s3_bucket <- function(x, ...){
 
 print.s3_object <- function(x, ...){
     cat("Key:           ", x$Key, "\n")
-    cat("Modified:      ", x$LastModified, "\n")
+    cat("LastModified:  ", x$LastModified, "\n")
     cat("ETag:          ", x$ETag, "\n")
     cat("Size (kb):     ", x$Size, "\n")
     cat("Owner:         ", x$Owner$DisplayName, "\n")

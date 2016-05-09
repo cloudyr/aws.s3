@@ -93,7 +93,7 @@ s3HTTP <- function(verb = "GET",
     } else if (verb == "HEAD") {
       r <- HEAD(url, H, query = query, ...)
       s <- http_status(r)
-      if (s$category == "success") {
+      if (tolower(s$category) == "success") {
           out <- TRUE
           attributes(out) <- c(attributes(out), headers(r))
           return(out)
@@ -106,7 +106,7 @@ s3HTTP <- function(verb = "GET",
     } else if (verb == "DELETE") {
       r <- DELETE(url, H, query = query, ...)
       s <- http_status(r)
-      if (s$category == "success") {
+      if (tolower(s$category) == "success") {
           out <- TRUE
           attributes(out) <- c(attributes(out), headers(r))
           return(out)
