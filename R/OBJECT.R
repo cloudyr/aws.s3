@@ -11,6 +11,7 @@
 #'
 #' @return If successful, \code{TRUE}, otherwise an aws_error object.
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPUT.html}{API Documentation}
+#' @seealso \code{\link{delete_object}}
 #' @export
 put_object <- function(file, object, bucket, headers = list(), ...) {
     if (missing(object)) {
@@ -52,18 +53,22 @@ post_object <- function(object, bucket, ...) {
 
 
 #' @title Delete object
-#' @description Deletes an object from an S3 bucket.
+#' @description Deletes one or more objects from an S3 bucket.
 #'
 #' @template object
 #' @template bucket
+#' @param quiet A logical indicating whether (when \code{object} is a list of multiple objects), to run the operation in \dQuote{quiet} mode. Ignored otherwise. See API documentation for details.
 #' @template dots
+#' @details \code{object} can be a single object key, an object of class \dQuote{s3_object}, or a list of either.
 #'
-#' @return TRUE if successful, aws_error details if not.
+#' @return \code{TRUE} if successful, otherwise an object of class aws_error details if not.
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectDELETE.html}{API Documentation}
-#' @import digest
-#' @import base64enc
+#' @seealso \code{\link{put_object}}
+#' @importFrom digest digest
+#' @importFrom base64enc base64encode
+#' @importFrom xml2 read_xml write_xml xml_add_child
 #' @export
-delete_object <- function(object, bucket, ...) {
+delete_object <- function(object, bucket, quiet = TRUE, ...) {
     if (missing(bucket)) {
         bucket <- get_bucketname(object)
     }
@@ -77,29 +82,16 @@ delete_object <- function(object, bucket, ...) {
         if (inherits(r, "aws_error")) {
             return(r)
         } else {
-            TRUE
+            return(TRUE)
         }
     } else {
-      
-      ## Looks like we would rather use the XML package to serialize this XML doc..
-        b1 <- 
-'<?xml version="1.0" encoding="UTF-8"?>
-<Delete>
-    <Quiet>true</Quiet>
-    <Object>'
-#         <Key>Key</Key>
-# version not implemented yet:
-#         <VersionId>VersionId</VersionId>
-        b2 <- 
-'    </Object>
-    <Object>
-         <Key>Key</Key>
-    </Object>
-    ...
-</Delete>'
+        xml <- read_xml(paste0('<?xml version="1.0" encoding="UTF-8"?><Delete><Quiet>', tolower(quiet),'</Quiet></Delete>'))
+        for (i in seq_along(object)) {
+            xml2::xml_add_child(xml, xml2::read_xml(paste0("<Object><Key>", get_objectkey(object[[i]]), "</Key></Object>")))
+        }
         tmpfile <- tempfile()
         on.exit(unlink(tmpfile))
-        b <- writeLines(paste0(b1, paste0("<Key>",object,"</Key>"), b2), tmpfile)
+        xml2::write_xml(xml, tmpfile)
         md <- base64enc::base64encode(digest::digest(file = tmpfile, raw = TRUE))
         r <- s3HTTP(verb = "POST", 
                     bucket = bucket,
@@ -111,7 +103,7 @@ delete_object <- function(object, bucket, ...) {
         if (inherits(r, "aws_error")) {
             return(r)
         } else {
-            return(structure(r, class = "s3_object"))
+            return(TRUE)
         }
     }
     return(r)

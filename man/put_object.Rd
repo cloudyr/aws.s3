@@ -28,4 +28,7 @@ Puts an object into an S3 bucket
 \references{
 \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPUT.html}{API Documentation}
 }
+\seealso{
+\code{\link{delete_object}}
+}
 

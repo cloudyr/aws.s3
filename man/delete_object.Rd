@@ -4,22 +4,30 @@
 \alias{delete_object}
 \title{Delete object}
 \usage{
-delete_object(object, bucket, ...)
+delete_object(object, bucket, quiet = TRUE, ...)
 }
 \arguments{
 \item{object}{Character string with the object key, or an object of class \dQuote{s3_object}. In most cases, if \code{object} is specified as the latter, \code{bucket} can be omitted because the bucket name will be extracted from \dQuote{Bucket} slot in \code{object}.}
 
 \item{bucket}{Character string with the name of the bucket, or an object of class \dQuote{s3_bucket}.}
 
+\item{quiet}{A logical indicating whether (when \code{object} is a list of multiple objects), to run the operation in \dQuote{quiet} mode. Ignored otherwise. See API documentation for details.}
+
 \item{\dots}{Additional arguments passed to \code{\link{s3HTTP}}.}
 }
 \value{
-TRUE if successful, aws_error details if not.
+\code{TRUE} if successful, otherwise an object of class aws_error details if not.
 }
 \description{
-Deletes an object from an S3 bucket.
+Deletes one or more objects from an S3 bucket.
+}
+\details{
+\code{object} can be a single object key, an object of class \dQuote{s3_object}, or a list of either.
 }
 \references{
 \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectDELETE.html}{API Documentation}
+}
+\seealso{
+\code{\link{put_object}}
 }
 

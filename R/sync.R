@@ -7,18 +7,18 @@
 #' @details \code{s3sync} synchronizes specified files to an S3 bucket. This works best if a local directory (and its subdirectories) correspond directly to the contents of an S3 bucket.
 #' If the bucket does not exist, it is created. Similarly, if local directories do not exist (corresponding to leading portions of object keys), they are created, recursively. Object keys are generated based on \code{files} and local files are named (and organized into directories) based on object keys. A slash is interpreted as a directory level.
 #' Local objects are copied to S3 and S3 objects are copied locally. This copying is performed conditionally. Objects existing locally but not in S3 are uploaded using \code{\link{put_object}}. Objects existing in S3 but not locally, are saved using \code{\link{save_object}}. If objects exist in both places, the MD5 checksum for each is compared; when identical, no copying is performed. If the checksums differ, local files are replaced with the bucket version if the local file is older and the S3 object is replaced if the local file is newer. If checksums differ but modified times match (which seems unlikely), a warning is issued.
-#' @return \dots
+#' @return A logical.
 #' @seealso \code{\link{get_bucket}}, \code{\link{put_object}}, , \code{\link{save_object}}
 #' @importFrom tools md5sum
 s3sync <- function(files = dir(recursive = TRUE), bucket, headers = list(), ...) {
     if (missing(bucket)) {
-        bucket <- get_bucketname(object)
+        bucket <- get_bucketname(bucket)
     } 
     if (!bucket_exists(bucket)) {
         put_bucket(bucket)
     }
     b <- get_bucket(bucket, ...)
-    if (attributes(b, "Marker") != list()) {
+    if (attr(b, "Marker") != list()) {
         # repeat get_bucket() until all objects are retrieved
     }
     
