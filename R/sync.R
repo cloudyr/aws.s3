@@ -43,7 +43,7 @@ s3sync <- function(files = dir(recursive = TRUE), bucket, ...) {
     whichinboth <- which(keys %in% files)
     inboth <- keys[whichinboth]
     ## check md5sums
-    md5files <- md5sums(inboth)
+    md5files <- md5sum(inboth)
     md5objects <- gsub("\"", "", unname(unlist(lapply(b[whichinboth], `[[`, "ETag"))))
     matched <- md5files == md5objects
     ## only sync files with mismatched md5sums
