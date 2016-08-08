@@ -10,7 +10,7 @@
 #' @return A logical.
 #' @seealso \code{\link{get_bucket}}, \code{\link{put_object}}, , \code{\link{save_object}}
 #' @importFrom tools md5sum
-s3sync <- function(files = dir(recursive = TRUE), bucket, headers = list(), ...) {
+s3sync <- function(files = dir(recursive = TRUE), bucket, ...) {
     if (missing(bucket)) {
         bucket <- get_bucketname(bucket)
     } 
