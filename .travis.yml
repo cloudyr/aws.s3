@@ -4,6 +4,8 @@ r_packages:
 - knitr
 - covr
 - drat
+r_github_packages:
+- hadley/xml2
 after_failure:
   email: 
     recipients:
