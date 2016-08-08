@@ -3,6 +3,6 @@ CONTRIBUTING.md
 README.Rmd
 drat.sh
 knitreadme.sh
-/man-roxygen
+man-roxygen/
 ^.*\.Rproj$
 ^\.Rproj\.user$
