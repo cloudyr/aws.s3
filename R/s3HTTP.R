@@ -140,7 +140,7 @@ s3HTTP <- function(verb = "GET",
 }
 
 parse_aws_s3_response <- function(r, Sig, verbose = getOption("verbose")){
-    ctype <- headers(r)$"content-type"
+    ctype <- headers(r)[["content-type"]]
     if (is.null(ctype) || ctype == "application/xml"){
         content <- content(r, as = "text", encoding = "UTF-8")
         if (content != "") {
