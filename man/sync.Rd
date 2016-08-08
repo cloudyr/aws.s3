@@ -4,7 +4,7 @@
 \alias{s3sync}
 \title{S3 file sync}
 \usage{
-s3sync(files = dir(recursive = TRUE), bucket, headers = list(), ...)
+s3sync(files = dir(recursive = TRUE), bucket, ...)
 }
 \arguments{
 \item{files}{A character vector specifying relative paths to files to be synchronized. The default is all files in the working directory and subdirectories.}
