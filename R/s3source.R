@@ -1,9 +1,9 @@
-#' @title source
-#' @description Source R code from S3
+#' @title Source from S3
+#' @description Source R code (a la \code{\link[base]{source}}) from S3
 #' 
 #' @template object
 #' @template bucket
-#' @param \dots Additional arguments passed to \code{\link{s3HTTP}}.
+#' @template dots
 #' @param opts Additional arguments passed to \code{\link{get_object}} for retrieving the R syntax file.
 #'
 #' @return See \code{\link[base]{source}}

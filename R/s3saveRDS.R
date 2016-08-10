@@ -5,7 +5,7 @@
 #' @param x For \code{s3saveRDS}, a single R object to be saved via \code{\link[base]{saveRDS}} and uploaded to S3. \code{x} is analogous to the \code{object} argument in \code{saveRDS}.
 #' @template bucket
 #' @template object
-#' @param ... Additional arguments passed to \code{\link{s3HTTP}}.
+#' @template dots
 #'
 #' @return For \code{s3saveRDS}, a logical. For \code{s3readRDS}, an R object.
 #' @examples
@@ -26,9 +26,9 @@
 #' }
 #' @seealso \code{\link{s3save}},\code{\link{s3load}}
 #' @export
-s3saveRDS <- function(x, bucket, object, ...) {
-    body <- memCompress(from = serialize(x, connection = NULL), type = 'gzip')
-    r <- put_object(file = body, bucket = bucket, object = object, ...)
+s3saveRDS <- function(x, bucket, object = paste0(as.character(substitute(x)), ".rds"), ...) {
+    b <- memCompress(from = serialize(x, connection = NULL), type = 'gzip')
+    r <- put_object(file = b, bucket = bucket, object = object, ...)
     if (inherits(r, "aws-error")) {
         return(r)
     } else {

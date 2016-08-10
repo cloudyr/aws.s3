@@ -1,3 +1,4 @@
+#' @export
 print.s3_bucketlist <- function(object, ...) {
     x <- do.call("rbind.data.frame", object)
     rownames(x) <- 1:nrow(x)
@@ -5,12 +6,14 @@ print.s3_bucketlist <- function(object, ...) {
     invisible(object)
 }
 
+#' @export
 print.s3_bucket <- function(x, ...){
     cat("Bucket:", attributes(x)[["Name"]], "\n\n")
     print(x[names(x) == "Contents"])
     invisible(x)
 }
 
+#' @export
 print.s3_object <- function(x, ...){
     cat("Key:           ", x$Key, "\n")
     cat("LastModified:  ", x$LastModified, "\n")

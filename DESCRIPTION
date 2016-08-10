@@ -18,7 +18,7 @@ BugReports: https://github.com/cloudyr/aws.s3/issues
 Imports:
     tools,
     httr,
-    xml2 (>= 1.0.0),
+    xml2 (> 1.0.0),
     base64enc,
     digest,
     curl,
