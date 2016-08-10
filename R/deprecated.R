@@ -1,69 +1,69 @@
-#' @rdname deprecated
+#' @rdname deprecated-aws.s3
 #' @title Deprecated
 #' @description These functions are deprecated.
 #' @param \dots Arguments passed to updated versions of each function.
 #' @export
 getobject <- function(...) {
-    warning("'getobject()' is deprecated. Use 'get_object()' instead.")
+    .Deprecated("get_object", "aws.s3")
     get_object(...)
 }
-#' @rdname deprecated
+#' @rdname deprecated-aws.s3
 #' @export
 saveobject <- function(...) {
-    warning("'saveobject()' is deprecated. Use 'save_object()' instead.")
+    .Deprecated("save_object", "aws.s3")
     save_object(...)
 }
-#' @rdname deprecated
+#' @rdname deprecated-aws.s3
 #' @export
 headobject <- function(...) {
-    warning("'headobject()' is deprecated. Use 'head_object()' instead.")
+    .Deprecated("head_object()", "aws.s3")
     head_object(...)
 }
-#' @rdname deprecated
+#' @rdname deprecated-aws.s3
 #' @export
 copyobject <- function(...) {
-    warning("'copyobject()' is deprecated. Use 'copy_object()' instead.")
+    .Deprecated("copy_object()", "aws.s3")
     copy_object(...)
 }
-#' @rdname deprecated
+#' @rdname deprecated-aws.s3
 #' @export
 copybucket <- function(...) {
-    warning("'copybucket()' is deprecated. Use 'copy_bucket()' instead.")
+    .Deprecated("copy_bucket()", "aws.s3")
     copy_bucket(...)
 }
-#' @rdname deprecated
+#' @rdname deprecated-aws.s3
 #' @export
 putbucket <- function(...) {
-    warning("'putbucket()' is deprecated. Use 'put_bucket()' instead.")
+    .Deprecated("put_bucket()", "aws.s3")
     put_bucket(...)
 }
-#' @rdname deprecated
+#' @rdname deprecated-aws.s3
 #' @export
 putobject <- function(...) {
-    warning("'putobject()' is deprecated. Use 'put_object()' instead.")
+    .Deprecated("put_object()", "aws.s3")
     put_object(...)
 }
-#' @rdname deprecated
+#' @rdname deprecated-aws.s3
 #' @export
 deleteobject <- function(...) {
-    warning("'deleteobject()' is deprecated. Use 'delete_object()' instead.")
+    warning("delete_object()", "aws.s3")
     delete_object(...)
 }
-#' @rdname deprecated
+#' @rdname deprecated-aws.s3
 #' @export
 getbucket <- function(...) {
-    warning("'getbucket()' is deprecated. Use 'get_bucket()' instead.")
+    warning("get_bucket()", "aws.s3")
     get_bucket(...)
 }
-#' @rdname deprecated
+#' @rdname deprecated-aws.s3
 #' @export
 deletebucket <- function(...) {
-    warning("'deletebucket()' is deprecated. Use 'delete_bucket()' instead.")
+    warning("delete_bucket()", "aws.s3")
     delete_bucket(...)
 }
-#' @rdname deprecated
+#' @rdname deprecated-aws.s3
 #' @export
 bucketexists <- function(...) {
-    warning("'bucketexists()' is deprecated. Use 'bucket_exists()' instead.")
+    warning("bucket_exists()", "aws.s3")
     bucket_exists(...)
 }
