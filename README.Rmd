@@ -96,7 +96,7 @@ This package is not yet on CRAN and it currently has a dependency on the develop
 install.packages("aws.s3", repos = c("cloudyr" = "http://cloudyr.github.io/drat"))
 
 # on windows you may need:
-install.packages("aws.s3", repos = c(getOption("repos"), "http://cloudyr.github.io/drat"), INSTALL_opts = "--no-multiarch")
+install.packages("aws.s3", repos = c("cloudyr" = "http://cloudyr.github.io/drat"), INSTALL_opts = "--no-multiarch")
 ```
 
 Or, to pull a potentially unstable version directly from GitHub:
