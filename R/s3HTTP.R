@@ -58,7 +58,13 @@ s3HTTP <- function(verb = "GET",
     
     current <- Sys.time()
     d_timestamp <- format(current, "%Y%m%dT%H%M%SZ", tz = "UTC")
-    action <- if (p$path == "") "/" else paste0("/", URLencode(p$path, TRUE))
+    action <- if (p$path == "") "/" else {
+        paste0("/", paste(sapply(
+            strsplit(p$path, '/')[[1]],
+            function(i) URLencode(i, TRUE),
+            USE.NAMES = FALSE
+        ), collapse = '/'))
+    }
     canonical_headers <- c(list(host = p$hostname,
                                 `x-amz-date` = d_timestamp), headers)
     
