@@ -1,3 +1,7 @@
+# CHANGES TO aws.s3 0.1.29 #
+
+* Fixed a bug related to the handling of object keys that contained atypical characters (e.g., `=`). (#64)
+
 # CHANGES TO aws.s3 0.1.25 #
 
 * Added function `s3source()` as a convenience function to source an R script directly from S3. (#54)

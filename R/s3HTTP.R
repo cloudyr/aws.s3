@@ -29,6 +29,7 @@
 #' @importFrom httr GET POST PUT HEAD DELETE VERB upload_file parse_url add_headers
 #' @importFrom httr http_error http_status warn_for_status content headers
 #' @importFrom xml2 read_xml as_list
+#' @importFrom utils URLencode
 #' @import aws.signature
 #' @export
 s3HTTP <- function(verb = "GET",
@@ -57,9 +58,9 @@ s3HTTP <- function(verb = "GET",
     
     current <- Sys.time()
     d_timestamp <- format(current, "%Y%m%dT%H%M%SZ", tz = "UTC")
-    action <- if (p$path == "") "/" else paste0("/", p$path)
+    action <- if (p$path == "") "/" else paste0("/", URLencode(p$path, TRUE))
     canonical_headers <- c(list(host = p$hostname,
-                              `x-amz-date` = d_timestamp), headers)
+                                `x-amz-date` = d_timestamp), headers)
     
     if (is.null(query) && !is.null(p$query)) {
         query <- p$query
