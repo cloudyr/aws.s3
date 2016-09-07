@@ -1,6 +1,8 @@
 # CHANGES TO aws.s3 0.1.29 #
 
 * Fixed a bug related to the handling of object keys that contained atypical characters (e.g., `=`). (#64)
+* Added a new function `s3save_image()` to save an entire workspace.
+* Added a temporary fix for GitHub installation using the DESCRIPTION `Remotes` field.
 
 # CHANGES TO aws.s3 0.1.25 #
 

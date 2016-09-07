@@ -3,16 +3,19 @@
 \name{s3save}
 \alias{s3load}
 \alias{s3save}
+\alias{s3save_image}
 \title{save/load}
 \usage{
 s3save(..., object, bucket, opts = NULL)
+
+s3save_image(object, bucket, opts = NULL)
 
 s3load(object, bucket, envir = parent.frame(), ...)
 }
 \arguments{
 \item{...}{For \code{s3save}, one or more R objects to be saved via \code{\link[base]{save}} and uploaded to S3. For \code{s3load}, see \code{opts}.}
 
-\item{object}{For \code{s3save}, a character string of the name of the object you want to save to. For \code{s3load}, a character string of the name of teh object you want to load from S3.}
+\item{object}{For \code{s3save}, a character string of the name of the object you want to save to. For \code{s3load}, a character string of the name of the object you want to load from S3.}
 
 \item{bucket}{Character string with the name of the bucket, or an object of class \dQuote{s3_bucket}.}
 

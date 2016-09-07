@@ -3,7 +3,7 @@
 #' 
 #' @param ... For \code{s3save}, one or more R objects to be saved via \code{\link[base]{save}} and uploaded to S3. For \code{s3load}, see \code{opts}.
 #' @template bucket
-#' @param object For \code{s3save}, a character string of the name of the object you want to save to. For \code{s3load}, a character string of the name of teh object you want to load from S3.
+#' @param object For \code{s3save}, a character string of the name of the object you want to save to. For \code{s3load}, a character string of the name of the object you want to load from S3.
 #' @param opts Additional arguments passed to \code{\link{s3HTTP}}.
 #' @param envir An R environment to load objects into. Default is the \code{parent.frame()} from which the function is called.
 #'
@@ -34,6 +34,24 @@ s3save <- function(..., object, bucket, opts = NULL) {
     tmp <- rawConnection(raw(0), "r+")
     on.exit(close(tmp))
     save(..., file = tmp)
+    if (is.null(opts)) {
+        r <- put_object(file = rawConnectionValue(tmp), bucket = bucket, object = object)
+    } else {
+        r <- do.call("put_object", c(list(file = rawConnectionValue(tmp), bucket = bucket, object = object), opts))
+    }
+    if (inherits(r, "aws-error")) {
+        return(r)
+    } else {
+        return(invisible(r))
+    }
+}
+
+#' @rdname s3save
+#' @export
+s3save_image <- function(object, bucket, opts = NULL) {
+    tmp <- rawConnection(raw(0), "r+")
+    on.exit(close(tmp))
+    save.image(file = tmp)
     if (is.null(opts)) {
         r <- put_object(file = rawConnectionValue(tmp), bucket = bucket, object = object)
     } else {
