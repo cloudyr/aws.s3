@@ -16,6 +16,7 @@ License: GPL (>= 2)
 URL: https://github.com/cloudyr/aws.s3
 BugReports: https://github.com/cloudyr/aws.s3/issues
 Imports:
+    utils,
     tools,
     httr,
     xml2 (> 1.0.0),
