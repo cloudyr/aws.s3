@@ -87,7 +87,6 @@ s3HTTP <- function(verb = "GET",
         headers$Authorization <- Sig$SignatureHeader
         H <- do.call(add_headers, headers)
     }
-    print(region)
     if (verb == "GET") {
       r <- GET(url, H, query = query, ...)
     } else if (verb == "HEAD") {
