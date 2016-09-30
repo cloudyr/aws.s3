@@ -6,7 +6,7 @@
 \alias{save_object}
 \title{Get object}
 \usage{
-get_object(object, bucket, headers = list(), ...)
+get_object(object, bucket, headers = list(), parse_response = FALSE, ...)
 
 save_object(object, bucket, file, headers = list(), ...)
 
@@ -18,6 +18,8 @@ head_object(object, bucket, ...)
 \item{bucket}{Character string with the name of the bucket, or an object of class \dQuote{s3_bucket}.}
 
 \item{headers}{List of request headers for the REST call.}
+
+\item{parse_response}{Passed through to \code{\link{s3HTTP}}, as this function requires a non-default setting. There is probably no reason to ever change this.}
 
 \item{file}{An R connection, or file name specifying the local file to save the object into.}
 

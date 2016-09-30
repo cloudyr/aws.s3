@@ -5,6 +5,7 @@
 #' @template bucket
 #' @param file An R connection, or file name specifying the local file to save the object into.
 #' @param headers List of request headers for the REST call.
+#' @param parse_response Passed through to \code{\link{s3HTTP}}, as this function requires a non-default setting. There is probably no reason to ever change this.
 #' @template dots
 #' @details \code{get_object} retrieves an object into memory. \code{save_object} saves an object to a local file. \code{head_object} checks whether an object exists by executing an HTTP HEAD request; this can be useful for checking object headers such as \dQuote{content-length} or \dQuote{content-type}.
 #' @examples
@@ -33,7 +34,7 @@
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectHEAD.html}{API Document: HEAD Object}
 #' @seealso \code{\link{get_bucket}}, \code{\link{s3curl}}
 #' @export
-get_object <- function(object, bucket, headers = list(), ...) {
+get_object <- function(object, bucket, headers = list(), parse_response = FALSE, ...) {
     if (missing(bucket)) {
         bucket <- get_bucketname(object)
     } 
@@ -42,6 +43,7 @@ get_object <- function(object, bucket, headers = list(), ...) {
                 bucket = bucket,
                 path = paste0("/", object),
                 headers = headers,
+                parse_response = parse_response,
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
