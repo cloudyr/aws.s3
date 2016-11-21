@@ -6,13 +6,8 @@ r_packages:
 - covr
 - drat
 r_github_packages:
+- cloudyr/aws.signature
 - hadley/xml2
-after_failure:
-  email: 
-    recipients:
-     - thosjleeper@gmail.com
-    on_success: change
-    on_failure: change
 after_success:
 - Rscript -e 'library("covr");codecov()'
 #- test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && bash knitreadme.sh

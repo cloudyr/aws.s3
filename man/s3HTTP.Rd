@@ -8,7 +8,9 @@ s3HTTP(verb = "GET", bucket = "", path = "", query = NULL,
   headers = list(), request_body = "", accelerate = FALSE,
   region = Sys.getenv("AWS_DEFAULT_REGION", "us-east-1"),
   key = Sys.getenv("AWS_ACCESS_KEY_ID"),
-  secret = Sys.getenv("AWS_SECRET_ACCESS_KEY"), parse_response = TRUE, ...)
+  secret = Sys.getenv("AWS_SECRET_ACCESS_KEY"),
+  session_token = Sys.getenv("AWS_SESSION_TOKEN"), parse_response = TRUE,
+  ...)
 }
 \arguments{
 \item{verb}{A character string containing an HTTP verb, defaulting to \dQuote{GET}.}
@@ -26,20 +28,17 @@ s3HTTP(verb = "GET", bucket = "", path = "", query = NULL,
 
 \item{accelerate}{A logical indicating whether to use AWS transfer acceleration, which can produce significant speed improvements for cross-country transfers. Acceleration only works with buckets that do not have dots in bucket name.}
 
-\item{region}{A character string containing the AWS region. Ignored if region can be inferred from \code{bucket}.
-If missing, defaults to \dQuote{us-east-1}.}
+\item{region}{A character string containing the AWS region. Ignored if region can be inferred from \code{bucket}. If missing, defaults to \dQuote{us-east-1}.}
 
-\item{key}{A character string containing an AWS Access Key ID. 
-If missing, defaults to value stored in environment variable \dQuote{AWS_ACCESS_KEY_ID}.}
+\item{key}{A character string containing an AWS Access Key ID. If missing, defaults to value stored in environment variable \dQuote{AWS_ACCESS_KEY_ID}.}
 
-\item{secret}{A character string containing an AWS Secret Access Key. 
-If missing, defaults to value stored in environment variable \dQuote{AWS_SECRET_ACCESS_KEY}.}
+\item{secret}{A character string containing an AWS Secret Access Key. If missing, defaults to value stored in environment variable \dQuote{AWS_SECRET_ACCESS_KEY}.}
 
-\item{parse_response}{return the response as is, or parse and return as a list?
-default is TRUE.}
+\item{session_token}{Optionally, a character string containing an AWS temporary Session Token. If missing, defaults to value stored in environment variable \dQuote{AWS_SESSION_TOKEN}.}
 
-\item{...}{Additional arguments passed to an HTTP request function.
-such as \code{\link[httr]{GET}}.}
+\item{parse_response}{return the response as is, or parse and return as a list? Default is TRUE.}
+
+\item{...}{Additional arguments passed to an HTTP request function. such as \code{\link[httr]{GET}}.}
 }
 \value{
 the S3 response, or the relevant error.
@@ -48,7 +47,6 @@ the S3 response, or the relevant error.
 This is the workhorse function for executing API requests for S3.
 }
 \details{
-This is mostly an internal function for executing API requests. 
-In almost all cases, users do not need to access this directly.
+This is mostly an internal function for executing API requests. In almost all cases, users do not need to access this directly.
 }
 
