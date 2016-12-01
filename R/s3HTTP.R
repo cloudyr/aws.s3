@@ -55,11 +55,11 @@ s3HTTP <- function(verb = "GET",
     }
     
     encodedPath <- if (path == "") "/" else {
-        paste0("/", paste(sapply(
+        paste(sapply(
             strsplit(path, '/')[[1]],
             function(i) URLencode(i, TRUE),
             USE.NAMES = FALSE
-        ), collapse = '/'))
+        ), collapse = '/')
     }
 
     url <- setup_s3_url(bucketname, region, encodedPath, accelerate)
@@ -67,7 +67,7 @@ s3HTTP <- function(verb = "GET",
 
     current <- Sys.time()
     d_timestamp <- format(current, "%Y%m%dT%H%M%SZ", tz = "UTC")
-    action <- if (p$path == "") "/" else p$path
+    action <- if (p$path == "") "/" else paste0("/", p$path)
     canonical_headers <- c(list(host = p$hostname,
                                 `x-amz-date` = d_timestamp), headers)
 
