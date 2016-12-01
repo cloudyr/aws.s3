@@ -53,21 +53,24 @@ s3HTTP <- function(verb = "GET",
     if (region == "") {
         region <- "us-east-1"
     }
-    url <- setup_s3_url(bucketname, region, path, accelerate)
-    p <- parse_url(url)
     
-    current <- Sys.time()
-    d_timestamp <- format(current, "%Y%m%dT%H%M%SZ", tz = "UTC")
-    action <- if (p$path == "") "/" else {
+    encodedPath <- if (path == "") "/" else {
         paste0("/", paste(sapply(
-            strsplit(p$path, '/')[[1]],
+            strsplit(path, '/')[[1]],
             function(i) URLencode(i, TRUE),
             USE.NAMES = FALSE
         ), collapse = '/'))
     }
+
+    url <- setup_s3_url(bucketname, region, encodedPath, accelerate)
+    p <- parse_url(url)
+
+    current <- Sys.time()
+    d_timestamp <- format(current, "%Y%m%dT%H%M%SZ", tz = "UTC")
+    action <- if (p$path == "") "/" else p$path
     canonical_headers <- c(list(host = p$hostname,
                                 `x-amz-date` = d_timestamp), headers)
-    
+
     if (is.null(query) && !is.null(p$query)) {
         query <- p$query
     }
