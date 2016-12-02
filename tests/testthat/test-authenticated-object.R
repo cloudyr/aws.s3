@@ -89,3 +89,26 @@ test_that("basic usage of s3saveRDS and s3readRDS", {
   
 })
 
+test_that("putobject and deleteobject handle object names with spaces and special characters", {
+  tmp <- tempfile(pattern = 'tricky file name &$@=:+,? ', fileext = ".txt")
+  writeLines(c("cloudyr", "test"), tmp)
+
+  p <- put_object(
+    file = tmp,
+    object = basename(tmp),
+    bucket = 'hpk',
+    key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"),
+    secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY")
+  )
+  expect_true(p)
+
+  d <- delete_object(
+    object = basename(tmp),
+    bucket = 'hpk',
+    key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"),
+    secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY")
+  )
+  expect_true(d)
+
+  if (file.exists(tmp)) file.remove(tmp)
+})
