@@ -1,4 +1,8 @@
-# CHANGES TO aws.s3 0.1.29 #
+# CHANGES TO aws.s3 0.1.32
+
+* Fixed a bug related to the handling of object keys that contained spaces. (#84, #85; h/t Bao Nguyen)
+
+# CHANGES TO aws.s3 0.1.29
 
 * Fixed a bug related to the handling of object keys that contained atypical characters (e.g., `=`). (#64)
 * Added a new function `s3save_image()` to save an entire workspace.
