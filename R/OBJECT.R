@@ -21,7 +21,7 @@ put_object <- function(file, object, bucket, headers = list(), ...) {
     }
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
-                path = paste0(object),
+                path = paste0('/', object),
                 headers = c(headers, list(
                   `Content-Length` = ifelse(is.character(file) && file.exists(file), 
                                                        file.size(file), length(file))
