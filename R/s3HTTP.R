@@ -155,7 +155,7 @@ parse_aws_s3_response <- function(r, Sig, verbose = getOption("verbose")){
     } else {
         response <- r
     }
-    if (http_error(r)) {
+    if (http_error(r) | (http_status(r)[["category"]] == "Redirection")) {
         warn_for_status(r)
         h <- headers(r)
         out <- structure(response, headers = h, class = "aws_error")

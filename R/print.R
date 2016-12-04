@@ -23,3 +23,10 @@ print.s3_object <- function(x, ...){
     cat("Storage class: ", x$StorageClass, "\n")
     invisible(x)
 }
+
+#' @export
+print.aws_error <- function(x, ...){
+    message("AWS API Error Encountered. Details below:")
+    print(str(x))
+    invisible(x)
+}
