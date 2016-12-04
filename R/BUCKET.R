@@ -38,6 +38,7 @@ get_bucket <- function(bucket,
     } else {
         for (i in which(names(r) == "Contents")) {
           r[[i]][["Bucket"]] <- get_bucketname(bucket)
+          r[[i]][["Size"]] <- as.numeric(r[[i]][["Size"]])
           attr(r[[i]], "class") <- "s3_object"
         }
         att <- r[names(r) != "Contents"]
