@@ -1,17 +1,28 @@
-# get_bucketname
-
+#' @rdname utilities
+#' @title Utility Functions
+#' @description Some utility functions for working with S3 objects and buckets
+#' @param x An object.
+#' @param \dots Ignored.
+#' @return \code{get_bucketname} returns a character string.
+#' @export
 get_bucketname <- function(x, ...) {
     UseMethod("get_bucketname")
 }
 
+#' @rdname utilities
+#' @export
 get_bucketname.character <- function(x, ...) {
     x
 }
 
+#' @rdname utilities
+#' @export
 get_bucketname.s3_bucket <- function(x, ...) {
     attributes(x)[["Name"]]
 }
 
+#' @rdname utilities
+#' @export
 get_bucketname.s3_object <- function(x, ...) {
     x[["Bucket"]]
 }
