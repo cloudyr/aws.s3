@@ -1,3 +1,7 @@
+# CHANGES TO aws.s3 0.1.34
+
+* Update and rename policy-related functions.
+
 # CHANGES TO aws.s3 0.1.33
 
 * Exported the `get_bucket()` S3 generic and methods.

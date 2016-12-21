@@ -133,7 +133,7 @@ s3HTTP <- function(verb = "GET",
       r <- VERB("OPTIONS", url, H, query = query, ...)
     }
     
-    if (parse_response) {
+    if (isTRUE(parse_response)) {
       out <- parse_aws_s3_response(r, Sig)
     } else {
       out <- r
@@ -177,7 +177,7 @@ setup_s3_url <- function(bucketname, region, path, accelerate) {
             url <- paste0("https://s3-", region, ".amazonaws.com")
         }
     } else {
-        if (accelerate) {
+        if (isTRUE(accelerate)) {
             if (grepl("\\.", bucketname)) {
                 stop("To use accelerate, bucket name must not contain dots (.)")
             }
