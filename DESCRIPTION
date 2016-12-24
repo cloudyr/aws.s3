@@ -20,7 +20,7 @@ Imports:
     utils,
     tools,
     httr,
-    xml2 (> 1.0.0),
+    xml2 (>= 1.0.0),
     base64enc,
     digest,
     curl,
