@@ -118,10 +118,7 @@ Or, to pull a potentially unstable version directly from GitHub:
 if (!require("ghit")) {
     install.packages("ghit")
 }
-ghit::install_github(c("hadley/xml2", "cloudyr/aws.s3"))
-
-# again, on windows you may need to specify:
-ghit::install_github(c("hadley/xml2", "cloudyr/aws.s3"), INSTALL_opts = "--no-multiarch")
+ghit::install_github("cloudyr/aws.s3")
 ```
 
 
