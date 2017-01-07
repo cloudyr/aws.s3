@@ -5,9 +5,6 @@ r_packages:
 - knitr
 - covr
 - drat
-r_github_packages:
-- cloudyr/aws.signature
-- hadley/xml2
 after_success:
 - Rscript -e 'library("covr");codecov()'
 #- test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && bash knitreadme.sh
