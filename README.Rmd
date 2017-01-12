@@ -19,13 +19,14 @@ If you work with multiple AWS accounts, another option that is consistent with o
 
 ```R
 # use your 'default' account credentials
-use_credentials()
+aws.signature::use_credentials()
 
 # use an alternative credentials profile
-use_credentials(profile = "bob")
+aws.signature::use_credentials(profile = "bob")
 ```
 
 Temporary session tokens are stored in environment variable `AWS_SESSION_TOKEN` (and will be stored there by the `use_credentials()` function). The [aws.iam package](https://github.com/cloudyr/aws.iam/) provides an R interface to IAM roles and the generation of temporary session tokens via the security token service (STS).
+
 
 ## Code Examples
 
