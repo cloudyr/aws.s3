@@ -29,7 +29,7 @@ s3HTTP <- function(verb = "GET",
                    headers = list(), 
                    request_body = "",
                    accelerate = FALSE,
-                   region = Sys.getenv("AWS_DEFAULT_REGION"), 
+                   region = Sys.getenv("AWS_DEFAULT_REGION", "us-east-1"), 
                    key = Sys.getenv("AWS_ACCESS_KEY_ID"), 
                    secret = Sys.getenv("AWS_SECRET_ACCESS_KEY"), 
                    session_token = Sys.getenv("AWS_SESSION_TOKEN"),
@@ -38,7 +38,7 @@ s3HTTP <- function(verb = "GET",
                    ...) {
     
     bucketname <- get_bucketname(bucket)
-    if (isTRUE(check_region)) {
+    if (isTRUE(check_region) && (bucketname != "")) {
         bucketregion <- get_region(bucket)
         if (!is.null(bucketregion)) {
             region <- bucketregion

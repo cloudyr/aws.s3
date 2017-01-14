@@ -27,6 +27,10 @@
 #' @seealso \code{\link{s3save}},\code{\link{s3load}}
 #' @export
 s3saveRDS <- function(x, bucket, object = paste0(as.character(substitute(x)), ".rds"), ...) {
+    if (missing(bucket)) {
+        bucket <- get_bucketname(object)
+    }
+    object <- get_objectkey(object)
     b <- memCompress(from = serialize(x, connection = NULL), type = 'gzip')
     r <- put_object(file = b, bucket = bucket, object = object, ...)
     if (inherits(r, "aws-error")) {
@@ -39,6 +43,10 @@ s3saveRDS <- function(x, bucket, object = paste0(as.character(substitute(x)), ".
 #' @rdname s3saveRDS
 #' @export
 s3readRDS <- function(bucket, object, ...) {
+    if (missing(bucket)) {
+        bucket <- get_bucketname(object)
+    }
+    object <- get_objectkey(object)
     r <- get_object(bucket = bucket, object = object, ...)
     if (typeof(r) == 'raw') {
         return(unserialize(memDecompress(from = as.vector(r), type = 'gzip')))

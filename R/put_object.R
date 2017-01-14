@@ -1,8 +1,7 @@
 #' @title Put object
 #' @description Puts an object into an S3 bucket
 #'
-#' @param file A character string containing the filename (or full path) of 
-#' the file you want to upload to S3.
+#' @param file A character string containing the filename (or full path) of the file you want to upload to S3.
 #' @template bucket
 #' @param object A character string containing the name the object should 
 #' have in S3 (i.e., its "object key"). If missing, the filename is used.
@@ -17,6 +16,9 @@ put_object <- function(file, object, bucket, headers = list(), ...) {
     if (missing(object)) {
         object <- basename(file)
     } else {
+        if (missing(bucket)) {
+            bucket <- get_bucketname(object)
+        }
         object <- get_objectkey(object)
     }
     r <- s3HTTP(verb = "PUT", 

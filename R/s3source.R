@@ -28,6 +28,10 @@
 #' @seealso \code{\link{s3saveRDS}},\code{\link{s3save}}, \code{\link{get_object}}
 #' @export
 s3source <- function(object, bucket, ..., opts = NULL) {
+    if (missing(bucket)) {
+        bucket <- get_bucketname(object)
+    }
+    object <- get_objectkey(object)
     if (is.null(opts)) {
         r <- get_object(bucket = bucket, object = object)
     } else {

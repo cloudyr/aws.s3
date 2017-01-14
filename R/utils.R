@@ -12,7 +12,12 @@ get_bucketname <- function(x, ...) {
 #' @rdname utilities
 #' @export
 get_bucketname.character <- function(x, ...) {
-    x
+    if (grepl("^s3://", x)) {
+        x <- substring(x, 6, nchar(x))
+        substring(x, 1, regexpr("/", x)-1L)
+    } else {
+        x
+    }
 }
 
 #' @rdname utilities
@@ -53,7 +58,12 @@ get_objectkey <- function(x, ...) {
 }
 
 get_objectkey.character <- function(x, ...) {
-    gsub("^/{1}", "", x)
+    if (grepl("^s3://", x)) {
+        x <- substring(x, 6, nchar(x))
+        substring(x, regexpr("/", x)+1L, nchar(x))
+    } else {
+        gsub("^/{1}", "", x)
+    }
 }
 
 get_objectkey.s3_object <- function(x, ...) {

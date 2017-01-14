@@ -6,7 +6,7 @@
 \usage{
 s3HTTP(verb = "GET", bucket = "", path = "", query = NULL,
   headers = list(), request_body = "", accelerate = FALSE,
-  region = Sys.getenv("AWS_DEFAULT_REGION"),
+  region = Sys.getenv("AWS_DEFAULT_REGION", "us-east-1"),
   key = Sys.getenv("AWS_ACCESS_KEY_ID"),
   secret = Sys.getenv("AWS_SECRET_ACCESS_KEY"),
   session_token = Sys.getenv("AWS_SESSION_TOKEN"), parse_response = TRUE,

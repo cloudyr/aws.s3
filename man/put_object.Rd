@@ -7,8 +7,7 @@
 put_object(file, object, bucket, headers = list(), ...)
 }
 \arguments{
-\item{file}{A character string containing the filename (or full path) of 
-the file you want to upload to S3.}
+\item{file}{A character string containing the filename (or full path) of the file you want to upload to S3.}
 
 \item{object}{A character string containing the name the object should 
 have in S3 (i.e., its "object key"). If missing, the filename is used.}

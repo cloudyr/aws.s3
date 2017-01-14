@@ -25,6 +25,9 @@
 #' y <- get_object(obj[[1]], file = object[[1]][["Key"]])
 #' y %in% dir()
 #' 
+#' # return object using s3:// syntax
+#' get_object("s3://myexamplebucket/mtcars")
+#' 
 #' # return parts of an object
 #' ## use 'Range' header to specify bytes
 #' get_object(object = obj[[1]], headers = list('Range' = 'bytes=1-120'))

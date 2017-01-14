@@ -34,6 +34,10 @@ s3save <- function(..., object, bucket, opts = NULL) {
     tmp <- rawConnection(raw(0), "r+")
     on.exit(close(tmp))
     save(..., file = tmp)
+    if (missing(bucket)) {
+        bucket <- get_bucketname(object)
+    }
+    object <- get_objectkey(object)
     if (is.null(opts)) {
         r <- put_object(file = rawConnectionValue(tmp), bucket = bucket, object = object)
     } else {
@@ -52,6 +56,10 @@ s3save_image <- function(object, bucket, opts = NULL) {
     tmp <- rawConnection(raw(0), "r+")
     on.exit(close(tmp))
     save.image(file = tmp)
+    if (missing(bucket)) {
+        bucket <- get_bucketname(object)
+    }
+    object <- get_objectkey(object)
     if (is.null(opts)) {
         r <- put_object(file = rawConnectionValue(tmp), bucket = bucket, object = object)
     } else {
@@ -67,6 +75,10 @@ s3save_image <- function(object, bucket, opts = NULL) {
 #' @rdname s3save
 #' @export
 s3load <- function(object, bucket, envir = parent.frame(), ...) {
+    if (missing(bucket)) {
+        bucket <- get_bucketname(object)
+    }
+    object <- get_objectkey(object)
     r <- get_object(bucket = bucket, object = object, parse_response = FALSE, ...)
     if (inherits(r, "aws-error")) {
         return(r)
