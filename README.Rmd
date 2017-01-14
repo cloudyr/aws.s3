@@ -49,7 +49,7 @@ get_bucket(bucket = '1000genomes')
 
 Amazon maintains a listing of [Public Data Sets](https://aws.amazon.com/datasets) on S3.
 
-To get a listing for all objects in a private bucket, pass your AWS key and secret in as parameters.  (As described above, all functions in `aws.s3` will look for your keys as environment variables by default, greatly simplifying the process of making a s3 request.)
+To get a listing for all objects in a private bucket, pass your AWS key and secret in as parameters.  (As described above, all functions in **aws.s3** will look for your keys as environment variables by default, greatly simplifying the process of making a s3 request.)
 
 ```R
 # specify keys in-line
@@ -65,11 +65,13 @@ Sys.setenv("AWS_ACCESS_KEY_ID" = "mykey",
 get_bucket("my_bucket")
 ```
 
+S3 can be a bit picky about region specifications. `bucketlist()` will return buckets from all regions, but all other functions require specifying a region. A default of `"us-east-1"` is relied upon if none is specified explicitly and the correct region can't be detected automatically. (Note: using an incorrect region is one of the most common - and hardest to figure out - errors when working with S3.)
+
 ### Objects
 
 There are six main functions that will be useful for working with objects in S3:
 
- 1. `get_object()` returns a raw vector representation of an S3 object.
+ 1. `get_object()` returns a raw vector representation of an S3 object. This might then be parsed in a number of ways, such as `rawToChar()`, `xml2::read_xml()`, `jsonlite::fromJSON()`, and so forth depending on the file format of the object
  2. `save_object()` saves an S3 object to a specified local file.
  3. `put_object()` stores a local file into an S3 bucket.
  4. `s3save()` saves one or more in-memory R objects to an .Rdata file in S3 (analogously to `save()`). `s3saveRDS()` is an analogue for `saveRDS()`.
@@ -87,6 +89,8 @@ s3load("mtcars.Rdata", bucket = "my_bucket")
 
 # get file as raw vector
 get_object("mtcars.Rdata", bucket = "my_bucket")
+# alternative 'S3 URI' syntax:
+get_object("s3://my_bucket/mtcars.Rdata")
 
 # save file locally
 save_object("mtcars.Rdata", file = "mtcars.Rdata", bucket = "my_bucket")
