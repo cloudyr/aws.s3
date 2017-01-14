@@ -13,7 +13,7 @@
 get_cors <- function(bucket, ...){
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
-                path = '/?cors',
+                query = list(cors = ""),
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -27,7 +27,7 @@ get_cors <- function(bucket, ...){
 put_cors <- function(bucket, ...){
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
-                path = "?cors",
+                query = list(cors = ""),
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -41,7 +41,7 @@ put_cors <- function(bucket, ...){
 delete_cors <- function(bucket, ...){
     r <- s3HTTP(verb = "DELETE", 
                 bucket = bucket,
-                path = "?cors",
+                query = list(cors = ""),
                 parse_response = FALSE,
                 ...)
     if (inherits(r, "aws_error")) {

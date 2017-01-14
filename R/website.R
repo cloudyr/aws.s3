@@ -14,7 +14,7 @@
 delete_website <- function(bucket, ...){
     r <- s3HTTP(verb = "DELETE", 
                 bucket = bucket,
-                path = "?website",
+                query = list(website = ""),
                 parse_response = FALSE,
                 ...)
     if (inherits(r, "aws_error")) {
@@ -29,7 +29,7 @@ delete_website <- function(bucket, ...){
 put_website <- function(bucket, ...){
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
-                path = "?website",
+                query = list(website = ""),
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -43,7 +43,7 @@ put_website <- function(bucket, ...){
 get_website <- function(bucket, ...){
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
-                path = "?website",
+                query = list(website = ""),
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)

@@ -14,7 +14,7 @@
 get_replication <- function(bucket, ...){
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
-                path = "?notification",
+                query = list(replication = ""),
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -28,7 +28,7 @@ get_replication <- function(bucket, ...){
 delete_replication <- function(bucket, ...){
     r <- s3HTTP(verb = "DELETE", 
                 bucket = bucket,
-                path = "?replication",
+                query = list(replication = ""),
                 parse_response = FALSE,
                 ...)
     if (inherits(r, "aws_error")) {

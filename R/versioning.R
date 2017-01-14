@@ -18,7 +18,7 @@
 get_versions <- function(bucket, ...){
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
-                path = "?versions",
+                query = list(versions = ""),
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -32,7 +32,7 @@ get_versions <- function(bucket, ...){
 get_versioning <- function(bucket, ...){
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
-                path = "?versioning",
+                query = list(versioning = ""),
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -55,7 +55,7 @@ put_versioning <- function(bucket, status = c("Enabled", "Suspended"), ...){
 ) # note this does not currently allow MFA Delete
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
-                path = "?versioning",
+                query = list(versioning = ""),
                 request_body = b,
                 ...)
     if (inherits(r, "aws_error")) {

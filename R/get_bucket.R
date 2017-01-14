@@ -61,7 +61,7 @@ get_bucket <- function(bucket,
 get_uploads <- function(bucket, ...){
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
-                path = "?uploads",
+                query = list(uploads = ""),
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)

@@ -14,7 +14,7 @@
 get_tagging <- function(bucket, ...){
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
-                path = "?tagging",
+                query = list(tagging = ""),
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -28,7 +28,7 @@ get_tagging <- function(bucket, ...){
 put_tagging <- function(bucket, ...){
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
-                path = "?tagging",
+                query = list(tagging = ""),
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -42,7 +42,7 @@ put_tagging <- function(bucket, ...){
 delete_tagging <- function(bucket, ...){
     r <- s3HTTP(verb = "DELETE", 
                 bucket = bucket,
-                path = "?tagging",
+                query = list(tagging = ""),
                 parse_response = FALSE,
                 ...)
     if (inherits(r, "aws_error")) {

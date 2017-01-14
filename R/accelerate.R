@@ -23,7 +23,7 @@
 get_acceleration <- function(bucket, ...){
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
-                path = "?accelerate",
+                query = list(accelerate = ""),
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -46,7 +46,7 @@ put_acceleration <- function(bucket, status = c("Enabled", "Suspended"), ...){
 </AccelerateConfiguration>')
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
-                path = "?accelerate",
+                query = list(accelerate = ""),
                 request_body = b,
                 ...)
     if (inherits(r, "aws_error")) {

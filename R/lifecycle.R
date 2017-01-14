@@ -14,7 +14,7 @@
 get_lifecycle <- function(bucket, ...){
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
-                path = '?lifecycle',
+                query = list(lifecycle = ""),
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -28,7 +28,7 @@ get_lifecycle <- function(bucket, ...){
 put_lifecycle <- function(bucket, ...){
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
-                action = "?lifecycle",
+                query = list(lifecycle = ""),
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -42,7 +42,7 @@ put_lifecycle <- function(bucket, ...){
 delete_lifecycle <- function(bucket, ...){
     r <- s3HTTP(verb = "DELETE", 
                 bucket = bucket,
-                path = "?lifecycle",
+                query = list(lifecycle = ""),
                 parse_response = FALSE,
                 ...)
     if (inherits(r, "aws_error")) {

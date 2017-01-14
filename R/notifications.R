@@ -13,7 +13,7 @@
 get_notification <- function(bucket, ...){
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
-                path = "?notification",
+                query = list(notification = ""),
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -27,7 +27,7 @@ get_notification <- function(bucket, ...){
 put_notification <- function(bucket, ...){
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
-                path = "?notification",
+                query = list(notification = ""),
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)

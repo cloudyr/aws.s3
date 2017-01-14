@@ -2,7 +2,7 @@ get_acl <- function(object, bucket, ...) {
     if (!missing(bucket)) {
         r <- s3HTTP(verb = "GET", 
                     bucket = bucket,
-                    path = "?acl",
+                    query = list(acl = ""),
                     ...)
         
         if (inherits(r, "aws_error")) {
@@ -31,7 +31,7 @@ putobject_acl <- function(object, bucket, ...) {
     if (missing(object)) {
         r <- s3HTTP(verb = "PUT", 
                     bucket = bucket,
-                    path = "?acl",
+                    query = list(acl = ""),
                     ...)
         if (inherits(r, "aws_error")) {
             return(r)

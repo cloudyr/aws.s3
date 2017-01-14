@@ -11,7 +11,7 @@
 get_requestpayment <- function(bucket, ...){
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
-                path = "?requestPayment",
+                query = list(requestPayment = ""),
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -25,7 +25,7 @@ get_requestpayment <- function(bucket, ...){
 put_requestpayment <- function(bucket, ...){
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
-                path = "?requestPayment",
+                query = list(requestPayment = ""),
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)

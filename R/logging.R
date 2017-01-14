@@ -1,7 +1,7 @@
 get_logging <- function(bucket, ...){
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
-                path = "?logging",
+                query = list(logging = ""),
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
@@ -13,7 +13,7 @@ get_logging <- function(bucket, ...){
 put_logging <- function(bucket, ...){
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
-                path = "?logging",
+                query = list(logging = ""),
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)
