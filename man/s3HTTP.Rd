@@ -6,25 +6,24 @@
 \usage{
 s3HTTP(verb = "GET", bucket = "", path = "", query = NULL,
   headers = list(), request_body = "", accelerate = FALSE,
-  region = Sys.getenv("AWS_DEFAULT_REGION", "us-east-1"),
+  region = Sys.getenv("AWS_DEFAULT_REGION"),
   key = Sys.getenv("AWS_ACCESS_KEY_ID"),
   secret = Sys.getenv("AWS_SECRET_ACCESS_KEY"),
   session_token = Sys.getenv("AWS_SESSION_TOKEN"), parse_response = TRUE,
-  ...)
+  check_region = TRUE, ...)
 }
 \arguments{
 \item{verb}{A character string containing an HTTP verb, defaulting to \dQuote{GET}.}
 
 \item{bucket}{A character string with the name of the bucket, or an object of class \dQuote{s3_bucket}. If the latter and a region can be inferred from the bucket object attributes, then that region is used instead of \code{region}.}
 
-\item{path}{A character string with the name of the object to put in the bucket 
-(sometimes called the object or 'key name' in the AWS documentation.)}
+\item{path}{A character string with the name of the object to put in the bucket (sometimes called the object or 'key name' in the AWS documentation.)}
 
-\item{query}{any queries, passed as a named list}
+\item{query}{Any query arguments, passed as a named list of key-value pairs.}
 
-\item{headers}{a list of request headers for the REST call.}
+\item{headers}{A list of request headers for the REST call.}
 
-\item{request_body}{character string of request body data.}
+\item{request_body}{A character string containing request body data.}
 
 \item{accelerate}{A logical indicating whether to use AWS transfer acceleration, which can produce significant speed improvements for cross-country transfers. Acceleration only works with buckets that do not have dots in bucket name.}
 
@@ -36,9 +35,11 @@ s3HTTP(verb = "GET", bucket = "", path = "", query = NULL,
 
 \item{session_token}{Optionally, a character string containing an AWS temporary Session Token. If missing, defaults to value stored in environment variable \dQuote{AWS_SESSION_TOKEN}.}
 
-\item{parse_response}{return the response as is, or parse and return as a list? Default is TRUE.}
+\item{parse_response}{A logical indicating whether to return the response as is, or parse and return as a list. Default is \code{TRUE}.}
 
 \item{...}{Additional arguments passed to an HTTP request function. such as \code{\link[httr]{GET}}.}
+
+\item{parse_response}{A logical indicating whether to check the value of \code{region} against the apparent bucket region. This is useful for avoiding (often confusing) out-of-region errors. Default is \code{TRUE}.}
 }
 \value{
 the S3 response, or the relevant error.

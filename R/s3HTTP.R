@@ -3,17 +3,17 @@
 #' @details This is mostly an internal function for executing API requests. In almost all cases, users do not need to access this directly.
 #' @param verb A character string containing an HTTP verb, defaulting to \dQuote{GET}.
 #' @param bucket A character string with the name of the bucket, or an object of class \dQuote{s3_bucket}. If the latter and a region can be inferred from the bucket object attributes, then that region is used instead of \code{region}.
-#' @param path A character string with the name of the object to put in the bucket 
-#' (sometimes called the object or 'key name' in the AWS documentation.)
-#' @param query any queries, passed as a named list 
-#' @param headers a list of request headers for the REST call.   
-#' @param request_body character string of request body data.
+#' @param path A character string with the name of the object to put in the bucket (sometimes called the object or 'key name' in the AWS documentation.)
+#' @param query Any query arguments, passed as a named list of key-value pairs.
+#' @param headers A list of request headers for the REST call.   
+#' @param request_body A character string containing request body data.
 #' @param accelerate A logical indicating whether to use AWS transfer acceleration, which can produce significant speed improvements for cross-country transfers. Acceleration only works with buckets that do not have dots in bucket name.
 #' @param region A character string containing the AWS region. Ignored if region can be inferred from \code{bucket}. If missing, defaults to \dQuote{us-east-1}.
 #' @param key A character string containing an AWS Access Key ID. If missing, defaults to value stored in environment variable \dQuote{AWS_ACCESS_KEY_ID}.
 #' @param secret A character string containing an AWS Secret Access Key. If missing, defaults to value stored in environment variable \dQuote{AWS_SECRET_ACCESS_KEY}.
 #' @param session_token Optionally, a character string containing an AWS temporary Session Token. If missing, defaults to value stored in environment variable \dQuote{AWS_SESSION_TOKEN}.
-#' @param parse_response return the response as is, or parse and return as a list? Default is TRUE.
+#' @param parse_response A logical indicating whether to return the response as is, or parse and return as a list. Default is \code{TRUE}.
+#' @param parse_response A logical indicating whether to check the value of \code{region} against the apparent bucket region. This is useful for avoiding (often confusing) out-of-region errors. Default is \code{TRUE}.
 #' @param ... Additional arguments passed to an HTTP request function. such as \code{\link[httr]{GET}}.
 #' @return the S3 response, or the relevant error.
 #' @importFrom httr GET POST PUT HEAD DELETE VERB upload_file parse_url add_headers
@@ -29,33 +29,28 @@ s3HTTP <- function(verb = "GET",
                    headers = list(), 
                    request_body = "",
                    accelerate = FALSE,
-                   region = Sys.getenv("AWS_DEFAULT_REGION", "us-east-1"), 
+                   region = Sys.getenv("AWS_DEFAULT_REGION"), 
                    key = Sys.getenv("AWS_ACCESS_KEY_ID"), 
                    secret = Sys.getenv("AWS_SECRET_ACCESS_KEY"), 
                    session_token = Sys.getenv("AWS_SESSION_TOKEN"),
                    parse_response = TRUE, 
+                   check_region = TRUE,
                    ...) {
     
     bucketname <- get_bucketname(bucket)
-    bucketregion <- get_region(bucket)
-    if (!is.null(bucketregion)) {
-        region <- bucketregion
+    if (isTRUE(check_region)) {
+        bucketregion <- get_region(bucket)
+        if (!is.null(bucketregion)) {
+            region <- bucketregion
+        }
     }
     if (region == "") {
         region <- "us-east-1"
     }
     
-    encodedPath <- if (path == "") "/" else {
-        paste(sapply(
-            strsplit(path, '/')[[1]],
-            function(i) URLencode(i, TRUE),
-            USE.NAMES = FALSE
-        ), collapse = '/')
-    }
-
-    url <- setup_s3_url(bucketname, region, encodedPath, accelerate)
+    url <- setup_s3_url(bucketname, region, path, accelerate)
     p <- parse_url(url)
-
+    
     current <- Sys.time()
     d_timestamp <- format(current, "%Y%m%dT%H%M%SZ", tz = "UTC")
     action <- if (p$path == "") "/" else paste0("/", p$path)
@@ -189,6 +184,14 @@ setup_s3_url <- function(bucketname, region, path, accelerate) {
                 url <- paste0("https://", bucketname, ".s3-", region, ".amazonaws.com")
             }
         }
+    }
+    
+    path <- if (path == "") "/" else {
+        paste(sapply(
+            strsplit(path, '/')[[1]],
+            function(i) URLencode(i, TRUE),
+            USE.NAMES = FALSE
+        ), collapse = '/')
     }
     url <- if (grepl('^[\\/].*', path)) { paste0(url, path) } else { paste(url, path, sep = "/") }
     return(url)

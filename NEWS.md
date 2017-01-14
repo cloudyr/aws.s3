@@ -1,3 +1,7 @@
+# CHANGES TO aws.s3 0.1.35
+
+* `s3HTTP()` gains a `check_region` argument (default is `TRUE`). If `TRUE`, attempts are made to verify the bucket's region before performing the operation in order to avoid confusing out-of-region errors. (#46)
+
 # CHANGES TO aws.s3 0.1.34
 
 * Update and rename policy-related functions.
