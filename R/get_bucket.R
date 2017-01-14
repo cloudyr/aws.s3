@@ -49,51 +49,6 @@ get_bucket <- function(bucket,
     out
 }
 
-#' @title Delete Bucket
-#' @description Deletes an S3 bucket.
-#'
-#' @template bucket
-#' @template dots
-#'
-#' @return \code{TRUE} if successful, \code{FALSE} otherwise. 
-#' An \code{aws_error} object may be returned if the request failed.
-#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETE.html}{API Documentation}
-#' @export
-delete_bucket <- function(bucket, ...){
-    r <- s3HTTP(verb = "DELETE", 
-                bucket = bucket,
-                parse_response = FALSE,
-                ...)
-    if (inherits(r, "aws_error")) {
-      return(r)
-    } else {
-      return(r)
-    }
-}
-
-
-#' @title Bucket location
-#' @description Get the AWS region location of bucket.
-#'
-#' @template bucket
-#' @template dots
-#'
-#' @return A character string containing the region, if one has been set.
-#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETlocation.html}{API Documentation}
-#' @export
-get_location <- function(bucket, ...){
-    r <- s3HTTP(verb = "GET", 
-                bucket = bucket,
-                path = "?location",
-                ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        r
-    }
-}
-
-
 #' @title Multipart uploads
 #' @description Get a list of multipart uploads for a bucket.
 #'
@@ -114,46 +69,3 @@ get_uploads <- function(bucket, ...){
         return(r)
     }
 }
-
-
-
-#' @title Bucket exists?
-#' @description Check whether a bucket exists and is accessible with the current authentication keys.
-#' @template bucket
-#' @template dots
-#'
-#' @return \code{TRUE} if bucket exists and is accessible, else \code{FALSE}. An \code{aws_error} object may be returned if the request failed.
-#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketHEAD.html}{API Documentation}
-#' @export
-bucket_exists <- function(bucket, ...){
-    r <- s3HTTP(verb = "HEAD", 
-                bucket = bucket,
-                ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        return(r)
-    }
-}
-
-
-#' @title Create bucket
-#' @description Creates a new S3 bucket.
-#' @template bucket
-#' @template dots
-#'
-#' @return \code{TRUE} if successful, aws_error details if not.
-#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUT.html}{API Documentation}
-#' @export
-put_bucket <- function(bucket, ...){
-    r <- s3HTTP(verb = "PUT", 
-                bucket = bucket,
-                parse_response = FALSE,
-                ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        TRUE
-    }
-}
-
