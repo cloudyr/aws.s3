@@ -37,9 +37,9 @@ s3HTTP(verb = "GET", bucket = "", path = "", query = NULL,
 
 \item{parse_response}{A logical indicating whether to return the response as is, or parse and return as a list. Default is \code{TRUE}.}
 
-\item{...}{Additional arguments passed to an HTTP request function. such as \code{\link[httr]{GET}}.}
+\item{check_region}{A logical indicating whether to check the value of \code{region} against the apparent bucket region. This is useful for avoiding (often confusing) out-of-region errors. Default is \code{TRUE}.}
 
-\item{parse_response}{A logical indicating whether to check the value of \code{region} against the apparent bucket region. This is useful for avoiding (often confusing) out-of-region errors. Default is \code{TRUE}.}
+\item{...}{Additional arguments passed to an HTTP request function. such as \code{\link[httr]{GET}}.}
 }
 \value{
 the S3 response, or the relevant error.

@@ -13,7 +13,7 @@
 #' @param secret A character string containing an AWS Secret Access Key. If missing, defaults to value stored in environment variable \dQuote{AWS_SECRET_ACCESS_KEY}.
 #' @param session_token Optionally, a character string containing an AWS temporary Session Token. If missing, defaults to value stored in environment variable \dQuote{AWS_SESSION_TOKEN}.
 #' @param parse_response A logical indicating whether to return the response as is, or parse and return as a list. Default is \code{TRUE}.
-#' @param parse_response A logical indicating whether to check the value of \code{region} against the apparent bucket region. This is useful for avoiding (often confusing) out-of-region errors. Default is \code{TRUE}.
+#' @param check_region A logical indicating whether to check the value of \code{region} against the apparent bucket region. This is useful for avoiding (often confusing) out-of-region errors. Default is \code{TRUE}.
 #' @param ... Additional arguments passed to an HTTP request function. such as \code{\link[httr]{GET}}.
 #' @return the S3 response, or the relevant error.
 #' @importFrom httr GET POST PUT HEAD DELETE VERB upload_file parse_url add_headers
