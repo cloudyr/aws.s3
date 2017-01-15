@@ -7,10 +7,9 @@
 put_object(file, object, bucket, headers = list(), ...)
 }
 \arguments{
-\item{file}{A character string containing the filename (or full path) of the file you want to upload to S3.}
+\item{file}{A character string containing the filename (or full path) of the file you want to upload to S3. Alternatively, an raw vector containing the file can be passed directly, in which case \code{object} needs to be specified explicitly.}
 
-\item{object}{A character string containing the name the object should 
-have in S3 (i.e., its "object key"). If missing, the filename is used.}
+\item{object}{A character string containing the name the object should have in S3 (i.e., its "object key"). If missing, the filename is used.}
 
 \item{bucket}{Character string with the name of the bucket, or an object of class \dQuote{s3_bucket}.}
 
@@ -19,15 +18,41 @@ have in S3 (i.e., its "object key"). If missing, the filename is used.}
 \item{\dots}{Additional arguments passed to \code{\link{s3HTTP}}.}
 }
 \value{
-If successful, \code{TRUE}, otherwise an aws_error object.
+If successful, \code{TRUE}, otherwise an \dQuote{aws_error} object.
 }
 \description{
 Puts an object into an S3 bucket
+}
+\details{
+This provide a generic interface for sending files (or serialized, in-memory representations thereof) to S3. Some convenience wrappers are provided for common tasks: \code{\link{s3save}} and \code{\link{s3saveRDS}}.
+}
+\examples{
+\dontrun{
+  library("datasets")
+
+  # write file to S3
+  tmp <- tempfile()
+  on.exit(unlink(tmp))
+  utils::write.csv(mtcars, file = tmp)
+  put_object(tmp, object = "mtcars.csv", bucket = "myexamplebucket")
+
+  # write serialized, in-memory object to S3
+  x <- rawConnection(raw(0), "w")
+  utils::write.csv(mtcars, x)
+  put_object(rawConnectionValue(x), object = "mtcars.csv", bucket = "myexamplebucketname")
+
+  # alternative "S3 URI" syntax:
+  put_object(rawConnectionValue(x), object = "s3://myexamplebucketname/mtcars.csv")
+  close(x)
+
+  # read the object back from S3
+  read.csv(text = rawToChar(get_object(object = "s3://myexamplebucketname/mtcars.csv")))
+}
 }
 \references{
 \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPUT.html}{API Documentation}
 }
 \seealso{
-\code{\link{delete_object}}
+\code{\link{put_bucket}}, \code{\link{get_object}}, \code{\link{delete_object}}
 }
 
