@@ -1,5 +1,10 @@
 # CHANGES TO aws.s3 0.1.35
 
+* `bucketlist()` now returns (in addition to past behavior of printing) a data frame of buckets.
+* New function `get_bucket_df()` returns a data frame of bucket contents. `get_bucket()` continues to return a list. (#102, h/t Dean Attali)
+
+# CHANGES TO aws.s3 0.1.35
+
 * `s3HTTP()` gains a `check_region` argument (default is `TRUE`). If `TRUE`, attempts are made to verify the bucket's region before performing the operation in order to avoid confusing out-of-region errors. (#46)
 * Object keys can now be expressed using "S3URI" syntax, e.g., `object = "s3://bucket_name/object_key"`. In all cases, the bucketname and object key will be extracted from this string (meaning that a bucket does not need to be explicitly specified). (#100; h/t John Ramey)
 * Fixed several places where query arguments were incorrectly being passed to the API as object key names, producing errors.

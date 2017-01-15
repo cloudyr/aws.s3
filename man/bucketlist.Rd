@@ -10,23 +10,19 @@ bucketlist(...)
 \item{\dots}{Additional arguments passed to \code{\link{s3HTTP}}.}
 }
 \value{
-a list of buckets.  if passed with default settings \dQuote{parse_response = TRUE}
-the response will list the name and creationdate of all buckets owned by the request
-sender.
+A data frame of buckets.
 }
 \description{
-List buckets for authenticated user
+List buckets as a data frame
 }
 \details{
-\code{bucketlist} performs a GET operation on the base s3 endpoint 
-and returns a list of all buckets owned by the authenticated 
-sender of the request. If authentication is successful, this function provides a list of 
-buckets available to the authenticated user. In this way, it can serve as 
-a \dQuote{hello world!} function, to confirm that one's authentication 
-credentials are working correctly.
+\code{bucketlist} performs a GET operation on the base s3 endpoint and returns a list of all buckets owned by the authenticated sender of the request. If authentication is successful, this function provides a list of buckets available to the authenticated user. In this way, it can serve as a \dQuote{hello world!} function, to confirm that one's authentication credentials are working correctly.
 }
 \references{
 \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTServiceGET.html}{API Documentation}
+}
+\seealso{
+\code{\link{get_bucket}}, \code{\link{get_object}}
 }
 \keyword{service}
 
