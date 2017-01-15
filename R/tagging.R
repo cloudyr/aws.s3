@@ -25,10 +25,18 @@ get_tagging <- function(bucket, ...){
 
 #' @rdname tagging
 #' @export
-put_tagging <- function(bucket, ...){
+put_tagging <- function(bucket, tags = list(), ...){
+    
+    tags_char <- character(length(tags))
+    for (i in seq_along(tags)) {
+        tags_char[i] <- paste0("<Tag><Key>", names(tags)[i], "</Key><Value>", unname(tags[[i]]), "</Value></Tag>")
+    }
+    request_body <- paste0("<Tagging><TagSet>", paste0(tags_char, collapse = ""), "</TagSet></Tagging>")
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
                 query = list(tagging = ""),
+                request_body = request_body,
+                encode = "raw",
                 ...)
     if (inherits(r, "aws_error")) {
         return(r)

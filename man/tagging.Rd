@@ -8,7 +8,7 @@
 \usage{
 get_tagging(bucket, ...)
 
-put_tagging(bucket, ...)
+put_tagging(bucket, tags = list(), ...)
 
 delete_tagging(bucket, ...)
 }

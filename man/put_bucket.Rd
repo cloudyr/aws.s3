@@ -4,12 +4,15 @@
 \alias{put_bucket}
 \title{Create bucket}
 \usage{
-put_bucket(bucket, region = Sys.getenv("AWS_DEFAULT_REGION"), ...)
+put_bucket(bucket, region = Sys.getenv("AWS_DEFAULT_REGION"),
+  headers = list(), ...)
 }
 \arguments{
 \item{bucket}{Character string with the name of the bucket, or an object of class \dQuote{s3_bucket}.}
 
 \item{region}{A character string containing the AWS region. If missing, defaults to value of environment variable \env{AWS_DEFAULT_REGION}.}
+
+\item{headers}{List of request headers for the REST call.}
 
 \item{\dots}{Additional arguments passed to \code{\link{s3HTTP}}.}
 }
@@ -19,7 +22,19 @@ put_bucket(bucket, region = Sys.getenv("AWS_DEFAULT_REGION"), ...)
 \description{
 Creates a new S3 bucket.
 }
+\examples{
+\dontrun{
+  put_bucket("examplebucket")
+  
+  # set a "canned" ACL to, e.g., make bucket publicly readable
+  put_bucket("examplebucket", headers = list(`x-amz-acl` = "public-read")
+
+}
+}
 \references{
 \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUT.html}{API Documentation}
+}
+\seealso{
+\code{\link{bucketlist}}, \code{\link{get_bucket}}, \code{\link{delete_bucket}}, \code{\link{put_object}}
 }
 
