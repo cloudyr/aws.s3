@@ -107,7 +107,7 @@ put_object(file = "mtcars.Rdata", object = "mtcars2.Rdata", bucket = "my_bucket"
 [![Build Status](https://travis-ci.org/cloudyr/aws.s3.png?branch=master)](https://travis-ci.org/cloudyr/aws.s3)
 [![codecov.io](https://codecov.io/github/cloudyr/aws.s3/coverage.svg?branch=master)](https://codecov.io/github/cloudyr/aws.s3?branch=master)
 
-This package is not yet on CRAN and it currently has a dependency on the development version of [xml2](https://github.com/hadley/xml2). To install the latest development version you can install from the cloudyr drat repository:
+This package is not yet on CRAN. To install the latest development version you can install from the cloudyr drat repository:
 
 ```R
 # latest stable version
