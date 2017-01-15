@@ -29,4 +29,3 @@ Suggests:
     testthat,
     datasets
 RoxygenNote: 5.0.1
-Remotes: hadley/xml2
