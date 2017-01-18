@@ -18,7 +18,7 @@ get_bucket_df(bucket, prefix = NULL, delimiter = NULL, max = NULL,
 
 \item{delimiter}{Character string used to group keys.  Read the AWS doc for more detail.}
 
-\item{max}{Integer indicating the maximum number of keys to return (max 1000).}
+\item{max}{Integer indicating the maximum number of keys to return. The function will recursively access the bucket in case \code{max > 1000}. Use \code{max = Inf} to retrieve all objects.}
 
 \item{marker}{Character string that pecifies the key to start with when listing objects in a bucket. Amazon S3 returns object keys in alphabetical order,  starting with key after the marker in order.}
 

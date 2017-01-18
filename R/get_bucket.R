@@ -4,7 +4,7 @@
 #' @template bucket
 #' @param prefix Character string that limits the response to keys that begin with the specified prefix
 #' @param delimiter Character string used to group keys.  Read the AWS doc for more detail.
-#' @param max Integer indicating the maximum number of keys to return (max 1000).
+#' @param max Integer indicating the maximum number of keys to return. The function will recursively access the bucket in case \code{max > 1000}. Use \code{max = Inf} to retrieve all objects.
 #' @param marker Character string that pecifies the key to start with when listing objects in a bucket. Amazon S3 returns object keys in alphabetical order,  starting with key after the marker in order.
 #' @param parse_response logical, should we attempt to parse the response?
 #' @template dots
@@ -20,6 +20,7 @@
 #' @references \href{https://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGET.html}{API Documentation}
 #' @seealso \code{\link{bucketlist}}, \code{\link{get_object}}
 #' @export
+#' @importFrom utils tail
 get_bucket <- function(bucket,
                        prefix = NULL,
                        delimiter = NULL,
@@ -28,8 +29,37 @@ get_bucket <- function(bucket,
                        parse_response = TRUE,
                        ...) {
 
-    query <- list(prefix = prefix, delimiter = delimiter, "max-keys" = max, marker = marker)
+    if (is.null(max)) {
+        query <- list(prefix = prefix, delimiter = delimiter, "max-keys" = NULL, marker = marker)
+    } else {
+        query <- list(prefix = prefix, delimiter = delimiter, "max-keys" = pmin(1000, max), marker = marker)
+    }
     r <- s3HTTP(verb = "GET", bucket = bucket, query = query, parse_response = parse_response, ...)
+
+    while (
+        r$IsTruncated == "true" &&
+        !is.null(max) &&
+        as.integer(r$MaxKeys) < max
+    ) {
+        query <- list(
+            prefix = prefix,
+            delimiter = delimiter,
+            "max-keys" = pmin(max - as.integer(r$MaxKeys), 1000),
+            marker = tail(r, 1)$Contents$Key
+        )
+        extra <- s3HTTP(verb = "GET", bucket = bucket, query = query, parse_response = parse_response, ...)
+        new_r <- c(r, tail(extra, -5))
+        new_r$MaxKeys <- as.character(as.integer(r$MaxKeys) + as.integer(extra$MaxKeys))
+        new_r$IsTruncated <- extra$IsTruncated
+        attr(new_r, "x-amz-id-2") <- attr(r, "x-amz-id-2")
+        attr(new_r, "x-amz-request-id") <- attr(r, "x-amz-request-id")
+        attr(new_r, "date") <- attr(r, "date")
+        attr(new_r, "x-amz-bucket-region") <- attr(r, "x-amz-bucket-region")
+        attr(new_r, "content-type") <- attr(r, "content-type")
+        attr(new_r, "transfer-encoding") <- attr(r, "transfer-encoding")
+        attr(new_r, "server") <- attr(r, "server")
+        r <- new_r
+    }
 
     if (!isTRUE(parse_response)) {
         return(r)
