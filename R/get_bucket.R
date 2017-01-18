@@ -20,48 +20,51 @@
 #' @references \href{https://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGET.html}{API Documentation}
 #' @seealso \code{\link{bucketlist}}, \code{\link{get_object}}
 #' @export
-get_bucket <- function(bucket, 
-                       prefix = NULL, 
+get_bucket <- function(bucket,
+                       prefix = NULL,
                        delimiter = NULL,
                        max = NULL,
-                       marker = NULL, 
+                       marker = NULL,
                        parse_response = TRUE,
                        ...) {
-    
+
     query <- list(prefix = prefix, delimiter = delimiter, "max-keys" = max, marker = marker)
     r <- s3HTTP(verb = "GET", bucket = bucket, query = query, parse_response = parse_response, ...)
 
     if (!isTRUE(parse_response)) {
-        out <- r
-    } else if (inherits(r, "aws_error")) {
-        out <- r
-    } else {
-        for (i in which(names(r) == "Contents")) {
-            r[[i]][["Bucket"]] <- get_bucketname(bucket)
-            r[[i]][["Size"]] <- as.numeric(r[[i]][["Size"]])
-            attr(r[[i]], "class") <- "s3_object"
-        }
-        att <- r[names(r) != "Contents"]
-        r[names(r) != "Contents"] <- NULL
-        out <- structure(r, class = "s3_bucket")
-        attributes(out) <- c(attributes(out), att)
+        return(r)
     }
+
+    if (inherits(r, "aws_error")) {
+        return(r)
+    }
+
+    for (i in which(names(r) == "Contents")) {
+        r[[i]][["Bucket"]] <- get_bucketname(bucket)
+        r[[i]][["Size"]] <- as.numeric(r[[i]][["Size"]])
+        attr(r[[i]], "class") <- "s3_object"
+    }
+    att <- r[names(r) != "Contents"]
+    r[names(r) != "Contents"] <- NULL
+    out <- structure(r, class = "s3_bucket")
+    attributes(out) <- c(attributes(out), att)
+
     out
 }
 
 #' @rdname get_bucket
 #' @export
-get_bucket_df <- 
-function(bucket, 
-         prefix = NULL, 
+get_bucket_df <-
+function(bucket,
+         prefix = NULL,
          delimiter = NULL,
          max = NULL,
-         marker = NULL, 
+         marker = NULL,
          ...) {
-   
-    r <- get_bucket(bucket = bucket, prefix = prefix, delimiter = delimiter, 
+
+    r <- get_bucket(bucket = bucket, prefix = prefix, delimiter = delimiter,
                     max = max, marker = marker, parse_response = TRUE, ...)
-    
+
     if (length(r)) {
     out <- lapply(r, function(x) {
         c(Key = x[["Key"]],
@@ -105,7 +108,7 @@ function(bucket,
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/mpUploadListMPUpload.html}{API Documentation}
 #' @export
 get_uploads <- function(bucket, ...){
-    r <- s3HTTP(verb = "GET", 
+    r <- s3HTTP(verb = "GET",
                 bucket = bucket,
                 query = list(uploads = ""),
                 ...)
