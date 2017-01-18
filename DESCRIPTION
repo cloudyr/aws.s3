@@ -10,7 +10,8 @@ Authors@R: c(person("Thomas J.", "Leeper", role = c("aut", "cre"),
              person("Mark", "Thompson", role = "ctb"),
              person("Tyler", "Hunt", role = "ctb"),
              person("Steven", "Akins", role = "ctb"),
-             person("Bao", "Nguyen", role = "ctb"))
+             person("Bao", "Nguyen", role = "ctb"),
+             person("Thierry", "Onkelinx", role = "ctb"))
 Description: A simple client package for the Amazon Web Services (AWS) Simple
     Storage Service (S3) REST API.
 License: GPL (>= 2)
