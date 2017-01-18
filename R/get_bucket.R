@@ -36,29 +36,31 @@ get_bucket <- function(bucket,
     }
     r <- s3HTTP(verb = "GET", bucket = bucket, query = query, parse_response = parse_response, ...)
 
-    while (
-        r$IsTruncated == "true" &&
-        !is.null(max) &&
-        as.integer(r$MaxKeys) < max
-    ) {
-        query <- list(
-            prefix = prefix,
-            delimiter = delimiter,
-            "max-keys" = pmin(max - as.integer(r$MaxKeys), 1000),
-            marker = tail(r, 1)$Contents$Key
-        )
-        extra <- s3HTTP(verb = "GET", bucket = bucket, query = query, parse_response = parse_response, ...)
-        new_r <- c(r, tail(extra, -5))
-        new_r$MaxKeys <- as.character(as.integer(r$MaxKeys) + as.integer(extra$MaxKeys))
-        new_r$IsTruncated <- extra$IsTruncated
-        attr(new_r, "x-amz-id-2") <- attr(r, "x-amz-id-2")
-        attr(new_r, "x-amz-request-id") <- attr(r, "x-amz-request-id")
-        attr(new_r, "date") <- attr(r, "date")
-        attr(new_r, "x-amz-bucket-region") <- attr(r, "x-amz-bucket-region")
-        attr(new_r, "content-type") <- attr(r, "content-type")
-        attr(new_r, "transfer-encoding") <- attr(r, "transfer-encoding")
-        attr(new_r, "server") <- attr(r, "server")
-        r <- new_r
+    if (isTRUE(parse_response)) {
+        while (
+            r$IsTruncated == "true" &&
+            !is.null(max) &&
+            as.integer(r$MaxKeys) < max
+        ) {
+            query <- list(
+                prefix = prefix,
+                delimiter = delimiter,
+                "max-keys" = pmin(max - as.integer(r$MaxKeys), 1000),
+                marker = tail(r, 1)$Contents$Key
+            )
+            extra <- s3HTTP(verb = "GET", bucket = bucket, query = query, parse_response = parse_response, ...)
+            new_r <- c(r, tail(extra, -5))
+            new_r$MaxKeys <- as.character(as.integer(r$MaxKeys) + as.integer(extra$MaxKeys))
+            new_r$IsTruncated <- extra$IsTruncated
+            attr(new_r, "x-amz-id-2") <- attr(r, "x-amz-id-2")
+            attr(new_r, "x-amz-request-id") <- attr(r, "x-amz-request-id")
+            attr(new_r, "date") <- attr(r, "date")
+            attr(new_r, "x-amz-bucket-region") <- attr(r, "x-amz-bucket-region")
+            attr(new_r, "content-type") <- attr(r, "content-type")
+            attr(new_r, "transfer-encoding") <- attr(r, "transfer-encoding")
+            attr(new_r, "server") <- attr(r, "server")
+            r <- new_r
+        }
     }
 
     if (!isTRUE(parse_response)) {
