@@ -74,7 +74,43 @@ get_objectkey.s3_object <- function(x, ...) {
     gsub("^/{1}", "", x[["Key"]])
 }
 
-
+#' @export
+as.data.frame.s3_bucket <- function(x, row.names = NULL, optional = FALSE, ...) {
+    if (length(x)) {
+        out <- lapply(x, function(z) {
+            c(Key = z[["Key"]],
+              LastModified = z[["LastModified"]],
+              ETag = z[["ETag"]],
+              Size = z[["Size"]],
+              Owner_ID = z[["Owner"]][["ID"]],
+              Owner_DisplayName = z[["Owner"]][["DisplayName"]],
+              StorageClass = z[["StorageClass"]],
+              Bucket = z[["Bucket"]])
+        })
+        op <- options(stringsAsFactors = FALSE)
+        on.exit(options(op))
+        out <- do.call("rbind.data.frame", unname(out))
+        names(out) <- c("Key", "LastModified", "ETag", "Size", "Owner_ID", "Owner_DisplayName", "StorageClass", "Bucket")
+        structure(out, row.names = if(!is.null(row.names)) row.names else seq_len(nrow(out)),
+                       Marker = attributes(x)[["Marker"]],
+                       IsTruncated = attributes(x)[["IsTruncated"]],
+                       MaxKeys = attributes(x)[["MaxKeys"]])
+    } else {
+        structure(list(Key = character(0),
+                       LastModified = character(0),
+                       ETag = character(0),
+                       Size = character(0),
+                       Owner_ID = character(0),
+                       Owner_DisplayName = character(0),
+                       StorageClass = character(0),
+                       Bucket = character(0)),
+                  class = "data.frame",
+                  row.names = character(0),
+                  Marker = attributes(x)[["Marker"]],
+                  IsTruncated = attributes(x)[["IsTruncated"]],
+                  MaxKeys = attributes(x)[["MaxKeys"]])
+    }
+}
 
 flatten_list <- function(x) {
     if (is.list(x)) {

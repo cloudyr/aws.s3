@@ -27,7 +27,7 @@ get_bucket_df(bucket, prefix = NULL, delimiter = NULL, max = NULL,
 \item{\dots}{Additional arguments passed to \code{\link{s3HTTP}}.}
 }
 \value{
-\code{get_bucket} returns a list of objects in the bucket. If \code{parse_response = FALSE}, a nested list with the complete contents of the AWS response.
+\code{get_bucket} returns a list of objects in the bucket (with class \dQuote{s3_bucket}), while \code{get_bucket_df} returns a data frame (the only difference is the application of the \code{as.data.frame()} method to the list of bucket contents. If \code{max} is greater than 1000, multiple API requests are executed and the attributes attached to the response object reflect only the final request.
 }
 \description{
 List the contents of an S3 bucket as either a list or data frame

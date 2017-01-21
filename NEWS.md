@@ -1,3 +1,8 @@
+# CHANGES to aws.s3 0.1.38
+
+* `get_bucket()` now automatically handles pagination based upon the specified number of objects to return. (PR #104, h/t Thierry Onkelinx)
+* `get_bucket_df()` now uses an available (but unexported) `as.data.frame.s3_bucket()` method. The resulting data frame always returns character rather than factor columns.
+
 # CHANGES to aws.s3 0.1.37
 
 * Further changes to region vertification in `s3HTTP()`. (#46, #106 h/t John Ramey)

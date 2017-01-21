@@ -9,7 +9,7 @@
 #' @param parse_response logical, should we attempt to parse the response?
 #' @template dots
 #' @details From the AWS doc: \dQuote{This implementation of the GET operation returns some or all (up to 1000) of the objects in a bucket. You can use the request parameters as selection criteria to return a subset of the objects in a bucket.} The \code{max} and \code{marker} arguments can be used to retrieve additional pages of results. Values from a call are store as attributes
-#' @return \code{get_bucket} returns a list of objects in the bucket. If \code{parse_response = FALSE}, a nested list with the complete contents of the AWS response.
+#' @return \code{get_bucket} returns a list of objects in the bucket (with class \dQuote{s3_bucket}), while \code{get_bucket_df} returns a data frame (the only difference is the application of the \code{as.data.frame()} method to the list of bucket contents. If \code{max} is greater than 1000, multiple API requests are executed and the attributes attached to the response object reflect only the final request.
 #' @examples
 #' \dontrun{
 #'   b <- bucketlist()
@@ -32,26 +32,26 @@ get_bucket <- function(bucket,
     if (is.null(max)) {
         query <- list(prefix = prefix, delimiter = delimiter, "max-keys" = NULL, marker = marker)
     } else {
-        query <- list(prefix = prefix, delimiter = delimiter, "max-keys" = pmin(1000, max), marker = marker)
+        query <- list(prefix = prefix, delimiter = delimiter, "max-keys" = pmin(1000, as.integer(max)), marker = marker)
     }
     r <- s3HTTP(verb = "GET", bucket = bucket, query = query, parse_response = parse_response, ...)
 
     if (isTRUE(parse_response)) {
         while (
-            r$IsTruncated == "true" &&
+            r[["IsTruncated"]] == "true" &&
             !is.null(max) &&
-            as.integer(r$MaxKeys) < max
+            as.integer(r[["MaxKeys"]]) < max
         ) {
             query <- list(
                 prefix = prefix,
                 delimiter = delimiter,
-                "max-keys" = pmin(max - as.integer(r$MaxKeys), 1000),
-                marker = tail(r, 1)$Contents$Key
+                "max-keys" = pmin(max - as.integer(r[["MaxKeys"]]), 1000),
+                marker = tail(r, 1)[["Contents"]][["Key"]]
             )
             extra <- s3HTTP(verb = "GET", bucket = bucket, query = query, parse_response = parse_response, ...)
             new_r <- c(r, tail(extra, -5))
-            new_r$MaxKeys <- as.character(as.integer(r$MaxKeys) + as.integer(extra$MaxKeys))
-            new_r$IsTruncated <- extra$IsTruncated
+            new_r[["MaxKeys"]] <- as.character(as.integer(r[["MaxKeys"]]) + as.integer(extra[["MaxKeys"]]))
+            new_r[["IsTruncated"]] <- extra[["IsTruncated"]]
             attr(new_r, "x-amz-id-2") <- attr(r, "x-amz-id-2")
             attr(new_r, "x-amz-request-id") <- attr(r, "x-amz-request-id")
             attr(new_r, "date") <- attr(r, "date")
@@ -61,9 +61,7 @@ get_bucket <- function(bucket,
             attr(new_r, "server") <- attr(r, "server")
             r <- new_r
         }
-    }
-
-    if (!isTRUE(parse_response)) {
+    } else {
         return(r)
     }
 
@@ -97,37 +95,7 @@ function(bucket,
     r <- get_bucket(bucket = bucket, prefix = prefix, delimiter = delimiter,
                     max = max, marker = marker, parse_response = TRUE, ...)
 
-    if (length(r)) {
-    out <- lapply(r, function(x) {
-        c(Key = x[["Key"]],
-          LastModified = x[["LastModified"]],
-          ETag = x[["ETag"]],
-          Size = x[["Size"]],
-          Owner_ID = x[["Owner"]][["ID"]],
-          Owner_DisplayName = x[["Owner"]][["DisplayName"]],
-          StorageClass = x[["StorageClass"]],
-          Bucket = x[["Bucket"]])
-    })
-    out <- do.call("rbind.data.frame", unname(out))
-    names(out) <- c("Key", "LastModified", "ETag", "Size", "Owner_ID", "Owner_DisplayName", "StorageClass", "Bucket")
-    structure(out, Marker = attributes(r)[["Marker"]],
-                   IsTruncated = attributes(r)[["IsTruncated"]],
-                   MaxKeys = attributes(r)[["MaxKeys"]])
-    } else {
-        structure(list(Key = character(0),
-                       LastModified = character(0),
-                       ETag = character(0),
-                       Size = character(0),
-                       Owner_ID = character(0),
-                       Owner_DisplayName = character(0),
-                       StorageClass = character(0),
-                       Bucket = character(0)),
-                  class = "data.frame",
-                  row.names = character(0),
-                  Marker = attributes(r)[["Marker"]],
-                  IsTruncated = attributes(r)[["IsTruncated"]],
-                  MaxKeys = attributes(r)[["MaxKeys"]])
-    }
+    as.data.frame(r)
 }
 
 #' @title Multipart uploads
