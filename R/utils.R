@@ -40,7 +40,7 @@ get_region <- function(x, ...) {
 }
 
 get_region.default <- function(x, ...) {
-    out <- get_location(bucket = x)
+    out <- get_location(bucket = x, ...)
     if (!is.character(out)) {
         stop("Cannot detect correct region from bucket")
     }
@@ -50,7 +50,7 @@ get_region.default <- function(x, ...) {
 get_region.s3_bucket <- function(x, ...) {
     region <- attributes(x)[["x-amz-bucket-region"]]
     if (is.null(region)) {
-        region <- get_location(bucket = attributes(x)[["Name"]])
+        region <- get_location(bucket = attributes(x)[["Name"]], ...)
     }
     region
 }

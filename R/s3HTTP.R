@@ -39,13 +39,13 @@ s3HTTP <- function(verb = "GET",
     
     bucketname <- get_bucketname(bucket)
     if (isTRUE(check_region) && (bucketname != "")) {
-        bucketregion <- get_region(bucket)
+        bucketregion <- get_region(bucket, key = key, secret = secret, session_token = session_token)
         if (!is.null(bucketregion)) {
             region <- bucketregion
         }
-    }
-    if (region == "") {
-        region <- "us-east-1"
+        if (region == "") {
+            region <- "us-east-1"
+        }
     }
     
     url <- setup_s3_url(bucketname, region, path, accelerate)

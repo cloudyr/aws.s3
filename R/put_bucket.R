@@ -24,6 +24,7 @@ put_bucket <- function(bucket, region = Sys.getenv("AWS_DEFAULT_REGION"), header
                 request_body = b,
                 headers = headers,
                 region = region,
+                check_region = FALSE,
                 parse_response = FALSE,
                 encode = "raw",
                 ...)

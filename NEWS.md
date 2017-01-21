@@ -1,4 +1,8 @@
-# CHANGES TO aws.s3 0.1.35
+# CHANGES to aws.s3 0.1.37
+
+* Further changes to region vertification in `s3HTTP()`. (#46, #106 h/t John Ramey)
+
+# CHANGES TO aws.s3 0.1.36
 
 * `bucketlist()` now returns (in addition to past behavior of printing) a data frame of buckets.
 * New function `get_bucket_df()` returns a data frame of bucket contents. `get_bucket()` continues to return a list. (#102, h/t Dean Attali)
