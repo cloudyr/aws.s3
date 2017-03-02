@@ -12,9 +12,9 @@ put_acceleration(bucket, status = c("Enabled", "Suspended"), ...)
 \arguments{
 \item{bucket}{Character string with the name of the bucket, or an object of class \dQuote{s3_bucket}.}
 
-\item{status}{Character string specifying whether acceleration should be \dQuote{Enabled} or \dQuote{Suspended}.}
-
 \item{\dots}{Additional arguments passed to \code{\link{s3HTTP}}.}
+
+\item{status}{Character string specifying whether acceleration should be \dQuote{Enabled} or \dQuote{Suspended}.}
 }
 \value{
 For \code{get_acceleration}: If acceleration has never been enabled or suspend, the value is \code{NULL}. Otherwise, the status is returned (either \dQuote{Enabled} or \dQuote{Suspended}). For \code{put_acceleration}: If acceleration has never been enabled or suspend, the value is \code{NULL}.
@@ -38,4 +38,3 @@ put_acceleration(b[[1]], "Suspended")
 \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUTaccelerate.html}{API Documentation: PUT Bucket accelerate}
 \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETaccelerate.html}{API Documentation: GET Bucket accelerate}
 }
-

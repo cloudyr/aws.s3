@@ -49,4 +49,3 @@ From the AWS doc: \dQuote{This implementation of the GET operation returns some 
 \seealso{
 \code{\link{bucketlist}}, \code{\link{get_object}}
 }
-

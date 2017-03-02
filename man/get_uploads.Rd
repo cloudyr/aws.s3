@@ -20,4 +20,3 @@ Get a list of multipart uploads for a bucket.
 \references{
 \href{http://docs.aws.amazon.com/AmazonS3/latest/API/mpUploadListMPUpload.html}{API Documentation}
 }
-

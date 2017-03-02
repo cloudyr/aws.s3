@@ -55,4 +55,3 @@ This provide a generic interface for sending files (or serialized, in-memory rep
 \seealso{
 \code{\link{put_bucket}}, \code{\link{get_object}}, \code{\link{delete_object}}
 }
-

@@ -26,4 +26,3 @@ get_bucketname(x, ...)
 \description{
 Some utility functions for working with S3 objects and buckets
 }
-

@@ -30,4 +30,3 @@ Deletes one or more objects from an S3 bucket.
 \seealso{
 \code{\link{put_object}}
 }
-

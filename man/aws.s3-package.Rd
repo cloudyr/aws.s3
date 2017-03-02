@@ -2,8 +2,8 @@
 % Please edit documentation in R/aws.s3-package.R
 \docType{package}
 \name{aws.s3-package}
-\alias{aws.s3}
 \alias{aws.s3-package}
+\alias{aws.s3}
 \title{aws.s3-package}
 \description{
 AWS S3 Client Package
@@ -15,4 +15,3 @@ A simple client package for the Amazon Web Services (AWS) Simple Storage Service
 Thomas J. Leeper <thosjleeper@gmail.com>
 }
 \keyword{package}
-

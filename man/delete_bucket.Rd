@@ -21,4 +21,3 @@ Deletes an S3 bucket.
 \references{
 \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETE.html}{API Documentation}
 }
-

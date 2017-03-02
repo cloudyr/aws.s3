@@ -25,4 +25,3 @@ List buckets as a data frame
 \code{\link{get_bucket}}, \code{\link{get_object}}
 }
 \keyword{service}
-

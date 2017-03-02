@@ -2,8 +2,8 @@
 % Please edit documentation in R/website.R
 \name{delete_website}
 \alias{delete_website}
-\alias{get_website}
 \alias{put_website}
+\alias{get_website}
 \title{Bucket Website configuration}
 \usage{
 delete_website(bucket, ...)
@@ -30,4 +30,3 @@ Get/Put/Delete the website configuration for a bucket.
 
 \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETEwebsite.html}{API Documentation}
 }
-

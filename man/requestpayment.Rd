@@ -23,4 +23,3 @@ Get/Put the requestPayment subresource for a bucket.
 \references{
 \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTrequestPaymentGET.html}{API Documentation}
 }
-

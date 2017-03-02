@@ -39,4 +39,3 @@ This function creates a \code{\link[curl]{curl}} connection to be used for async
 \seealso{
 \code{\link{get_object}}, \code{\link{save_object}}, \code{\link[curl]{curl}}
 }
-

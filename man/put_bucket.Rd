@@ -37,4 +37,3 @@ Creates a new S3 bucket.
 \seealso{
 \code{\link{bucketlist}}, \code{\link{get_bucket}}, \code{\link{delete_bucket}}, \code{\link{put_object}}
 }
-

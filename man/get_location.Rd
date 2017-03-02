@@ -20,4 +20,3 @@ Get the AWS region location of bucket.
 \references{
 \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETlocation.html}{API Documentation}
 }
-

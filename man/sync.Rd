@@ -27,4 +27,3 @@ Local objects are copied to S3 and S3 objects are copied locally. This copying i
 \seealso{
 \code{\link{get_bucket}}, \code{\link{put_object}}, , \code{\link{save_object}}
 }
-
