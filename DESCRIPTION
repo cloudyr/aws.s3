@@ -1,8 +1,8 @@
 Package: aws.s3
 Type: Package
 Title: AWS S3 Client Package
-Version: 0.1.38
-Date: 2017-01-21
+Version: 0.1.39
+Date: 2017-03-02
 Authors@R: c(person("Thomas J.", "Leeper", role = c("aut", "cre"),
                     email = "thosjleeper@gmail.com"),
              person("Boettiger", "Carl", role = "ctb"),
@@ -29,4 +29,4 @@ Imports:
 Suggests:
     testthat,
     datasets
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1

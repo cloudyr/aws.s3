@@ -5,7 +5,7 @@
 #' @template bucket
 #' @param object For \code{s3save}, a character string of the name of the object you want to save to. For \code{s3load}, a character string of the name of the object you want to load from S3.
 #' @param opts Additional arguments passed to \code{\link{s3HTTP}}.
-#' @param envir An R environment to load objects into. Default is the \code{parent.frame()} from which the function is called.
+#' @param envir For \code{s3save}, an R environment to save objects from; for \code{s3load}, the environment to load objects into. Default is the \code{parent.frame()} from which the function is called.
 #'
 #' @return For \code{s3save}, a logical, invisibly, otherwise an error object. For \code{s3load}, \code{NULL} invisibly, otherwise an error object.
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectGET.html}{API Documentation}
@@ -30,10 +30,10 @@
 #' }
 #' @seealso \code{\link{s3saveRDS}},\code{\link{s3readRDS}}
 #' @export
-s3save <- function(..., object, bucket, opts = NULL) {
+s3save <- function(..., object, bucket, envir = parent.frame(), opts = NULL) {
     tmp <- rawConnection(raw(0), "r+")
     on.exit(close(tmp))
-    save(..., file = tmp)
+    save(..., file = tmp, envir = envir)
     if (missing(bucket)) {
         bucket <- get_bucketname(object)
     }

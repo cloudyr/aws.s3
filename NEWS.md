@@ -1,3 +1,7 @@
+# CHANGES to aws.s3 0.1.39
+
+* `s3save()` gains an `envir` argument. (#115)
+
 # CHANGES to aws.s3 0.1.38
 
 * `get_bucket()` now automatically handles pagination based upon the specified number of objects to return. (PR #104, h/t Thierry Onkelinx)
