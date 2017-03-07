@@ -10,7 +10,8 @@ s3HTTP(verb = "GET", bucket = "", path = "", query = NULL,
   key = Sys.getenv("AWS_ACCESS_KEY_ID"),
   secret = Sys.getenv("AWS_SECRET_ACCESS_KEY"),
   session_token = Sys.getenv("AWS_SESSION_TOKEN"), parse_response = TRUE,
-  check_region = TRUE, verbose = getOption("verbose", FALSE), ...)
+  check_region = TRUE, verbose = getOption("verbose", FALSE),
+  path_based_bucket = getOption("path_based_bucket", TRUE), ...)
 }
 \arguments{
 \item{verb}{A character string containing an HTTP verb, defaulting to \dQuote{GET}.}
@@ -40,6 +41,8 @@ s3HTTP(verb = "GET", bucket = "", path = "", query = NULL,
 \item{check_region}{A logical indicating whether to check the value of \code{region} against the apparent bucket region. This is useful for avoiding (often confusing) out-of-region errors. Default is \code{TRUE}.}
 
 \item{verbose}{A logical indicating whether to be verbose. Default is given by \code{options("verbose")}.}
+
+\item{path_based_bucket}{A logical indicating whether to use path-based bucket naming (if {TRUE}) or virtual-host-based naming (if \code{FALSE})}
 
 \item{...}{Additional arguments passed to an HTTP request function. such as \code{\link[httr]{GET}}.}
 }

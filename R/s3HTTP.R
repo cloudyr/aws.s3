@@ -15,6 +15,7 @@
 #' @param parse_response A logical indicating whether to return the response as is, or parse and return as a list. Default is \code{TRUE}.
 #' @param check_region A logical indicating whether to check the value of \code{region} against the apparent bucket region. This is useful for avoiding (often confusing) out-of-region errors. Default is \code{TRUE}.
 #' @param verbose A logical indicating whether to be verbose. Default is given by \code{options("verbose")}.
+#' @param path_based_bucket A logical indicating whether to use path-based bucket naming (if {TRUE}) or virtual-host-based naming (if \code{FALSE})
 #' @param ... Additional arguments passed to an HTTP request function. such as \code{\link[httr]{GET}}.
 #' @return the S3 response, or the relevant error.
 #' @importFrom httr GET POST PUT HEAD DELETE VERB upload_file parse_url add_headers
@@ -37,6 +38,7 @@ s3HTTP <- function(verb = "GET",
                    parse_response = TRUE, 
                    check_region = TRUE,
                    verbose = getOption("verbose", FALSE),
+                   path_based_bucket = getOption('path_based_bucket',TRUE),
                    ...) {
     
     bucketname <- get_bucketname(bucket)
@@ -53,7 +55,7 @@ s3HTTP <- function(verb = "GET",
         }
     }
     
-    url <- setup_s3_url(bucketname, region, path, accelerate)
+    url <- setup_s3_url(bucketname, region, path, accelerate, path_based_bucket)
     p <- parse_url(url)
     
     current <- Sys.time()
@@ -179,8 +181,9 @@ parse_aws_s3_response <- function(r, Sig, verbose = getOption("verbose")){
     return(response)
 }
 
-setup_s3_url <- function(bucketname, region, path, accelerate) {
-    if (bucketname == "") {
+setup_s3_url <- function(bucketname, region, path, accelerate, 
+                         path_based_bucket) {
+    if (bucketname == "" | path_based_bucket) {
         if (region == "us-east-1") {
             url <- paste0("https://s3.amazonaws.com")
         } else {
@@ -208,6 +211,18 @@ setup_s3_url <- function(bucketname, region, path, accelerate) {
             USE.NAMES = FALSE
         ), collapse = '/')
     }
-    url <- if (grepl('^[\\/].*', path)) { paste0(url, path) } else { paste(url, path, sep = "/") }
+    if(path_based_bucket & bucketname!="") {
+      url <- if (grepl('^[\\/].*', bucketname)) { 
+        paste0(url, bucketname) 
+      } else { 
+        paste(url, bucketname, sep = "/") 
+      }
+    }
+    url <- if (grepl('^[\\/].*', path)) { 
+      paste0(url, path) 
+    } else { 
+      paste(url, path, sep = "/") 
+    }
+    #if(getOption('verbose')) message(sprintf("computed URL: %s", url))
     return(url)
 }
