@@ -15,7 +15,7 @@ delete_replication(bucket, ...)
 \item{\dots}{Additional arguments passed to \code{\link{s3HTTP}}.}
 }
 \value{
-For \code{get_replication}: A list containing the replication configuration, if one has been set. For \code{delete_replication}: \code{TRUE} if successful, \code{FALSE} otherwise. An \code{aws_error} object may be returned if the request failed.
+For \code{get_replication}: A list containing the replication configuration, if one has been set. For \code{delete_replication}: \code{TRUE} if successful, \code{FALSE} otherwise.
 }
 \description{
 Get/Delete the replication configuration for a bucket.

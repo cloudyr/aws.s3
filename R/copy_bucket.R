@@ -24,11 +24,7 @@ copy_object <- function(from_object, to_object = from_object, from_bucket, to_bu
                 headers = c(headers, 
                             `x-amz-copy-source` = paste0("/",from_bucket,"/",from_object)), 
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        return(r)
-    }
+    return(r)
 }
 
 #' @rdname copyobject

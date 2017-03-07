@@ -13,11 +13,7 @@ get_requestpayment <- function(bucket, ...){
                 bucket = bucket,
                 query = list(requestPayment = ""),
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        r
-    }
+    return(r)
 }
 
 #' @rdname requestpayment
@@ -27,9 +23,5 @@ put_requestpayment <- function(bucket, ...){
                 bucket = bucket,
                 query = list(requestPayment = ""),
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        structure(r, class = "s3_bucket")
-    }
+    structure(r, class = "s3_bucket")
 }

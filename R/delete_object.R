@@ -25,11 +25,7 @@ delete_object <- function(object, bucket, quiet = TRUE, ...) {
                     bucket = bucket,
                     path = paste0("/", object),
                     ...)
-        if (inherits(r, "aws_error")) {
-            return(r)
-        } else {
-            return(TRUE)
-        }
+        return(TRUE)
     } else {
         xml <- read_xml(paste0('<?xml version="1.0" encoding="UTF-8"?><Delete><Quiet>', tolower(quiet),'</Quiet></Delete>'))
         for (i in seq_along(object)) {
@@ -46,11 +42,6 @@ delete_object <- function(object, bucket, quiet = TRUE, ...) {
                     headers = list(`Content-Length` = file.size(tmpfile), 
                                    `Content-MD5` = md), 
                     ...)
-        if (inherits(r, "aws_error")) {
-            return(r)
-        } else {
-            return(TRUE)
-        }
+        return(TRUE)
     }
-    return(r)
 }

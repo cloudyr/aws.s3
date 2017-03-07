@@ -15,11 +15,7 @@ get_notification <- function(bucket, ...){
                 bucket = bucket,
                 query = list(notification = ""),
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        return(r)
-    }
+    return(r)
 }
 
 #' @rdname notifications
@@ -29,9 +25,5 @@ put_notification <- function(bucket, ...){
                 bucket = bucket,
                 query = list(notification = ""),
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        structure(r, class = "s3_bucket")
-    }
+    structure(r, class = "s3_bucket")
 }

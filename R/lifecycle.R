@@ -5,8 +5,7 @@
 #' @template bucket
 #' @template dots
 #'
-#' @return For \code{get_lifecycle}: a list with lifecycle configuration, if it has been configured.
-#' For \code{delete_lifecycle}: \code{TRUE} if successful, \code{FALSE} otherwise. An \code{aws_error} object may be returned if the request failed.
+#' @return For \code{get_lifecycle}: a list with lifecycle configuration, if it has been configured. For \code{delete_lifecycle}: \code{TRUE} if successful, \code{FALSE} otherwise.
 #' @references 
 #' \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETlifecycle.html}{API Documentation}
 #' \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETElifecycle.html}{API Documentation}
@@ -16,11 +15,7 @@ get_lifecycle <- function(bucket, ...){
                 bucket = bucket,
                 query = list(lifecycle = ""),
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        r
-    }
+    return(r)
 }
 
 #' @rdname lifecycle
@@ -30,11 +25,7 @@ put_lifecycle <- function(bucket, ...){
                 bucket = bucket,
                 query = list(lifecycle = ""),
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        structure(r, class = "s3_bucket")
-    }
+    structure(r, class = "s3_bucket")
 }
 
 #' @rdname lifecycle
@@ -45,9 +36,5 @@ delete_lifecycle <- function(bucket, ...){
                 query = list(lifecycle = ""),
                 parse_response = FALSE,
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        
-    }
+    return(r)
 }

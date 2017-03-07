@@ -15,11 +15,7 @@ get_cors <- function(bucket, ...){
                 bucket = bucket,
                 query = list(cors = ""),
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        return(r)
-    }
+    return(r)
 }
 
 #' @rdname cors
@@ -29,11 +25,7 @@ put_cors <- function(bucket, ...){
                 bucket = bucket,
                 query = list(cors = ""),
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        structure(r, class = "s3_bucket")
-    }
+    structure(r, class = "s3_bucket")
 }
 
 #' @rdname cors
@@ -44,9 +36,5 @@ delete_cors <- function(bucket, ...){
                 query = list(cors = ""),
                 parse_response = FALSE,
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        return(r)
-    }
+    return(r)
 }

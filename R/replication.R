@@ -6,7 +6,7 @@
 #' @template bucket
 #' @template dots
 #'
-#' @return For \code{get_replication}: A list containing the replication configuration, if one has been set. For \code{delete_replication}: \code{TRUE} if successful, \code{FALSE} otherwise. An \code{aws_error} object may be returned if the request failed.
+#' @return For \code{get_replication}: A list containing the replication configuration, if one has been set. For \code{delete_replication}: \code{TRUE} if successful, \code{FALSE} otherwise.
 #' @references
 #' \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETreplication.html}{API Documentation}
 #' \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETEreplication.html}{API Documentation}
@@ -16,11 +16,7 @@ get_replication <- function(bucket, ...){
                 bucket = bucket,
                 query = list(replication = ""),
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        return(r)
-    }
+    return(r)
 }
 
 #' @rdname replication
@@ -31,9 +27,5 @@ delete_replication <- function(bucket, ...){
                 query = list(replication = ""),
                 parse_response = FALSE,
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        return(r)
-    }
+    return(r)
 }

@@ -24,7 +24,7 @@ s3load(object, bucket, envir = parent.frame(), ...)
 \item{opts}{Additional arguments passed to \code{\link{s3HTTP}}.}
 }
 \value{
-For \code{s3save}, a logical, invisibly, otherwise an error object. For \code{s3load}, \code{NULL} invisibly, otherwise an error object.
+For \code{s3save}, a logical, invisibly. For \code{s3load}, \code{NULL} invisibly.
 }
 \description{
 Save/load R object(s) to/from S3

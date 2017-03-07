@@ -12,7 +12,7 @@ bucket_exists(bucket, ...)
 \item{\dots}{Additional arguments passed to \code{\link{s3HTTP}}.}
 }
 \value{
-\code{TRUE} if bucket exists and is accessible, else \code{FALSE}. An \code{aws_error} object may be returned if the request failed.
+\code{TRUE} if bucket exists and is accessible, else \code{FALSE}.
 }
 \description{
 Check whether a bucket exists and is accessible with the current authentication keys.

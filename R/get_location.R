@@ -13,13 +13,9 @@ get_location <- function(bucket, ...){
                 query = list(location = ""),
                 check_region = FALSE,
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
+    if (!length(r)) {
+        return("us-east-1")
     } else {
-        if (!length(r)) {
-            return("us-east-1")
-        } else {
-            return(r[[1L]])
-        }
+        return(r[[1L]])
     }
 }

@@ -6,7 +6,7 @@
 \alias{delete_bucket_policy}
 \title{Bucket policies}
 \usage{
-get_bucket_policy(bucket, ...)
+get_bucket_policy(bucket, parse_response = TRUE, ...)
 
 put_bucket_policy(bucket, policy, ...)
 
@@ -15,12 +15,14 @@ delete_bucket_policy(bucket, ...)
 \arguments{
 \item{bucket}{Character string with the name of the bucket, or an object of class \dQuote{s3_bucket}.}
 
+\item{parse_response}{A logical indicating whether to return the response as is, or parse and return as a list. Default is \code{FALSE}.}
+
 \item{\dots}{Additional arguments passed to \code{\link{s3HTTP}}.}
 
 \item{policy}{A character string containing a bucket policy.}
 }
 \value{
-For \code{get_policy}: A character string containing the JSON representation of the policy, if one has been set. For \code{delete_policy} and \code{put_policy}: \code{TRUE} if successful, \code{FALSE} otherwise. An \code{aws_error} object may be returned if the request failed.
+For \code{get_policy}: A character string containing the JSON representation of the policy, if one has been set. For \code{delete_policy} and \code{put_policy}: \code{TRUE} if successful, \code{FALSE} otherwise.
 }
 \description{
 Get/Put/Delete the bucket access policy for a bucket.

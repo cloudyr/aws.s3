@@ -4,7 +4,7 @@
 #' @param region A character string containing the AWS region. If missing, defaults to value of environment variable \env{AWS_DEFAULT_REGION}.
 #' @param headers List of request headers for the REST call.   
 #' @template dots
-#' @return \code{TRUE} if successful, aws_error details if not.
+#' @return \code{TRUE} if successful.
 #' @examples
 #' \dontrun{
 #'   put_bucket("examplebucket")
@@ -28,10 +28,5 @@ put_bucket <- function(bucket, region = Sys.getenv("AWS_DEFAULT_REGION"), header
                 parse_response = FALSE,
                 encode = "raw",
                 ...)
-    if (http_error(r)) {
-        warn_for_status(r)
-        return(r)
-    } else {
-        TRUE
-    }
+    return(TRUE)
 }

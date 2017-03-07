@@ -4,7 +4,7 @@
 #' @template bucket
 #' @param tags A list containing key-value pairs of tag names and values.
 #' @template dots
-#' @return A list containing the tag set, if one has been set. For \code{delete_tagging}: \code{TRUE} if successful, \code{FALSE} otherwise. An \code{aws_error} object may be returned if the request failed.
+#' @return A list containing the tag set, if one has been set. For \code{delete_tagging}: \code{TRUE} if successful, \code{FALSE} otherwise.
 #' @references
 #'  \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETtagging.html}{API Documentation}
 #'  \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETEtagging.html}{API Documentation}
@@ -14,11 +14,7 @@ get_tagging <- function(bucket, ...){
                 bucket = bucket,
                 query = list(tagging = ""),
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        return(r)
-    }
+    return(r)
 }
 
 #' @rdname tagging
@@ -36,11 +32,7 @@ put_tagging <- function(bucket, tags = list(), ...){
                 request_body = request_body,
                 encode = "raw",
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        structure(r, class = "s3_bucket")
-    }
+    structure(r, class = "s3_bucket")
 }
 
 #' @rdname tagging
@@ -51,9 +43,5 @@ delete_tagging <- function(bucket, ...){
                 query = list(tagging = ""),
                 parse_response = FALSE,
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        return(r)
-    }
+    return(r)
 }

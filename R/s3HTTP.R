@@ -14,10 +14,11 @@
 #' @param session_token Optionally, a character string containing an AWS temporary Session Token. If missing, defaults to value stored in environment variable \dQuote{AWS_SESSION_TOKEN}.
 #' @param parse_response A logical indicating whether to return the response as is, or parse and return as a list. Default is \code{TRUE}.
 #' @param check_region A logical indicating whether to check the value of \code{region} against the apparent bucket region. This is useful for avoiding (often confusing) out-of-region errors. Default is \code{TRUE}.
+#' @param verbose A logical indicating whether to be verbose. Default is given by \code{options("verbose")}.
 #' @param ... Additional arguments passed to an HTTP request function. such as \code{\link[httr]{GET}}.
 #' @return the S3 response, or the relevant error.
 #' @importFrom httr GET POST PUT HEAD DELETE VERB upload_file parse_url add_headers
-#' @importFrom httr http_error http_status warn_for_status content headers
+#' @importFrom httr http_error http_status warn_for_status stop_for_status content headers
 #' @importFrom xml2 read_xml as_list
 #' @importFrom utils URLencode
 #' @import aws.signature
@@ -35,6 +36,7 @@ s3HTTP <- function(verb = "GET",
                    session_token = Sys.getenv("AWS_SESSION_TOKEN"),
                    parse_response = TRUE, 
                    check_region = TRUE,
+                   verbose = getOption("verbose", FALSE),
                    ...) {
     
     bucketname <- get_bucketname(bucket)
@@ -45,6 +47,9 @@ s3HTTP <- function(verb = "GET",
         }
         if (region == "") {
             region <- "us-east-1"
+        }
+        if (isTRUE(verbose)) {
+            message(sprintf("Executing request using bucket region %s", region))
         }
     }
     
@@ -64,10 +69,16 @@ s3HTTP <- function(verb = "GET",
         query <- NULL
     }
     if (key == "") {
+        if (isTRUE(verbose)) {
+            message("Executing request without AWS credentials")
+        }
         headers[["x-amz-date"]] <- d_timestamp
         Sig <- list()
         H <- do.call(add_headers, headers)
     } else {
+        if (isTRUE(verbose)) {
+            message("Executing request with AWS credentials")
+        }
         Sig <- aws.signature::signature_v4_auth(
                datetime = d_timestamp,
                region = region,
@@ -87,57 +98,60 @@ s3HTTP <- function(verb = "GET",
         H <- do.call(add_headers, headers)
     }
     if (verb == "GET") {
-      r <- GET(url, H, query = query, ...)
+        r <- GET(url, H, query = query, ...)
     } else if (verb == "HEAD") {
-      r <- HEAD(url, H, query = query, ...)
-      s <- http_status(r)
-      if (tolower(s$category) == "success") {
-          out <- TRUE
-          attributes(out) <- c(attributes(out), headers(r))
-          return(out)
-      } else {
-          message(s$message)
-          out <- FALSE
-          attributes(out) <- c(attributes(out), headers(r))
-          return(out)
-      }
+        r <- HEAD(url, H, query = query, ...)
+        s <- http_status(r)
+        if (tolower(s$category) == "success") {
+            out <- TRUE
+            attributes(out) <- c(attributes(out), headers(r))
+            return(out)
+        } else {
+            message(s$message)
+            out <- FALSE
+            attributes(out) <- c(attributes(out), headers(r))
+            return(out)
+        }
     } else if (verb == "DELETE") {
-      r <- DELETE(url, H, query = query, ...)
-      s <- http_status(r)
-      if (tolower(s$category) == "success") {
-          out <- TRUE
-          attributes(out) <- c(attributes(out), headers(r))
-          return(out)
-      } else {
-          message(s$message)
-          out <- FALSE
-          attributes(out) <- c(attributes(out), headers(r))
-          return(out)
-      }
+        r <- DELETE(url, H, query = query, ...)
+        s <- http_status(r)
+        if (tolower(s$category) == "success") {
+            out <- TRUE
+            attributes(out) <- c(attributes(out), headers(r))
+            return(out)
+        } else {
+            message(s$message)
+            out <- FALSE
+            attributes(out) <- c(attributes(out), headers(r))
+            return(out)
+        }
     } else if (verb == "POST") {
-      r <- POST(url, H, query = query, ...)
+        r <- POST(url, H, query = query, ...)
     } else if (verb == "PUT") {
-      if (is.character(request_body) && request_body == "") {
-        r <- PUT(url, H, query = query, ...)
-      } else if (is.character(request_body) && file.exists(request_body)) {
-        r <- PUT(url, H, body = upload_file(request_body), query = query, ...)
-      } else {
-        r <- PUT(url, H, body = request_body, query = query, ...)
-      }
+        if (is.character(request_body) && request_body == "") {
+            r <- PUT(url, H, query = query, ...)
+        } else if (is.character(request_body) && file.exists(request_body)) {
+            r <- PUT(url, H, body = upload_file(request_body), query = query, ...)
+        } else {
+            r <- PUT(url, H, body = request_body, query = query, ...)
+        }
     } else if (verb == "OPTIONS") {
-      r <- VERB("OPTIONS", url, H, query = query, ...)
+        r <- VERB("OPTIONS", url, H, query = query, ...)
     }
     
     if (isTRUE(parse_response)) {
-      out <- parse_aws_s3_response(r, Sig)
+        out <- parse_aws_s3_response(r, Sig, verbose = verbose)
     } else {
-      out <- r
+        out <- r
     }
     attributes(out) <- c(attributes(out), headers(r))
     out
 }
 
 parse_aws_s3_response <- function(r, Sig, verbose = getOption("verbose")){
+    if (isTRUE(verbose)) {
+        message("Parsing AWS API response...")
+    }
     ctype <- headers(r)[["content-type"]]
     if (is.null(ctype) || ctype == "application/xml"){
         content <- content(r, as = "text", encoding = "UTF-8")
@@ -150,18 +164,19 @@ parse_aws_s3_response <- function(r, Sig, verbose = getOption("verbose")){
     } else {
         response <- r
     }
+    if (isTRUE(verbose)) {
+        message(http_status(r)[["message"]])
+    }
     if (http_error(r) | (http_status(r)[["category"]] == "Redirection")) {
-        warn_for_status(r)
         h <- headers(r)
         out <- structure(response, headers = h, class = "aws_error")
         attr(out, "request_canonical") <- Sig$CanonicalRequest
         attr(out, "request_string_to_sign") <- Sig$StringToSign
         attr(out, "request_signature") <- Sig$SignatureHeader
-    } else {
-        out <- response
+        print(out)
+        stop_for_status(r)
     }
-    
-    return(out)
+    return(response)
 }
 
 setup_s3_url <- function(bucketname, region, path, accelerate) {

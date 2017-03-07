@@ -5,21 +5,13 @@ get_acl <- function(object, bucket, ...) {
                     query = list(acl = ""),
                     ...)
         
-        if (inherits(r, "aws_error")) {
-            return(r)
-        } else {
-            structure(r, class = "s3_bucket")
-        }
+        structure(r, class = "s3_bucket")
     } else if (!missing(object)) {
         object <- get_objectkey(object)
         r <- s3HTTP(verb = "GET", 
                     path = "/object?acl",
                     ...)
-        if (inherits(r, "aws_error")) {
-            return(r)
-        } else {
-            structure(r, class = "s3_object")
-        }
+        structure(r, class = "s3_object")
     }
 }
 
@@ -33,11 +25,7 @@ putobject_acl <- function(object, bucket, ...) {
                     bucket = bucket,
                     query = list(acl = ""),
                     ...)
-        if (inherits(r, "aws_error")) {
-            return(r)
-        } else {
-            structure(r, class = "s3_bucket")
-        }
+        structure(r, class = "s3_bucket")
     } else {
         if (inherits(object, "s3_object"))
             object <- object$Key
@@ -45,10 +33,6 @@ putobject_acl <- function(object, bucket, ...) {
                     bucket = bucket,
                     path = paste0("/", object),
                     ...)
-        if (inherits(r, "aws_error")) {
-            return(r)
-        } else {
-            structure(r, class = "s3_object")
-        }
+        structure(r, class = "s3_object")
     }
 }

@@ -18,8 +18,7 @@ delete_lifecycle(bucket, ...)
 \item{\dots}{Additional arguments passed to \code{\link{s3HTTP}}.}
 }
 \value{
-For \code{get_lifecycle}: a list with lifecycle configuration, if it has been configured.
-For \code{delete_lifecycle}: \code{TRUE} if successful, \code{FALSE} otherwise. An \code{aws_error} object may be returned if the request failed.
+For \code{get_lifecycle}: a list with lifecycle configuration, if it has been configured. For \code{delete_lifecycle}: \code{TRUE} if successful, \code{FALSE} otherwise.
 }
 \description{
 Get/Put/Delete the lifecycle configuration information for a bucket.

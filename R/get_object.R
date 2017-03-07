@@ -52,13 +52,9 @@ get_object <- function(object, bucket, headers = list(), parse_response = FALSE,
                 headers = headers,
                 parse_response = parse_response,
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        cont <- httr::content(r, as = "raw")
-        attributes(cont) <- httr::headers(r)
-        return(cont)
-    }
+    cont <- httr::content(r, as = "raw")
+    attributes(cont) <- httr::headers(r)
+    return(cont)
 }
 
 #' @rdname getobject
@@ -76,12 +72,8 @@ save_object <- function(object, bucket, file, headers = list(), ...) {
                 path = paste0("/", object),
                 headers = headers,
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        writeBin(httr::content(r, as = "raw"), con = file)
-        return(file)
-    }
+    writeBin(httr::content(r, as = "raw"), con = file)
+    return(file)
 }
 
 #' @rdname getobject
@@ -95,11 +87,7 @@ head_object <- function(object, bucket, ...) {
                 bucket = bucket,
                 path = paste0("/", object),
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        structure(r, class = "HEAD")
-    }
+    structure(r, class = "HEAD")
 }
 
 #' @title Get object torrent
@@ -121,9 +109,5 @@ get_torrent <- function(object, bucket, ...) {
                 bucket = bucket,
                 path = paste0("/", object, "?torrent"),
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        return(r)
-    }
+    return(r)
 }

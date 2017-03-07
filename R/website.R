@@ -17,11 +17,7 @@ delete_website <- function(bucket, ...){
                 query = list(website = ""),
                 parse_response = FALSE,
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        return(r)
-    }
+    return(r)
 }
 
 #' @rdname website
@@ -31,11 +27,7 @@ put_website <- function(bucket, ...){
                 bucket = bucket,
                 query = list(website = ""),
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        structure(r, class = "s3_bucket")
-    }
+    structure(r, class = "s3_bucket")
 }
 
 #' @rdname website
@@ -45,9 +37,5 @@ get_website <- function(bucket, ...){
                 bucket = bucket,
                 query = list(website = ""),
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        return(r)
-    }
+    return(r)
 }

@@ -35,16 +35,11 @@ test_that("unparsed getbucket", {
 
 
 test_that("get_cors on a bucket with no cors setup", {
-  ex <- get_cors(
-    bucket = 'hpk',
-    key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
-    secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY")
-  )
-  
-  expect_is(ex, "aws_error")
-  expect_true(
-    all(c("Code", "Message", "BucketName", "RequestId", "HostId") %in% names(ex))
-  )
+  expect_error(get_cors(
+      bucket = 'hpk',
+      key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
+      secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY")
+  ))
 })
 
 

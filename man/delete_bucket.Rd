@@ -12,8 +12,7 @@ delete_bucket(bucket, ...)
 \item{\dots}{Additional arguments passed to \code{\link{s3HTTP}}.}
 }
 \value{
-\code{TRUE} if successful, \code{FALSE} otherwise. 
-An \code{aws_error} object may be returned if the request failed.
+\code{TRUE} if successful, \code{FALSE} otherwise.
 }
 \description{
 Deletes an S3 bucket.

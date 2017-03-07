@@ -3,11 +3,7 @@ get_logging <- function(bucket, ...){
                 bucket = bucket,
                 query = list(logging = ""),
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        r
-    }
+    return(r)
 }
 
 put_logging <- function(bucket, ...){
@@ -15,9 +11,5 @@ put_logging <- function(bucket, ...){
                 bucket = bucket,
                 query = list(logging = ""),
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        structure(r, class = "s3_bucket")
-    }
+    structure(r, class = "s3_bucket")
 }

@@ -18,7 +18,7 @@ put_object(file, object, bucket, headers = list(), ...)
 \item{\dots}{Additional arguments passed to \code{\link{s3HTTP}}.}
 }
 \value{
-If successful, \code{TRUE}, otherwise an \dQuote{aws_error} object.
+If successful, \code{TRUE}.
 }
 \description{
 Puts an object into an S3 bucket

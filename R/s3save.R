@@ -7,7 +7,7 @@
 #' @param opts Additional arguments passed to \code{\link{s3HTTP}}.
 #' @param envir For \code{s3save}, an R environment to save objects from; for \code{s3load}, the environment to load objects into. Default is the \code{parent.frame()} from which the function is called.
 #'
-#' @return For \code{s3save}, a logical, invisibly, otherwise an error object. For \code{s3load}, \code{NULL} invisibly, otherwise an error object.
+#' @return For \code{s3save}, a logical, invisibly. For \code{s3load}, \code{NULL} invisibly.
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectGET.html}{API Documentation}
 #' @examples
 #' \dontrun{
@@ -43,11 +43,7 @@ s3save <- function(..., object, bucket, envir = parent.frame(), opts = NULL) {
     } else {
         r <- do.call("put_object", c(list(file = rawConnectionValue(tmp), bucket = bucket, object = object), opts))
     }
-    if (inherits(r, "aws-error")) {
-        return(r)
-    } else {
-        return(invisible(r))
-    }
+    return(invisible(r))
 }
 
 #' @rdname s3save
@@ -65,11 +61,7 @@ s3save_image <- function(object, bucket, opts = NULL) {
     } else {
         r <- do.call("put_object", c(list(file = rawConnectionValue(tmp), bucket = bucket, object = object), opts))
     }
-    if (inherits(r, "aws-error")) {
-        return(r)
-    } else {
-        return(invisible(r))
-    }
+    return(invisible(r))
 }
 
 #' @rdname s3save
@@ -80,12 +72,8 @@ s3load <- function(object, bucket, envir = parent.frame(), ...) {
     }
     object <- get_objectkey(object)
     r <- get_object(bucket = bucket, object = object, parse_response = FALSE, ...)
-    if (inherits(r, "aws-error")) {
-        return(r)
-    } else {
-        tmp <- rawConnection(r, "r")
-        on.exit(close(tmp))
-        load(tmp, envir = envir)
-        return(invisible())
-    }
+    tmp <- rawConnection(r, "r")
+    on.exit(close(tmp))
+    load(tmp, envir = envir)
+    return(invisible())
 }

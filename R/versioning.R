@@ -20,11 +20,7 @@ get_versions <- function(bucket, ...){
                 bucket = bucket,
                 query = list(versions = ""),
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        return(r)
-    }
+    return(r)
 }
 
 #' @rdname versions
@@ -34,14 +30,10 @@ get_versioning <- function(bucket, ...){
                 bucket = bucket,
                 query = list(versioning = ""),
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
+    if (identical(r, list())) {
+        return(NULL)
     } else {
-        if (identical(r, list())) {
-            return(NULL)
-        } else {
-            return(r$Status)
-        }
+        return(r$Status)
     }
 }
 
@@ -58,13 +50,9 @@ put_versioning <- function(bucket, status = c("Enabled", "Suspended"), ...){
                 query = list(versioning = ""),
                 request_body = b,
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
+    if (identical(r, list())) {
+        return(NULL)
     } else {
-        if (identical(r, list())) {
-            return(NULL)
-        } else {
-            return(r$Status)
-        }
+        return(r$Status)
     }
 }

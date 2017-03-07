@@ -7,7 +7,7 @@
 #' @param headers List of request headers for the REST call.   
 #' @details This provide a generic interface for sending files (or serialized, in-memory representations thereof) to S3. Some convenience wrappers are provided for common tasks: \code{\link{s3save}} and \code{\link{s3saveRDS}}.
 #' 
-#' @return If successful, \code{TRUE}, otherwise an \dQuote{aws_error} object.
+#' @return If successful, \code{TRUE}.
 #' @examples
 #' \dontrun{
 #'   library("datasets")
@@ -51,11 +51,7 @@ put_object <- function(file, object, bucket, headers = list(), ...) {
                   )), 
                 request_body = file,
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        TRUE
-    }
+    return(TRUE)
 }
 
 post_object <- function(object, bucket, ...) {
@@ -67,9 +63,5 @@ post_object <- function(object, bucket, ...) {
                 bucket = bucket,
                 path = paste0("/", object),
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        structure(r, class = "s3_object")
-    }
+    structure(r, class = "s3_object")
 }

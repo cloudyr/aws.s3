@@ -25,15 +25,11 @@ get_acceleration <- function(bucket, ...){
                 bucket = bucket,
                 query = list(accelerate = ""),
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
+    attributes(r) <- NULL
+    if (identical(r, list())) {
+        return(NULL)
     } else {
-        attributes(r) <- NULL
-        if (identical(r, list())) {
-            return(NULL)
-        } else {
-            return(r)
-        }
+        return(r)
     }
 }
 
@@ -49,14 +45,10 @@ put_acceleration <- function(bucket, status = c("Enabled", "Suspended"), ...){
                 query = list(accelerate = ""),
                 request_body = b,
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
+    attributes(r) <- NULL
+    if (identical(r, list())) {
+        return(NULL)
     } else {
-        attributes(r) <- NULL
-        if (identical(r, list())) {
-            return(NULL)
-        } else {
-            return(r)
-        }
+        return(r)
     }
 }

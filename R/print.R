@@ -18,8 +18,10 @@ print.s3_object <- function(x, ...){
 
 #' @importFrom utils str
 #' @export
-print.aws_error <- function(x, ...){
-    message("AWS API Error Encountered. Details below:")
+print.aws_error <- function(x, verbose = getOption("verbose"), ...){
+    if (isTRUE(verbose)) {
+        message("AWS API Error Encountered. Details below:")
+    }
     print(str(x))
     invisible(x)
 }

@@ -65,10 +65,6 @@ get_bucket <- function(bucket,
         return(r)
     }
 
-    if (inherits(r, "aws_error")) {
-        return(r)
-    }
-
     for (i in which(names(r) == "Contents")) {
         r[[i]][["Bucket"]] <- get_bucketname(bucket)
         r[[i]][["Size"]] <- as.numeric(r[[i]][["Size"]])
@@ -112,9 +108,5 @@ get_uploads <- function(bucket, ...){
                 bucket = bucket,
                 query = list(uploads = ""),
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        return(r)
-    }
+    return(r)
 }

@@ -11,13 +11,9 @@
 #' @export
 bucketlist <- function(...) {
     r <- s3HTTP(verb = "GET", ...)
-    if (inherits(r, "aws_error") | inherits(r, "response")) {
-        return(r)
-    } else {
-        out <- do.call("rbind.data.frame", r[["Buckets"]])
-        out[] <- lapply(out, as.character)
-        names(out)[names(out) %in% "Name"] <- "Bucket"
-        rownames(out) <- seq_len(nrow(out))
-        out
-    }
+    out <- do.call("rbind.data.frame", r[["Buckets"]])
+    out[] <- lapply(out, as.character)
+    names(out)[names(out) %in% "Name"] <- "Bucket"
+    rownames(out) <- seq_len(nrow(out))
+    out
 }

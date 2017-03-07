@@ -33,11 +33,7 @@ s3saveRDS <- function(x, bucket, object = paste0(as.character(substitute(x)), ".
     object <- get_objectkey(object)
     b <- memCompress(from = serialize(x, connection = NULL), type = 'gzip')
     r <- put_object(file = b, bucket = bucket, object = object, ...)
-    if (inherits(r, "aws-error")) {
-        return(r)
-    } else {
-        return(invisible(r))
-    }
+    return(invisible(r))
 }
 
 #' @rdname s3saveRDS

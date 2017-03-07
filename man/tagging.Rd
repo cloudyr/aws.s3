@@ -20,7 +20,7 @@ delete_tagging(bucket, ...)
 \item{tags}{A list containing key-value pairs of tag names and values.}
 }
 \value{
-A list containing the tag set, if one has been set. For \code{delete_tagging}: \code{TRUE} if successful, \code{FALSE} otherwise. An \code{aws_error} object may be returned if the request failed.
+A list containing the tag set, if one has been set. For \code{delete_tagging}: \code{TRUE} if successful, \code{FALSE} otherwise.
 }
 \description{
 Get/delete the tag set for a bucket.

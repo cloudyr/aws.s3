@@ -3,22 +3,23 @@
 #' @description Get/Put/Delete the bucket access policy for a bucket.
 #' @template bucket
 #' @param policy A character string containing a bucket policy.
+#' @param parse_response A logical indicating whether to return the response as is, or parse and return as a list. Default is \code{FALSE}.
 #' @template dots
-#' @return For \code{get_policy}: A character string containing the JSON representation of the policy, if one has been set. For \code{delete_policy} and \code{put_policy}: \code{TRUE} if successful, \code{FALSE} otherwise. An \code{aws_error} object may be returned if the request failed.
+#' @return For \code{get_policy}: A character string containing the JSON representation of the policy, if one has been set. For \code{delete_policy} and \code{put_policy}: \code{TRUE} if successful, \code{FALSE} otherwise. 
 #' @references 
 #' \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETpolicy.html}{API Documentation}
 #' \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETEpolicy.html}{API Documentation}
 #' @export
-get_bucket_policy <- function(bucket, ...){
+get_bucket_policy <- function(bucket, parse_response = TRUE, ...){
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 query = alist(policy = ),
+                parse_response = FALSE, 
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        content(r, "text", encoding = "UTF-8")
+    if (isTRUE(parse_response)) {
+        r <- content(r, "text", encoding = "UTF-8")
     }
+    return(r)
 }
 
 #' @rdname policy
@@ -30,11 +31,7 @@ put_bucket_policy <- function(bucket, policy, ...){
                 request_body = policy,
                 encode = "raw",
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        TRUE
-    }
+    return(TRUE)
 }
 
 #' @rdname policy
@@ -45,9 +42,5 @@ delete_bucket_policy <- function(bucket, ...){
                 query = alist(policy = ),
                 parse_response = FALSE,
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        TRUE
-    }
+    return(TRUE)
 }

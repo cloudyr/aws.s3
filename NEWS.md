@@ -1,3 +1,7 @@
+# CHANGES to aws.s3 0.2.0
+
+* All functions now produce errors when requests fail rather than returning an object of class "aws_error". (#86)
+
 # CHANGES to aws.s3 0.1.39
 
 * `s3save()` gains an `envir` argument. (#115)

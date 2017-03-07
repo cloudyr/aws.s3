@@ -17,7 +17,7 @@ put_bucket(bucket, region = Sys.getenv("AWS_DEFAULT_REGION"),
 \item{\dots}{Additional arguments passed to \code{\link{s3HTTP}}.}
 }
 \value{
-\code{TRUE} if successful, aws_error details if not.
+\code{TRUE} if successful.
 }
 \description{
 Creates a new S3 bucket.

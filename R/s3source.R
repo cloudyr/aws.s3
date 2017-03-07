@@ -37,11 +37,7 @@ s3source <- function(object, bucket, ..., opts = NULL) {
     } else {
         r <- do.call("get_object", c(list(bucket = bucket, object = object), opts))
     }
-    if (inherits(r, "aws-error")) {
-        return(r)
-    } else {
-        tmp <- rawConnection(r, "r+")
-        on.exit(close(tmp))
-        return(source(tmp, ...))
-    }
+    tmp <- rawConnection(r, "r+")
+    on.exit(close(tmp))
+    return(source(tmp, ...))
 }

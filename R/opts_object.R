@@ -8,9 +8,5 @@ opts_object <- function(object, bucket, ...) {
                 bucket = bucket,
                 path = paste0("/", object),
                 ...)
-    if (inherits(r, "aws_error")) {
-        return(r)
-    } else {
-        return(r)
-    }
+    return(r)
 }
