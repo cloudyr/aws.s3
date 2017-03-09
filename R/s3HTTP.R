@@ -8,13 +8,14 @@
 #' @param headers A list of request headers for the REST call.   
 #' @param request_body A character string containing request body data.
 #' @param accelerate A logical indicating whether to use AWS transfer acceleration, which can produce significant speed improvements for cross-country transfers. Acceleration only works with buckets that do not have dots in bucket name.
+#' @param parse_response A logical indicating whether to return the response as is, or parse and return as a list. Default is \code{TRUE}.
+#' @param check_region A logical indicating whether to check the value of \code{region} against the apparent bucket region. This is useful for avoiding (often confusing) out-of-region errors. Default is \code{TRUE}.
+#' @param url_style A character string specifying either \dQuote{path} (the default), or \dQuote{virtual}-style S3 URLs.
+#' @param verbose A logical indicating whether to be verbose. Default is given by \code{options("verbose")}.
 #' @param region A character string containing the AWS region. Ignored if region can be inferred from \code{bucket}. If missing, defaults to \dQuote{us-east-1}.
 #' @param key A character string containing an AWS Access Key ID. If missing, defaults to value stored in environment variable \dQuote{AWS_ACCESS_KEY_ID}.
 #' @param secret A character string containing an AWS Secret Access Key. If missing, defaults to value stored in environment variable \dQuote{AWS_SECRET_ACCESS_KEY}.
 #' @param session_token Optionally, a character string containing an AWS temporary Session Token. If missing, defaults to value stored in environment variable \dQuote{AWS_SESSION_TOKEN}.
-#' @param parse_response A logical indicating whether to return the response as is, or parse and return as a list. Default is \code{TRUE}.
-#' @param check_region A logical indicating whether to check the value of \code{region} against the apparent bucket region. This is useful for avoiding (often confusing) out-of-region errors. Default is \code{TRUE}.
-#' @param verbose A logical indicating whether to be verbose. Default is given by \code{options("verbose")}.
 #' @param ... Additional arguments passed to an HTTP request function. such as \code{\link[httr]{GET}}.
 #' @return the S3 response, or the relevant error.
 #' @importFrom httr GET POST PUT HEAD DELETE VERB upload_file parse_url add_headers
@@ -30,13 +31,14 @@ s3HTTP <- function(verb = "GET",
                    headers = list(), 
                    request_body = "",
                    accelerate = FALSE,
+                   parse_response = TRUE, 
+                   check_region = TRUE,
+                   url_style = c("path", "virtual"),
+                   verbose = getOption("verbose", FALSE),
                    region = Sys.getenv("AWS_DEFAULT_REGION", "us-east-1"), 
                    key = Sys.getenv("AWS_ACCESS_KEY_ID"), 
                    secret = Sys.getenv("AWS_SECRET_ACCESS_KEY"), 
                    session_token = Sys.getenv("AWS_SESSION_TOKEN"),
-                   parse_response = TRUE, 
-                   check_region = TRUE,
-                   verbose = getOption("verbose", FALSE),
                    ...) {
     
     bucketname <- get_bucketname(bucket)
@@ -53,7 +55,8 @@ s3HTTP <- function(verb = "GET",
         }
     }
     
-    url <- setup_s3_url(bucketname, region, path, accelerate)
+    url_style <- match.arg(url_style)
+    url <- setup_s3_url(bucketname, region, path, accelerate, url_style = url_style, verbose = verbose)
     p <- parse_url(url)
     
     current <- Sys.time()
@@ -179,7 +182,15 @@ parse_aws_s3_response <- function(r, Sig, verbose = getOption("verbose")){
     return(response)
 }
 
-setup_s3_url <- function(bucketname, region, path, accelerate) {
+setup_s3_url <- 
+function(bucketname, 
+         region, 
+         path, 
+         accelerate, 
+         url_style = c("path", "virtual"), 
+         verbose = getOption("verbose", FALSE)) 
+{
+    url_style <- match.arg(url_style)
     if (bucketname == "") {
         if (region == "us-east-1") {
             url <- paste0("https://s3.amazonaws.com")
@@ -188,15 +199,27 @@ setup_s3_url <- function(bucketname, region, path, accelerate) {
         }
     } else {
         if (isTRUE(accelerate)) {
-            if (grepl("\\.", bucketname)) {
-                stop("To use accelerate, bucket name must not contain dots (.)")
+            if (url_stlye == "virtual" && grepl("\\.", bucketname)) {
+                stop("To use accelerate for bucket name with dots (.), 'url_style' must be 'path'")
             }
-            url <- paste0("https://", bucketname, ".s3-accelerate.amazonaws.com")
+            if (url_style == "virtual") {
+                url <- paste0("https://", bucketname, ".s3-accelerate.amazonaws.com")
+            } else {
+                url <- paste0("https://s3-accelerate.amazonaws.com/", bucketname)
+            }
         } else {
             if (region == "us-east-1") {
-                url <- paste0("https://", bucketname, ".s3.amazonaws.com")
+                if (url_style == "virtual") {
+                    url <- paste0("https://", bucketname, ".s3.amazonaws.com")
+                } else {
+                    url <- paste0("https://s3.amazonaws.com/", bucketname)
+                }
             } else {
-                url <- paste0("https://", bucketname, ".s3-", region, ".amazonaws.com")
+                if (url_style == "virtual") {
+                    url <- paste0("https://", bucketname, ".s3-", region, ".amazonaws.com")
+                } else {
+                    url <- paste0("https://s3-", region, ".amazonaws.com/", bucketname)
+                }
             }
         }
     }
@@ -208,6 +231,13 @@ setup_s3_url <- function(bucketname, region, path, accelerate) {
             USE.NAMES = FALSE
         ), collapse = '/')
     }
-    url <- if (grepl('^[\\/].*', path)) { paste0(url, path) } else { paste(url, path, sep = "/") }
+    url <- if (grepl('^[\\/].*', path)) { 
+        paste0(url, path) 
+    } else { 
+        paste(url, path, sep = "/") 
+    }
+    if (isTRUE(verbose)) {
+        message(sprintf("S3 Request URL: %s", url))
+    }
     return(url)
 }

@@ -37,9 +37,16 @@ From the AWS doc: \dQuote{This implementation of the GET operation returns some 
 }
 \examples{
 \dontrun{
+  # basic usage
   b <- bucketlist()
   get_bucket(b[1,1])
   get_bucket_df(b[1,1])
+
+  # bucket names with dots
+  ## this (default) should work:
+  get_bucket("this.bucket.has.dots", url_style = "path")
+  ## this probably wont:
+  #get_bucket("this.bucket.has.dots", url_style = "virtual")
 }
 
 }

@@ -6,11 +6,12 @@
 \usage{
 s3HTTP(verb = "GET", bucket = "", path = "", query = NULL,
   headers = list(), request_body = "", accelerate = FALSE,
+  parse_response = TRUE, check_region = TRUE, url_style = c("path",
+  "virtual"), verbose = getOption("verbose", FALSE),
   region = Sys.getenv("AWS_DEFAULT_REGION", "us-east-1"),
   key = Sys.getenv("AWS_ACCESS_KEY_ID"),
   secret = Sys.getenv("AWS_SECRET_ACCESS_KEY"),
-  session_token = Sys.getenv("AWS_SESSION_TOKEN"), parse_response = TRUE,
-  check_region = TRUE, verbose = getOption("verbose", FALSE), ...)
+  session_token = Sys.getenv("AWS_SESSION_TOKEN"), ...)
 }
 \arguments{
 \item{verb}{A character string containing an HTTP verb, defaulting to \dQuote{GET}.}
@@ -27,6 +28,14 @@ s3HTTP(verb = "GET", bucket = "", path = "", query = NULL,
 
 \item{accelerate}{A logical indicating whether to use AWS transfer acceleration, which can produce significant speed improvements for cross-country transfers. Acceleration only works with buckets that do not have dots in bucket name.}
 
+\item{parse_response}{A logical indicating whether to return the response as is, or parse and return as a list. Default is \code{TRUE}.}
+
+\item{check_region}{A logical indicating whether to check the value of \code{region} against the apparent bucket region. This is useful for avoiding (often confusing) out-of-region errors. Default is \code{TRUE}.}
+
+\item{url_style}{A character string specifying either \dQuote{path} (the default), or \dQuote{virtual}-style S3 URLs.}
+
+\item{verbose}{A logical indicating whether to be verbose. Default is given by \code{options("verbose")}.}
+
 \item{region}{A character string containing the AWS region. Ignored if region can be inferred from \code{bucket}. If missing, defaults to \dQuote{us-east-1}.}
 
 \item{key}{A character string containing an AWS Access Key ID. If missing, defaults to value stored in environment variable \dQuote{AWS_ACCESS_KEY_ID}.}
@@ -34,12 +43,6 @@ s3HTTP(verb = "GET", bucket = "", path = "", query = NULL,
 \item{secret}{A character string containing an AWS Secret Access Key. If missing, defaults to value stored in environment variable \dQuote{AWS_SECRET_ACCESS_KEY}.}
 
 \item{session_token}{Optionally, a character string containing an AWS temporary Session Token. If missing, defaults to value stored in environment variable \dQuote{AWS_SESSION_TOKEN}.}
-
-\item{parse_response}{A logical indicating whether to return the response as is, or parse and return as a list. Default is \code{TRUE}.}
-
-\item{check_region}{A logical indicating whether to check the value of \code{region} against the apparent bucket region. This is useful for avoiding (often confusing) out-of-region errors. Default is \code{TRUE}.}
-
-\item{verbose}{A logical indicating whether to be verbose. Default is given by \code{options("verbose")}.}
 
 \item{...}{Additional arguments passed to an HTTP request function. such as \code{\link[httr]{GET}}.}
 }

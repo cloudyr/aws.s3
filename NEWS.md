@@ -1,5 +1,9 @@
 # CHANGES to aws.s3 0.2.0
 
+* `s3HTTP()` gains a `url_style` argument to control use of "path"-style (new default) versus "virtual"-style URL paths. (#23, #118)
+
+# CHANGES to aws.s3 0.2.0
+
 * All functions now produce errors when requests fail rather than returning an object of class "aws_error". (#86)
 
 # CHANGES to aws.s3 0.1.39

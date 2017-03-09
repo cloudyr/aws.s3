@@ -12,9 +12,16 @@
 #' @return \code{get_bucket} returns a list of objects in the bucket (with class \dQuote{s3_bucket}), while \code{get_bucket_df} returns a data frame (the only difference is the application of the \code{as.data.frame()} method to the list of bucket contents. If \code{max} is greater than 1000, multiple API requests are executed and the attributes attached to the response object reflect only the final request.
 #' @examples
 #' \dontrun{
+#'   # basic usage
 #'   b <- bucketlist()
 #'   get_bucket(b[1,1])
 #'   get_bucket_df(b[1,1])
+#' 
+#'   # bucket names with dots
+#'   ## this (default) should work:
+#'   get_bucket("this.bucket.has.dots", url_style = "path")
+#'   ## this probably wont:
+#'   #get_bucket("this.bucket.has.dots", url_style = "virtual")
 #' }
 #'
 #' @references \href{https://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGET.html}{API Documentation}
