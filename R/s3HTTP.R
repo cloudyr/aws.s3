@@ -199,7 +199,7 @@ function(bucketname,
         }
     } else {
         if (isTRUE(accelerate)) {
-            if (url_stlye == "virtual" && grepl("\\.", bucketname)) {
+            if (url_style == "virtual" && grepl("\\.", bucketname)) {
                 stop("To use accelerate for bucket name with dots (.), 'url_style' must be 'path'")
             }
             if (url_style == "virtual") {
