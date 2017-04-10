@@ -77,3 +77,42 @@ s3load <- function(object, bucket, envir = parent.frame(), ...) {
     load(tmp, envir = envir)
     return(invisible())
 }
+
+#' @importFrom feather write_feather
+#' @rdname s3save
+#' @export
+s3write_feather <- function(..., bucket, object, opts = NULL) {
+    if (inherits(object, "s3_object")) {
+        object <- object$Key
+    }
+    tmp <- tempfile(fileext = ".feather")
+    on.exit(unlink(tmp))
+    write_feather(..., path = tmp)
+    if (is.null(opts)) {
+        r <- put_object(file = tmp, bucket = bucket, object = object)
+    } else {
+        r <- do.call("put_object", c(list(file = tmp, bucket = bucket, object = object), opts))
+    }
+    if (inherits(r, "aws-error")) {
+        return(r)
+    } else {
+        return(invisible())
+    }
+}
+
+
+#' @importFrom feather read_feather
+#' @rdname s3save
+#' @export
+s3read_feather <- function(bucket, object, ...) {
+    tmp <- tempfile(fileext = ".feather")
+    on.exit(unlink(tmp))
+    r <- get_object(bucket = bucket, object = object, parse_response = FALSE, ...)
+    if (inherits(r, "aws-error")) {
+        return(r)
+    } else {
+        writeBin(httr::content(r, "raw"), con = tmp)
+        load(tmp, envir = envir)
+        return(invisible())
+    }
+}
