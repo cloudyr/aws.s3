@@ -4,6 +4,8 @@
 \alias{s3save}
 \alias{s3save_image}
 \alias{s3load}
+\alias{s3write_feather}
+\alias{s3read_feather}
 \title{save/load}
 \usage{
 s3save(..., object, bucket, envir = parent.frame(), opts = NULL)
@@ -11,6 +13,10 @@ s3save(..., object, bucket, envir = parent.frame(), opts = NULL)
 s3save_image(object, bucket, opts = NULL)
 
 s3load(object, bucket, envir = parent.frame(), ...)
+
+s3write_feather(..., bucket, object, opts = NULL)
+
+s3read_feather(bucket, object, ...)
 }
 \arguments{
 \item{...}{For \code{s3save}, one or more R objects to be saved via \code{\link[base]{save}} and uploaded to S3. For \code{s3load}, see \code{opts}.}
