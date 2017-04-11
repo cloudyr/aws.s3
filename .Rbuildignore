@@ -1,8 +1,9 @@
 .travis.yml
 CONTRIBUTING.md
 README.Rmd
+Makefile
 drat.sh
 knitreadme.sh
-man-roxygen/
+/man-roxygen
 ^.*\.Rproj$
 ^\.Rproj\.user$

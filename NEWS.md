@@ -1,4 +1,8 @@
-# CHANGES to aws.s3 0.2.0
+# CHANGES to aws.s3 0.2.2
+
+* Two new functions - `s3read_using()` and `s3write_using()` provide a generic interface to reading and writing objects from S3 using a specified function. This provides a simple and extensible interface for the import and export of objects (such as data frames) in formats other than those provided by base R. (#125, #99)
+
+# CHANGES to aws.s3 0.2.1
 
 * `s3HTTP()` gains a `url_style` argument to control use of "path"-style (new default) versus "virtual"-style URL paths. (#23, #118)
 

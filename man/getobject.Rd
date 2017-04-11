@@ -51,7 +51,7 @@ Some users may find the raw vector response format of \code{get_object} unfamili
   "mtcars" \%in\% ls()
 
   # save an object locally
-  y <- get_object(obj[[1]], file = object[[1]][["Key"]])
+  y <- save_object(obj[[1]], file = object[[1]][["Key"]])
   y \%in\% dir()
 
   # return object using 'S3 URI' syntax
