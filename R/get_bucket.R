@@ -39,7 +39,7 @@ get_bucket <- function(bucket,
     if (is.null(max)) {
         query <- list(prefix = prefix, delimiter = delimiter, "max-keys" = NULL, marker = marker)
     } else {
-        query <- list(prefix = prefix, delimiter = delimiter, "max-keys" = pmin(1000, as.integer(max)), marker = marker)
+        query <- list(prefix = prefix, delimiter = delimiter, "max-keys" = as.integer(pmin(1000, max)), marker = marker)
     }
     r <- s3HTTP(verb = "GET", bucket = bucket, query = query, parse_response = parse_response, ...)
 
@@ -52,7 +52,7 @@ get_bucket <- function(bucket,
             query <- list(
                 prefix = prefix,
                 delimiter = delimiter,
-                "max-keys" = pmin(max - as.integer(r[["MaxKeys"]]), 1000),
+                "max-keys" = as.integer(pmin(max - r[["MaxKeys"]], 1000)),
                 marker = tail(r, 1)[["Contents"]][["Key"]]
             )
             extra <- s3HTTP(verb = "GET", bucket = bucket, query = query, parse_response = parse_response, ...)

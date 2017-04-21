@@ -1,3 +1,7 @@
+# CHANGES to aws.s3 0.2.3
+
+* Fixed a bug in `get_bucket()` when `max = Inf`. (#127, h/t Liz Macfie)
+
 # CHANGES to aws.s3 0.2.2
 
 * Two new functions - `s3read_using()` and `s3write_using()` provide a generic interface to reading and writing objects from S3 using a specified function. This provides a simple and extensible interface for the import and export of objects (such as data frames) in formats other than those provided by base R. (#125, #99)
