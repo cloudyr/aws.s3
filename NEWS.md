@@ -1,3 +1,7 @@
+# CHANGES to aws.s3 0.2.4
+
+* Try using tempfile() instead of rawConnection() for high-level read/write functions. (#128)
+
 # CHANGES to aws.s3 0.2.3
 
 * Fixed a bug in `get_bucket()` when `max = Inf`. (#127, h/t Liz Macfie)

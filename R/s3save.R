@@ -31,17 +31,17 @@
 #' @seealso \code{\link{s3saveRDS}},\code{\link{s3readRDS}}
 #' @export
 s3save <- function(..., object, bucket, envir = parent.frame(), opts = NULL) {
-    tmp <- rawConnection(raw(0), "r+")
-    on.exit(close(tmp))
+    tmp <- tmpfile(fileext = ".rdata")
+    on.exit(unlink(tmp))
     save(..., file = tmp, envir = envir)
     if (missing(bucket)) {
         bucket <- get_bucketname(object)
     }
     object <- get_objectkey(object)
     if (is.null(opts)) {
-        r <- put_object(file = rawConnectionValue(tmp), bucket = bucket, object = object)
+        r <- put_object(file = tmp, bucket = bucket, object = object)
     } else {
-        r <- do.call("put_object", c(list(file = rawConnectionValue(tmp), bucket = bucket, object = object), opts))
+        r <- do.call("put_object", c(list(file = tmp, bucket = bucket, object = object), opts))
     }
     return(invisible(r))
 }
@@ -49,17 +49,17 @@ s3save <- function(..., object, bucket, envir = parent.frame(), opts = NULL) {
 #' @rdname s3save
 #' @export
 s3save_image <- function(object, bucket, opts = NULL) {
-    tmp <- rawConnection(raw(0), "r+")
-    on.exit(close(tmp))
+    tmp <- tmpfile(fileext = ".rdata")
+    on.exit(unlink(tmp))
     save.image(file = tmp)
     if (missing(bucket)) {
         bucket <- get_bucketname(object)
     }
     object <- get_objectkey(object)
     if (is.null(opts)) {
-        r <- put_object(file = rawConnectionValue(tmp), bucket = bucket, object = object)
+        r <- put_object(file = tmp, bucket = bucket, object = object)
     } else {
-        r <- do.call("put_object", c(list(file = rawConnectionValue(tmp), bucket = bucket, object = object), opts))
+        r <- do.call("put_object", c(list(file = tmp, bucket = bucket, object = object), opts))
     }
     return(invisible(r))
 }
@@ -71,9 +71,9 @@ s3load <- function(object, bucket, envir = parent.frame(), ...) {
         bucket <- get_bucketname(object)
     }
     object <- get_objectkey(object)
-    r <- get_object(bucket = bucket, object = object, parse_response = FALSE, ...)
-    tmp <- rawConnection(r, "r")
-    on.exit(close(tmp))
+    tmp <- tmpfile(fileext = ".rdata")
+    on.exit(unlink(tmp))
+    r <- save_object(bucket = bucket, object = object, file = tmp, ...)
     load(tmp, envir = envir)
     return(invisible())
 }

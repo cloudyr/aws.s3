@@ -43,10 +43,8 @@ s3readRDS <- function(bucket, object, ...) {
         bucket <- get_bucketname(object)
     }
     object <- get_objectkey(object)
-    r <- get_object(bucket = bucket, object = object, ...)
-    if (typeof(r) == 'raw') {
-        return(unserialize(memDecompress(from = as.vector(r), type = 'gzip')))
-    } else {
-        return(r)
-    }
+    tmp <- tmpfile(fileext = ".rdata")
+    on.exit(unlink(tmp))
+    r <- save_object(bucket = bucket, object = object, file = tmp, ...)
+    readRDS(tmp)
 }
