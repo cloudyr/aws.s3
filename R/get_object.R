@@ -53,7 +53,6 @@ get_object <- function(object, bucket, headers = list(), parse_response = FALSE,
                 parse_response = parse_response,
                 ...)
     cont <- httr::content(r, as = "raw")
-    attributes(cont) <- httr::headers(r)
     return(cont)
 }
 
