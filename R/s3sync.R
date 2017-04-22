@@ -17,10 +17,9 @@ s3sync <- function(files = dir(recursive = TRUE), bucket, ...) {
     if (!bucket_exists(bucket)) {
         put_bucket(bucket)
     }
-    b <- get_bucket(bucket, ...)
-    if (attr(b, "Marker") != list()) {
-        # repeat get_bucket() until all objects are retrieved
-    }
+    
+    # return all bucket objects
+    b <- get_bucket(bucket, max = Inf, ...)
     
     # list all files
     files <- files
