@@ -79,9 +79,15 @@ get_bucket <- function(bucket,
     }
     att <- r[names(r) != "Contents"]
     r[names(r) != "Contents"] <- NULL
+
+    # collapse CommonPrefixes elements
+    cp <- att[names(att) == "CommonPrefixes"]
+    att[names(att) == "CommonPrefixes"] <- NULL
+    att[["CommonPrefixes"]] <- as.character(cp)
+    
+    # return value
     out <- structure(r, class = "s3_bucket")
     attributes(out) <- c(attributes(out), att)
-
     out
 }
 
