@@ -11,6 +11,7 @@
 #' @param parse_response A logical indicating whether to return the response as is, or parse and return as a list. Default is \code{TRUE}.
 #' @param check_region A logical indicating whether to check the value of \code{region} against the apparent bucket region. This is useful for avoiding (often confusing) out-of-region errors. Default is \code{TRUE}.
 #' @param url_style A character string specifying either \dQuote{path} (the default), or \dQuote{virtual}-style S3 URLs.
+#' @param base_url A character string specifying the base URL for the request. There is no need to set this, as it is provided only to generalize the package to (potentially) support S3-compatible storage on non-AWS servers.
 #' @param verbose A logical indicating whether to be verbose. Default is given by \code{options("verbose")}.
 #' @param region A character string containing the AWS region. Ignored if region can be inferred from \code{bucket}. If missing, defaults to \dQuote{us-east-1}.
 #' @param key A character string containing an AWS Access Key ID. If missing, defaults to value stored in environment variable \dQuote{AWS_ACCESS_KEY_ID}.
@@ -34,6 +35,7 @@ s3HTTP <- function(verb = "GET",
                    parse_response = TRUE, 
                    check_region = TRUE,
                    url_style = c("path", "virtual"),
+                   base_url = "s3.amazonaws.com",
                    verbose = getOption("verbose", FALSE),
                    region = Sys.getenv("AWS_DEFAULT_REGION", "us-east-1"), 
                    key = Sys.getenv("AWS_ACCESS_KEY_ID"), 
@@ -56,7 +58,7 @@ s3HTTP <- function(verb = "GET",
     }
     
     url_style <- match.arg(url_style)
-    url <- setup_s3_url(bucketname, region, path, accelerate, url_style = url_style, verbose = verbose)
+    url <- setup_s3_url(bucketname, region, path, accelerate, url_style = url_style, base_url = base_url, verbose = verbose)
     p <- parse_url(url)
     
     current <- Sys.time()
@@ -188,12 +190,16 @@ function(bucketname,
          path, 
          accelerate, 
          url_style = c("path", "virtual"), 
+         base_url = "s3.amazonaws.com",
          verbose = getOption("verbose", FALSE)) 
 {
     url_style <- match.arg(url_style)
+    if (base_url != "s3.amazonaws.com") {
+        url_style <- "path"
+    }
     if (bucketname == "") {
         if (region == "us-east-1") {
-            url <- paste0("https://s3.amazonaws.com")
+            url <- paste0("https://", base_url)
         } else {
             url <- paste0("https://s3-", region, ".amazonaws.com")
         }
@@ -210,9 +216,9 @@ function(bucketname,
         } else {
             if (region == "us-east-1") {
                 if (url_style == "virtual") {
-                    url <- paste0("https://", bucketname, ".s3.amazonaws.com")
+                    url <- paste0("https://", bucketname, ".", base_url)
                 } else {
-                    url <- paste0("https://s3.amazonaws.com/", bucketname)
+                    url <- paste0("https://", base_url, "/", bucketname)
                 }
             } else {
                 if (url_style == "virtual") {

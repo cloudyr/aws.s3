@@ -1,6 +1,10 @@
 # CHANGES to aws.s3 0.2.4
 
-* Try using tempfile() instead of rawConnection() for high-level read/write functions. (#128)
+* Use `tempfile()` instead of `rawConnection()` for high-level read/write functions. (#128)
+* Allow multiple CommonPrefix values in `get_bucket()`. (#88)
+* `get_object()` now returns a pure raw vector (without attributes). (#94)
+* `s3sync()` relies on `get_bucket(max = Inf)`. (#20)
+* `s3HTTP()` gains a `base_url` argument to (potentially) support S3-compatible storage on non-AWS servers. (#109)
 
 # CHANGES to aws.s3 0.2.3
 

@@ -7,8 +7,8 @@
 s3HTTP(verb = "GET", bucket = "", path = "", query = NULL,
   headers = list(), request_body = "", accelerate = FALSE,
   parse_response = TRUE, check_region = TRUE, url_style = c("path",
-  "virtual"), verbose = getOption("verbose", FALSE),
-  region = Sys.getenv("AWS_DEFAULT_REGION", "us-east-1"),
+  "virtual"), base_url = "s3.amazonaws.com", verbose = getOption("verbose",
+  FALSE), region = Sys.getenv("AWS_DEFAULT_REGION", "us-east-1"),
   key = Sys.getenv("AWS_ACCESS_KEY_ID"),
   secret = Sys.getenv("AWS_SECRET_ACCESS_KEY"),
   session_token = Sys.getenv("AWS_SESSION_TOKEN"), ...)
@@ -33,6 +33,8 @@ s3HTTP(verb = "GET", bucket = "", path = "", query = NULL,
 \item{check_region}{A logical indicating whether to check the value of \code{region} against the apparent bucket region. This is useful for avoiding (often confusing) out-of-region errors. Default is \code{TRUE}.}
 
 \item{url_style}{A character string specifying either \dQuote{path} (the default), or \dQuote{virtual}-style S3 URLs.}
+
+\item{base_url}{A character string specifying the base URL for the request. There is no need to set this, as it is provided only to generalize the package to (potentially) support S3-compatible storage on non-AWS servers.}
 
 \item{verbose}{A logical indicating whether to be verbose. Default is given by \code{options("verbose")}.}
 
