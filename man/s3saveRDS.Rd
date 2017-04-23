@@ -6,7 +6,7 @@
 \title{saveRDS/readRDS}
 \usage{
 s3saveRDS(x, bucket, object = paste0(as.character(substitute(x)), ".rds"),
-  ...)
+  compress = TRUE, ...)
 
 s3readRDS(bucket, object, ...)
 }
@@ -16,6 +16,8 @@ s3readRDS(bucket, object, ...)
 \item{bucket}{Character string with the name of the bucket, or an object of class \dQuote{s3_bucket}.}
 
 \item{object}{Character string with the object key, or an object of class \dQuote{s3_object}. In most cases, if \code{object} is specified as the latter, \code{bucket} can be omitted because the bucket name will be extracted from \dQuote{Bucket} slot in \code{object}.}
+
+\item{compress}{A logical. See \code{\link[base]{saveRDS}}.}
 
 \item{\dots}{Additional arguments passed to \code{\link{s3HTTP}}.}
 }
