@@ -43,7 +43,7 @@ s3readRDS <- function(bucket, object, ...) {
         bucket <- get_bucketname(object)
     }
     object <- get_objectkey(object)
-    tmp <- tmpfile(fileext = ".rdata")
+    tmp <- tempfile(fileext = ".rds")
     on.exit(unlink(tmp))
     r <- save_object(bucket = bucket, object = object, file = tmp, ...)
     readRDS(tmp)

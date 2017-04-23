@@ -37,7 +37,7 @@ s3source <- function(object, bucket, ..., opts = NULL) {
     } else {
         r <- do.call("get_object", c(list(bucket = bucket, object = object), opts))
     }
-    tmp <- tmpfile(fileext = ".rdata")
+    tmp <- tempfile(fileext = ".R")
     on.exit(unlink(tmp))
     return(source(tmp, ...))
 }

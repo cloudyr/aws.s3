@@ -31,7 +31,7 @@
 #' @seealso \code{\link{s3saveRDS}},\code{\link{s3readRDS}}
 #' @export
 s3save <- function(..., object, bucket, envir = parent.frame(), opts = NULL) {
-    tmp <- tmpfile(fileext = ".rdata")
+    tmp <- tempfile(fileext = ".rdata")
     on.exit(unlink(tmp))
     save(..., file = tmp, envir = envir)
     if (missing(bucket)) {
@@ -49,7 +49,7 @@ s3save <- function(..., object, bucket, envir = parent.frame(), opts = NULL) {
 #' @rdname s3save
 #' @export
 s3save_image <- function(object, bucket, opts = NULL) {
-    tmp <- tmpfile(fileext = ".rdata")
+    tmp <- tempfile(fileext = ".rdata")
     on.exit(unlink(tmp))
     save.image(file = tmp)
     if (missing(bucket)) {
@@ -71,7 +71,7 @@ s3load <- function(object, bucket, envir = parent.frame(), ...) {
         bucket <- get_bucketname(object)
     }
     object <- get_objectkey(object)
-    tmp <- tmpfile(fileext = ".rdata")
+    tmp <- tempfile(fileext = ".rdata")
     on.exit(unlink(tmp))
     r <- save_object(bucket = bucket, object = object, file = tmp, ...)
     load(tmp, envir = envir)
