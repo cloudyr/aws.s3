@@ -1,5 +1,6 @@
 # CHANGES to aws.s3 0.2.4
 
+* Mocked up multipart upload functionality within `put_object()` (#80)
 * Use `tempfile()` instead of `rawConnection()` for high-level read/write functions. (#128)
 * Allow multiple CommonPrefix values in `get_bucket()`. (#88)
 * `get_object()` now returns a pure raw vector (without attributes). (#94)

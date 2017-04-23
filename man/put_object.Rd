@@ -4,7 +4,7 @@
 \alias{put_object}
 \title{Put object}
 \usage{
-put_object(file, object, bucket, headers = list(), ...)
+put_object(file, object, bucket, multipart = FALSE, headers = list(), ...)
 }
 \arguments{
 \item{file}{A character string containing the filename (or full path) of the file you want to upload to S3. Alternatively, an raw vector containing the file can be passed directly, in which case \code{object} needs to be specified explicitly.}
@@ -12,6 +12,8 @@ put_object(file, object, bucket, headers = list(), ...)
 \item{object}{A character string containing the name the object should have in S3 (i.e., its "object key"). If missing, the filename is used.}
 
 \item{bucket}{Character string with the name of the bucket, or an object of class \dQuote{s3_bucket}.}
+
+\item{multipart}{A logical indicating whether to use multipart uploads. See \url{http://docs.aws.amazon.com/AmazonS3/latest/dev/mpuoverview.html}. If \code{file} is less than 100 MB, this is ignored.}
 
 \item{headers}{List of request headers for the REST call.}
 
