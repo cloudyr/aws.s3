@@ -24,7 +24,6 @@ Imports:
     xml2 (> 1.0.0),
     base64enc,
     digest,
-    curl,
     aws.signature (>= 0.2.6)
 Suggests:
     testthat,

@@ -6,9 +6,10 @@
 \usage{
 s3HTTP(verb = "GET", bucket = "", path = "", query = NULL,
   headers = list(), request_body = "", accelerate = FALSE,
-  parse_response = TRUE, check_region = TRUE, url_style = c("path",
-  "virtual"), base_url = "s3.amazonaws.com", verbose = getOption("verbose",
-  FALSE), region = Sys.getenv("AWS_DEFAULT_REGION", "us-east-1"),
+  dualstack = FALSE, parse_response = TRUE, check_region = TRUE,
+  url_style = c("path", "virtual"), base_url = "s3.amazonaws.com",
+  verbose = getOption("verbose", FALSE),
+  region = Sys.getenv("AWS_DEFAULT_REGION", "us-east-1"),
   key = Sys.getenv("AWS_ACCESS_KEY_ID"),
   secret = Sys.getenv("AWS_SECRET_ACCESS_KEY"),
   session_token = Sys.getenv("AWS_SESSION_TOKEN"), ...)
@@ -27,6 +28,8 @@ s3HTTP(verb = "GET", bucket = "", path = "", query = NULL,
 \item{request_body}{A character string containing request body data.}
 
 \item{accelerate}{A logical indicating whether to use AWS transfer acceleration, which can produce significant speed improvements for cross-country transfers. Acceleration only works with buckets that do not have dots in bucket name.}
+
+\item{dualstack}{A logical indicating whether to use \dQuote{dual stack} requests, which can resolve to either IPv4 or IPv6. See \url{http://docs.aws.amazon.com/AmazonS3/latest/dev/dual-stack-endpoints.html}.}
 
 \item{parse_response}{A logical indicating whether to return the response as is, or parse and return as a list. Default is \code{TRUE}.}
 

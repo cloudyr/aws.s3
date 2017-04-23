@@ -5,6 +5,7 @@
 * `get_object()` now returns a pure raw vector (without attributes). (#94)
 * `s3sync()` relies on `get_bucket(max = Inf)`. (#20)
 * `s3HTTP()` gains a `base_url` argument to (potentially) support S3-compatible storage on non-AWS servers. (#109)
+* `s3HTTP()` gains a `dualstack` argument provide support for "dual stack" (IPv4 and IPv6) support. (#62)
 
 # CHANGES to aws.s3 0.2.3
 

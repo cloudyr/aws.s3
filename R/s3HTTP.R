@@ -8,6 +8,7 @@
 #' @param headers A list of request headers for the REST call.   
 #' @param request_body A character string containing request body data.
 #' @param accelerate A logical indicating whether to use AWS transfer acceleration, which can produce significant speed improvements for cross-country transfers. Acceleration only works with buckets that do not have dots in bucket name.
+#' @param dualstack A logical indicating whether to use \dQuote{dual stack} requests, which can resolve to either IPv4 or IPv6. See \url{http://docs.aws.amazon.com/AmazonS3/latest/dev/dual-stack-endpoints.html}.
 #' @param parse_response A logical indicating whether to return the response as is, or parse and return as a list. Default is \code{TRUE}.
 #' @param check_region A logical indicating whether to check the value of \code{region} against the apparent bucket region. This is useful for avoiding (often confusing) out-of-region errors. Default is \code{TRUE}.
 #' @param url_style A character string specifying either \dQuote{path} (the default), or \dQuote{virtual}-style S3 URLs.
@@ -25,23 +26,25 @@
 #' @importFrom utils URLencode
 #' @import aws.signature
 #' @export
-s3HTTP <- function(verb = "GET",
-                   bucket = "", 
-                   path = "", 
-                   query = NULL,
-                   headers = list(), 
-                   request_body = "",
-                   accelerate = FALSE,
-                   parse_response = TRUE, 
-                   check_region = TRUE,
-                   url_style = c("path", "virtual"),
-                   base_url = "s3.amazonaws.com",
-                   verbose = getOption("verbose", FALSE),
-                   region = Sys.getenv("AWS_DEFAULT_REGION", "us-east-1"), 
-                   key = Sys.getenv("AWS_ACCESS_KEY_ID"), 
-                   secret = Sys.getenv("AWS_SECRET_ACCESS_KEY"), 
-                   session_token = Sys.getenv("AWS_SESSION_TOKEN"),
-                   ...) {
+s3HTTP <- 
+function(verb = "GET",
+         bucket = "", 
+         path = "", 
+         query = NULL,
+         headers = list(), 
+         request_body = "",
+         accelerate = FALSE,
+         dualstack = FALSE,
+         parse_response = TRUE, 
+         check_region = TRUE,
+         url_style = c("path", "virtual"),
+         base_url = "s3.amazonaws.com",
+         verbose = getOption("verbose", FALSE),
+         region = Sys.getenv("AWS_DEFAULT_REGION", "us-east-1"), 
+         key = Sys.getenv("AWS_ACCESS_KEY_ID"), 
+         secret = Sys.getenv("AWS_SECRET_ACCESS_KEY"), 
+         session_token = Sys.getenv("AWS_SESSION_TOKEN"),
+         ...) {
     
     bucketname <- get_bucketname(bucket)
     if (isTRUE(check_region) && (bucketname != "")) {
@@ -188,45 +191,79 @@ setup_s3_url <-
 function(bucketname, 
          region, 
          path, 
-         accelerate, 
+         accelerate = FALSE, 
+         dualstack = FALSE,
          url_style = c("path", "virtual"), 
          base_url = "s3.amazonaws.com",
          verbose = getOption("verbose", FALSE)) 
 {
     url_style <- match.arg(url_style)
+    
+    # handle S3-compatible storage URLs
     if (base_url != "s3.amazonaws.com") {
-        url_style <- "path"
-    }
-    if (bucketname == "") {
-        if (region == "us-east-1") {
-            url <- paste0("https://", base_url)
-        } else {
-            url <- paste0("https://s3-", region, ".amazonaws.com")
+        if (isTRUE(verbose) && url_style != "path") {
+            message("Non-AWS base URL requested. Switching to path-style URLs.")
         }
+        url_style <- "path"
+        accelerate <- FALSE
+        dualstack <- FALSE
     } else {
+        # if accelerate = TRUE, must use virtual paths
         if (isTRUE(accelerate)) {
-            if (url_style == "virtual" && grepl("\\.", bucketname)) {
-                stop("To use accelerate for bucket name with dots (.), 'url_style' must be 'path'")
+            if (isTRUE(verbose) && url_style != "virtual") {
+                message("Option 'accelerate = TRUE' requested. Switching to virtual-style paths.")
             }
-            if (url_style == "virtual") {
-                url <- paste0("https://", bucketname, ".s3-accelerate.amazonaws.com")
+            url_style <- "virtual"
+        }
+        # handle region
+        if (region == "us-east-1") {
+            # handle dualstack
+            if (isTRUE(dualstack)) {
+                # handle accelerate
+                if (isTRUE(accelerate)) {
+                    base_url <- "s3-acclerate.dualstack.amazonaws.com"
+                } else {
+                    base_url <- "s3.dualstack.amazonaws.com"
+                }
             } else {
-                url <- paste0("https://s3-accelerate.amazonaws.com/", bucketname)
+                # handle accelerate
+                if (isTRUE(accelerate)) {
+                    base_url <- "s3-accelerate.amazonaws.com"
+                } else {
+                    base_url <- "s3.amazonaws.com"
+                }
             }
         } else {
-            if (region == "us-east-1") {
-                if (url_style == "virtual") {
-                    url <- paste0("https://", bucketname, ".", base_url)
+            # handle dualstack
+            if (isTRUE(dualstack)) {
+                # handle accelerate
+                if (isTRUE(accelerate)) {
+                    base_url <- paste0("s3-accelerate.dualstack.", region, ".amazonaws.com")
                 } else {
-                    url <- paste0("https://", base_url, "/", bucketname)
+                    base_url <- paste0("s3.dualstack.", region, ".amazonaws.com")
                 }
             } else {
-                if (url_style == "virtual") {
-                    url <- paste0("https://", bucketname, ".s3-", region, ".amazonaws.com")
+                # handle accelerate
+                if (isTRUE(accelerate)) {
+                    base_url <- paste0("s3-accelerate.amazonaws.com")
                 } else {
-                    url <- paste0("https://s3-", region, ".amazonaws.com/", bucketname)
+                    base_url <- paste0("s3-", region, ".amazonaws.com")
                 }
             }
+        }
+    }
+    
+    # handle bucket name
+    if (bucketname == "") {
+        url <- paste0("https://", base_url)
+    } else {
+        if (url_style == "virtual") {
+            if (isTRUE(accelerate) && grepl("\\.", bucketname)) {
+                stop("To use 'accelerate' for bucket name with dots (.), 'url_style' must be 'path'")
+            }
+            url <- paste0("https://", bucketname, ".", base_url)
+        } else {
+            url <- paste0("https://", base_url, "/", bucketname)
         }
     }
     

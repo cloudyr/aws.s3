@@ -68,5 +68,5 @@ Some users may find the raw vector response format of \code{get_object} unfamili
 \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectHEAD.html}{API Document: HEAD Object}
 }
 \seealso{
-\code{\link{get_bucket}}, \code{\link{put_object}}, \code{\link{delete_object}}, \code{\link{s3curl}}
+\code{\link{get_bucket}}, \code{\link{put_object}}, \code{\link{delete_object}}
 }
