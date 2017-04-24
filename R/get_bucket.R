@@ -52,7 +52,7 @@ get_bucket <- function(bucket,
             query <- list(
                 prefix = prefix,
                 delimiter = delimiter,
-                "max-keys" = as.integer(pmin(max - r[["MaxKeys"]], 1000)),
+                "max-keys" = as.integer(pmin(max - as.integer(r[["MaxKeys"]]), 1000)),
                 marker = tail(r, 1)[["Contents"]][["Key"]]
             )
             extra <- s3HTTP(verb = "GET", bucket = bucket, query = query, parse_response = parse_response, ...)
