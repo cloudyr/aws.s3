@@ -24,6 +24,11 @@
 #'   utils::write.csv(mtcars, x)
 #'   put_object(rawConnectionValue(x), object = "mtcars.csv", bucket = "myexamplebucketname")
 #' 
+#'   # use `headers` for server-side encryption
+#'   ## require appropriate bucket policy
+#'   put_object(file = tmp, object = "mtcars.csv", bucket = "myexamplebucket",
+#'              headers = c('x-amz-server-side-encryption' = 'AES256'))
+#' 
 #'   # alternative "S3 URI" syntax:
 #'   put_object(rawConnectionValue(x), object = "s3://myexamplebucketname/mtcars.csv")
 #'   close(x)
