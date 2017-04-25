@@ -22,6 +22,9 @@ put_bucket(bucket, region = Sys.getenv("AWS_DEFAULT_REGION"),
 \description{
 Creates a new S3 bucket.
 }
+\details{
+Bucket policies regulate who has what access to a bucket and its contents. The \code{header} argument can beused to specify \dQuote{canned} policies and \code{\link{put_bucket_policy}} can be used to specify a more complex policy. The \href{https://awspolicygen.s3.amazonaws.com/policygen.html}{AWS Policy Generator} can be useful for creating the appropriate JSON policy structure.
+}
 \examples{
 \dontrun{
   put_bucket("examplebucket")
@@ -33,6 +36,7 @@ Creates a new S3 bucket.
 }
 \references{
 \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUT.html}{API Documentation}
+\href{https://awspolicygen.s3.amazonaws.com/policygen.html}{AWS Policy Generator}
 }
 \seealso{
 \code{\link{bucketlist}}, \code{\link{get_bucket}}, \code{\link{delete_bucket}}, \code{\link{put_object}}

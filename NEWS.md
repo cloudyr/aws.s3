@@ -2,6 +2,7 @@
 
 * Fix reversed argument order in `s3readRDS()` and `s3saveRDS()`.
 * Fixed the persistent bug related to `s3readRDS()`. (#59)
+* Updated some documentation.
 
 # CHANGES to aws.s3 0.2.4
 
