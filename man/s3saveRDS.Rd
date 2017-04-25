@@ -5,17 +5,17 @@
 \alias{s3readRDS}
 \title{saveRDS/readRDS}
 \usage{
-s3saveRDS(x, bucket, object = paste0(as.character(substitute(x)), ".rds"),
+s3saveRDS(x, object = paste0(as.character(substitute(x)), ".rds"), bucket,
   compress = TRUE, ...)
 
-s3readRDS(bucket, object, ...)
+s3readRDS(object, bucket, ...)
 }
 \arguments{
 \item{x}{For \code{s3saveRDS}, a single R object to be saved via \code{\link[base]{saveRDS}} and uploaded to S3. \code{x} is analogous to the \code{object} argument in \code{saveRDS}.}
 
-\item{bucket}{Character string with the name of the bucket, or an object of class \dQuote{s3_bucket}.}
-
 \item{object}{Character string with the object key, or an object of class \dQuote{s3_object}. In most cases, if \code{object} is specified as the latter, \code{bucket} can be omitted because the bucket name will be extracted from \dQuote{Bucket} slot in \code{object}.}
+
+\item{bucket}{Character string with the name of the bucket, or an object of class \dQuote{s3_bucket}.}
 
 \item{compress}{A logical. See \code{\link[base]{saveRDS}}.}
 
@@ -26,6 +26,9 @@ For \code{s3saveRDS}, a logical. For \code{s3readRDS}, an R object.
 }
 \description{
 Serialization interface to read/write R objects to S3
+}
+\details{
+Note that early versions of \code{s3saveRDS} from aws.s3 <= 0.2.4 unintentionally serialized objects to big endian format (due to defaults in \code{\link[base]{serialize}}. This can create problems when attempting to read these files using \code{\link[base]{readRDS}}. The function attempts to catch the issue and read accordingly, but may fail. The solution used internally is \code{unserialize(memDecompress(get_object(), "gzip"))}
 }
 \examples{
 \dontrun{

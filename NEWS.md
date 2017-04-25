@@ -1,3 +1,8 @@
+# CHANGES to aws.s3 0.2.5
+
+* Fix reversed argument order in `s3readRDS()` and `s3saveRDS()`.
+* Fixed the persistent bug related to `s3readRDS()`. (#59)
+
 # CHANGES to aws.s3 0.2.4
 
 * Mocked up multipart upload functionality within `put_object()` (#80)
