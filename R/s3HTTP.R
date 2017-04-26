@@ -48,12 +48,12 @@ function(verb = "GET",
     
     bucketname <- get_bucketname(bucket)
     if (isTRUE(check_region) && (bucketname != "")) {
-        bucketregion <- get_region(bucket, key = key, secret = secret, session_token = session_token)
-        if (!is.null(bucketregion)) {
-            region <- bucketregion
+        if (isTRUE(verbose)) {
+            message(sprintf("Checking bucket region using get_location('%s')", bucketname))
         }
-        if (region == "") {
-            region <- "us-east-1"
+        bucketregion <- get_region(x = bucket, key = key, secret = secret, session_token = session_token, ...)
+        if (!is.null(bucketregion) && bucketregion != "") {
+            region <- bucketregion
         }
         if (isTRUE(verbose)) {
             message(sprintf("Executing request using bucket region %s", region))
@@ -158,7 +158,7 @@ function(verb = "GET",
 
 parse_aws_s3_response <- function(r, Sig, verbose = getOption("verbose")){
     if (isTRUE(verbose)) {
-        message("Parsing AWS API response...")
+        message("Parsing AWS API response")
     }
     ctype <- headers(r)[["content-type"]]
     if (is.null(ctype) || ctype == "application/xml"){

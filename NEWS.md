@@ -1,3 +1,7 @@
+# CHANGES to aws.s3 0.2.6
+
+* Tweak region checking in `s3HTTP()`.
+
 # CHANGES to aws.s3 0.2.5
 
 * Fix reversed argument order in `s3readRDS()` and `s3saveRDS()`.
