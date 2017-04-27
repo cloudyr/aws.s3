@@ -1,3 +1,8 @@
+# CHANGES to aws.s3 0.2.8
+
+* Exported the `s3sync()` function. (#20)
+* `save_object()` now creates a local directory if needed before trying to save. This is useful for object keys contains `/`.
+
 # CHANGES to aws.s3 0.2.7
 
 * Some small bug fixes.
