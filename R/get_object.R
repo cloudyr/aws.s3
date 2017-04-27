@@ -72,6 +72,10 @@ save_object <- function(object, bucket, file, headers = list(), ...) {
                 path = paste0("/", object),
                 headers = headers,
                 ...)
+    d <- dirname(file)
+    if (!dir.exists(d)) {
+        dir.create(d, recursive = TRUE)
+    }
     writeBin(httr::content(r, as = "raw"), con = file)
     return(file)
 }
