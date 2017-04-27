@@ -25,7 +25,16 @@ A list containing the tag set, if one has been set. For \code{delete_tagging}: \
 \description{
 Get/delete the tag set for a bucket.
 }
+\examples{
+\dontrun{
+ put_tagging("mybucket", tags = list(foo = "1", bar = "2"))
+ get_tagging("mybucket")
+ delete_tagging("mybucket")
+}
+
+}
 \references{
-\href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETtagging.html}{API Documentation}
- \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETEtagging.html}{API Documentation}
+\href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUTtagging.html}{API Documentation: PUT tagging}
+ \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETtagging.html}{API Documentation: GET tagging}
+ \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETEtagging.html}{API Documentation: DELETE tagging}
 }

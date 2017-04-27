@@ -24,6 +24,7 @@ For \code{get_cors}: A list with cors configuration and rules. For \code{delete_
 Get/Put/Delete the cross origin resource sharing configuration information for a bucket.
 }
 \references{
-\href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETEcors.html}{API Documentation}
-\href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETcors.html}{API Documentation}
+\href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUTcors.html}{API Documentation: PUT cors}
+\href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETcors.html}{API Documentation: GET cords}
+\href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETEcors.html}{API Documentation: DELETE cors}
 }

@@ -38,6 +38,7 @@
 #' }
 #' @return If \code{file = NULL}, a raw object. Otherwise, a character string containing the file name that the object is saved to.
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectGET.html}{API Documentation: GET Object}
+#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectGET.html}{API Documentation: GET Object torrent}
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectHEAD.html}{API Document: HEAD Object}
 #' @seealso \code{\link{get_bucket}}, \code{\link{put_object}}, \code{\link{delete_object}}
 #' @export
@@ -106,7 +107,8 @@ get_torrent <- function(object, bucket, ...) {
     object <- get_objectkey(object)
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
-                path = paste0("/", object, "?torrent"),
+                path = paste0("/", object),
+                query = list(torrent =""),
                 ...)
-    return(r)
+    return(content(r, "raw"))
 }

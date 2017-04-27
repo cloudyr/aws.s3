@@ -1,3 +1,8 @@
+# CHANGES to aws.s3 0.2.7
+
+* Some small bug fixes.
+* Updated examples and links to API documentation.
+
 # CHANGES to aws.s3 0.2.6
 
 * Tweak region checking in `s3HTTP()`.

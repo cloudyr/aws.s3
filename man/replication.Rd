@@ -2,10 +2,13 @@
 % Please edit documentation in R/replication.R
 \name{get_replication}
 \alias{get_replication}
+\alias{put_replication}
 \alias{delete_replication}
 \title{Bucket replication}
 \usage{
 get_replication(bucket, ...)
+
+put_replication(bucket, request_body, ...)
 
 delete_replication(bucket, ...)
 }
@@ -13,6 +16,8 @@ delete_replication(bucket, ...)
 \item{bucket}{Character string with the name of the bucket, or an object of class \dQuote{s3_bucket}.}
 
 \item{\dots}{Additional arguments passed to \code{\link{s3HTTP}}.}
+
+\item{request_body}{A character string containing an XML request body, as defined in the specification in the \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUTreplication.html}{API Documentation}.}
 }
 \value{
 For \code{get_replication}: A list containing the replication configuration, if one has been set. For \code{delete_replication}: \code{TRUE} if successful, \code{FALSE} otherwise.
@@ -24,6 +29,7 @@ Get/Delete the replication configuration for a bucket.
 \code{get_replication} gets the current replication policy. \code{delete_replication} deletes the replication policy for a bucket.
 }
 \references{
-\href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETreplication.html}{API Documentation}
-\href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETEreplication.html}{API Documentation}
+\href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUTreplication.html}{API Documentation: PUT replication}
+\href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETreplication.html}{API Documentation: GET replication}
+\href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETEreplication.html}{API Documentation: DELETE replication}
 }

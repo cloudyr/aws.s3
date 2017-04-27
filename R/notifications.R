@@ -3,6 +3,7 @@
 #' @description Get/put the notification configuration for a bucket.
 #'
 #' @template bucket
+#' @param request_body A character string containing an XML request body, as defined in the specification in the \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUTnotification.html}{API Documentation}.
 #' @template dots
 #'
 #' @return A list containing the notification configuration, if one has been set.
@@ -20,10 +21,11 @@ get_notification <- function(bucket, ...){
 
 #' @rdname notifications
 #' @export
-put_notification <- function(bucket, ...){
+put_notification <- function(bucket, request_body, ...){
     r <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
                 query = list(notification = ""),
+                request_body = request_body,
                 ...)
     structure(r, class = "s3_bucket")
 }

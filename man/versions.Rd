@@ -17,8 +17,7 @@ put_versioning(bucket, status = c("Enabled", "Suspended"), ...)
 
 \item{\dots}{Additional arguments passed to \code{\link{s3HTTP}}.}
 
-\item{status}{Character string specifying whether versioning should be
-\dQuote{Enabled} or \dQuote{Suspended}.}
+\item{status}{Character string specifying whether versioning should be \dQuote{Enabled} or \dQuote{Suspended}.}
 }
 \value{
 For \code{get_versioning}: If versioning has never been enabled or suspend, the value is \code{NULL}. Otherwise, the status is returned (either \dQuote{Enabled} or \dQuote{Suspended}). For \code{put_versioning}: If versioning has never been enabled or suspend, the value is \code{NULL}. Otherwise, the status is returned (either \dQuote{Enabled} or \dQuote{Suspended}).
@@ -29,6 +28,14 @@ Get/Put versioning settings or retrieve versions of bucket objects.
 }
 \details{
 \code{get_versioning} returns the versioning status of a bucket; \code{put_versioning} sets the versioning status. \code{get_versions} returns information about bucket versions.
+}
+\examples{
+\dontrun{
+ put_versioning("mybucket")
+ get_versioning("mybucket")
+ get_versions("mybucket")
+}
+
 }
 \references{
 \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETVersion.html}{API Documentation}

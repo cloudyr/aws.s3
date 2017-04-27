@@ -37,8 +37,8 @@ delete_object <- function(object, bucket, quiet = TRUE, ...) {
         md <- base64enc::base64encode(digest::digest(file = tmpfile, raw = TRUE))
         r <- s3HTTP(verb = "POST", 
                     bucket = bucket,
-                    path = "?delete",
-                    body = tmpfile,
+                    query = list(delete = ""),
+                    request_body = tmpfile,
                     headers = list(`Content-Length` = file.size(tmpfile), 
                                    `Content-MD5` = md), 
                     ...)

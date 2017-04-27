@@ -4,12 +4,19 @@
 #' @details \code{get_versioning} returns the versioning status of a bucket; \code{put_versioning} sets the versioning status. \code{get_versions} returns information about bucket versions.
 #'
 #' @template bucket
-#' @param status Character string specifying whether versioning should be
-#' \dQuote{Enabled} or \dQuote{Suspended}.
+#' @param status Character string specifying whether versioning should be \dQuote{Enabled} or \dQuote{Suspended}.
 #' @template dots
 #'
 #' @return For \code{get_versioning}: If versioning has never been enabled or suspend, the value is \code{NULL}. Otherwise, the status is returned (either \dQuote{Enabled} or \dQuote{Suspended}). For \code{put_versioning}: If versioning has never been enabled or suspend, the value is \code{NULL}. Otherwise, the status is returned (either \dQuote{Enabled} or \dQuote{Suspended}).
 #' For \code{get_versions}: A list.
+#' 
+#' @examples
+#' \dontrun{
+#'  put_versioning("mybucket")
+#'  get_versioning("mybucket")
+#'  get_versions("mybucket")
+#' }
+#' 
 #' @references 
 #' \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETVersion.html}{API Documentation}
 #' \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETversioningStatus.html}{API Documentation}

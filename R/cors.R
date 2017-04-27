@@ -7,8 +7,9 @@
 #'
 #' @return For \code{get_cors}: A list with cors configuration and rules. For \code{delete_cors}: \code{TRUE} if successful, \code{FALSE} otherwise.
 #' @references
-#' \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETEcors.html}{API Documentation}
-#' \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETcors.html}{API Documentation}
+#' \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUTcors.html}{API Documentation: PUT cors}
+#' \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETcors.html}{API Documentation: GET cords}
+#' \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETEcors.html}{API Documentation: DELETE cors}
 #' @export
 get_cors <- function(bucket, ...){
     r <- s3HTTP(verb = "GET", 

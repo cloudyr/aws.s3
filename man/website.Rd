@@ -8,7 +8,7 @@
 \usage{
 delete_website(bucket, ...)
 
-put_website(bucket, ...)
+put_website(bucket, request_body, ...)
 
 get_website(bucket, ...)
 }
@@ -16,6 +16,8 @@ get_website(bucket, ...)
 \item{bucket}{Character string with the name of the bucket, or an object of class \dQuote{s3_bucket}.}
 
 \item{\dots}{Additional arguments passed to \code{\link{s3HTTP}}.}
+
+\item{request_body}{A character string containing an XML request body, as defined in the specification in the \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUTwebsite.html}{API Documentation}.}
 }
 \value{
 For \code{put_website} and \code{get_website}, a list containing the website configuration, if one has been set.
@@ -26,7 +28,7 @@ An \code{aws_error} object may be returned if the request failed.
 Get/Put/Delete the website configuration for a bucket.
 }
 \references{
-\href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETwebsite.html}{API Documentation}
-
-\href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETEwebsite.html}{API Documentation}
+\href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUTwebsite.html}{API Documentation: PUT website}
+ \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETwebsite.html}{API Documentation: GET website}
+ \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketDELETEwebsite.html}{API Documentation: DELETE website}
 }
