@@ -2,11 +2,16 @@
 % Please edit documentation in R/bucketlist.R
 \name{bucketlist}
 \alias{bucketlist}
+\alias{bucket_list_df}
 \title{List Buckets}
 \usage{
-bucketlist(...)
+bucketlist(add_region = FALSE, ...)
+
+bucket_list_df(add_region = FALSE, ...)
 }
 \arguments{
+\item{add_region}{A logical (by default \code{FALSE}) indicating whether to add \dQuote{Region} column to the output data frame. This simply induces a loop over \code{\link{get_location}} for each bucket.}
+
 \item{\dots}{Additional arguments passed to \code{\link{s3HTTP}}.}
 }
 \value{
@@ -17,6 +22,8 @@ List buckets as a data frame
 }
 \details{
 \code{bucketlist} performs a GET operation on the base s3 endpoint and returns a list of all buckets owned by the authenticated sender of the request. If authentication is successful, this function provides a list of buckets available to the authenticated user. In this way, it can serve as a \dQuote{hello world!} function, to confirm that one's authentication credentials are working correctly.
+
+\code{bucket_list_df} and \code{bucketlist} are identical.
 }
 \references{
 \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTServiceGET.html}{API Documentation}
