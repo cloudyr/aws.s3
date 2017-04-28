@@ -1,5 +1,6 @@
 # CHANGES to aws.s3 0.3.0
 
+* CRAN (beta) release. (#126)
 * `bucketlist()` gains both an alias, `bucket_list_df()`, and an argument `add_region` to add a region column to the output data frame.
 
 # CHANGES to aws.s3 0.2.8
