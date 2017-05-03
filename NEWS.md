@@ -1,6 +1,7 @@
 # CHANGES to aws.s3 0.3.2
 
 * `put_bucket()` now errors if the request is unsuccessful. (#132, h/t Sean Kross)
+* Fixed a bug in the internal function `setup_s3_url()` when `region = ""`.
 
 # CHANGES to aws.s3 0.3.1
 
