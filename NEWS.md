@@ -1,3 +1,11 @@
+# CHANGES to aws.s3 0.3.2
+
+* `put_bucket()` now errors if the request is unsuccessful. (#132, h/t Sean Kross)
+
+# CHANGES to aws.s3 0.3.1
+
+* DESCRIPTION file fix for CRAN.
+
 # CHANGES to aws.s3 0.3.0
 
 * CRAN (beta) release. (#126)

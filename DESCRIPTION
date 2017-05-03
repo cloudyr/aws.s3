@@ -1,8 +1,8 @@
 Package: aws.s3
 Type: Package
 Title: AWS S3 Client Package
-Version: 0.3.1
-Date: 2017-04-28
+Version: 0.3.2
+Date: 2017-05-03
 Authors@R: c(person("Thomas J.", "Leeper", role = c("aut", "cre"),
                     email = "thosjleeper@gmail.com"),
              person("Boettiger", "Carl", role = "ctb"),
