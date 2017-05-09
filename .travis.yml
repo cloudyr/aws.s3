@@ -7,10 +7,10 @@ r_packages:
 - drat
 after_success:
 - Rscript -e 'library("covr");codecov()'
-#- test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && bash knitreadme.sh
-- test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && bash drat.sh
+- test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && bash
+  drat.sh
 env:
   global:
   - secure: NkoBLN7g9Jjkn1kXfjFbiTmCRXgEFWAeRObLyiJZCA9FzeAN6pARvuV45Jkt8T3pRzma7MbOg1wN/FG7ywAXYYMeijIDUy5VxNZWxbmTOHVOeVBVW+H8qlrGxHF/KXHKKAcjnOnO2Z/rHrvBmXOJQbEXXUwPAlr7RNNxwasrFAY=
   - secure: XT+piKb0x5Tt4Zac/h7K7IuO3/RtH+KatM7GjNKxUuMjCU8BMKon95e5AG3kCUfnKoEbeuPaV+zx2FwJXP72tVHmEfvVuxnPPH5rPQkEWfAd+THeTnVEqfi+64v4d/oDqY1nbdZ7H8PZNiRnMuWigsLjlmwkitXOpzNL2JPivZk=
-  - secure: g0Gsff+BDSMHFDfLvB+r5vOxgaLWjQBy7eMMJoMdrU+40nXuOaHCHmjL67BYuTjWjfHvnCq01n+rZjIRjJbiSCzlELx0bw7hW0JteAqFrU3UVYwgEnJb7ulBEWuVjL0e/tJItSCwGo1S+ighMXQlM1fCKBTCX5QPV1ROonSla2Y=
+  - secure: o55+mZ+30+GkUiAjXeiCrKtuMSfpTzX119JS/TDH2E7Sdsnl7RN492K3VpzMQ6V4UjlP4nLMDSqqjvZlxFBUQwiSw9JJupbYjq8OKKN6vl46JJyyJMbt4Vr8C9XfCez5v2cShZt7d7ZRnSRUvl1+PfLVveEvzAo4XSgScO98CNk=
