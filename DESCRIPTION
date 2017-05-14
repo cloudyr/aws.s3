@@ -21,7 +21,7 @@ Imports:
     utils,
     tools,
     httr,
-    xml2 (> 1.0.0),
+    xml2 (>= 1.0.0),
     base64enc,
     digest,
     aws.signature (>= 0.2.6)
