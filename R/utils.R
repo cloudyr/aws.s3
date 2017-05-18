@@ -77,16 +77,29 @@ get_objectkey.s3_object <- function(x, ...) {
 #' @export
 as.data.frame.s3_bucket <- function(x, row.names = NULL, optional = FALSE, ...) {
     if (length(x)) {
-        out <- lapply(x, function(z) {
-            c(Key = z[["Key"]],
-              LastModified = z[["LastModified"]],
-              ETag = z[["ETag"]],
-              Size = z[["Size"]],
-              Owner_ID = z[["Owner"]][["ID"]],
-              Owner_DisplayName = z[["Owner"]][["DisplayName"]],
-              StorageClass = z[["StorageClass"]],
-              Bucket = z[["Bucket"]])
-        })
+        if (any(names(x) != "Owner")) {
+          out <- lapply(x, function(z) {
+              c(Key = z[["Key"]],
+                LastModified = z[["LastModified"]],
+                ETag = z[["ETag"]],
+                Size = z[["Size"]],
+                Owner_ID = NA,
+                Owner_DisplayName = NA,
+                StorageClass = z[["StorageClass"]],
+                Bucket = z[["Bucket"]])
+         })
+         } else {
+           out <- lapply(x, function(z) {
+               c(Key = z[["Key"]],
+                 LastModified = z[["LastModified"]],
+                 ETag = z[["ETag"]],
+                 Size = z[["Size"]],
+                 Owner_ID = z[["Owner"]][["ID"]],
+                 Owner_DisplayName = z[["Owner"]][["DisplayName"]],
+                 StorageClass = z[["StorageClass"]],
+                 Bucket = z[["Bucket"]])
+           })          
+         }
         op <- options(stringsAsFactors = FALSE)
         on.exit(options(op))
         out <- do.call("rbind.data.frame", unname(out))
