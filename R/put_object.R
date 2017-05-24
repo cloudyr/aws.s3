@@ -8,18 +8,25 @@
 #' @template acl
 #' @param headers List of request headers for the REST call.
 #' @template dots
-#' @details This provide a generic interface for sending files (or serialized, in-memory representations thereof) to S3. Some convenience wrappers are provided for common tasks: \code{\link{s3save}} and \code{\link{s3saveRDS}}.
+#' @details This provide a generic interface for sending files (or serialized, in-memory representations thereof) to S3. Some convenience wrappers are provided for common tasks: e.g., \code{\link{s3save}} and \code{\link{s3saveRDS}}.
+#' 
+#' Note that S3 is a flat file store. So there is no folder hierarchy as in a traditional hard drive. However, S3 allows users to create pseudo-folders by prepending object keys with \code{foldername/}. The \code{put_folder} function is provided as a high-level convenience function for creating folders. This is not actually necessary as objects with slashes in their key will be displayed in the S3 web console as if they were in folders, but it may be useful for creating an empty directory (which is possible in the web console).
 #' 
 #' @return If successful, \code{TRUE}.
 #' @examples
 #' \dontrun{
 #'   library("datasets")
-#' 
+#'   
 #'   # write file to S3
 #'   tmp <- tempfile()
 #'   on.exit(unlink(tmp))
 #'   utils::write.csv(mtcars, file = tmp)
 #'   put_object(tmp, object = "mtcars.csv", bucket = "myexamplebucket")
+#' 
+#'   # create a "folder" in a bucket
+#'   put_folder("example", bucket = "myexamplebucket")
+#'   ## write object to the "folder"
+#'   put_object(tmp, object = "example/mtcars.csv", bucket = "myexamplebucket")
 #' 
 #'   # write serialized, in-memory object to S3
 #'   x <- rawConnection(raw(0), "w")
@@ -125,6 +132,15 @@ function(file,
                     ...)
         return(TRUE)
     }
+}
+
+#' @rdname put_object
+#' @export
+put_folder <- function(name, bucket, ...) {
+    if (!endsWith(name, "/")) {
+        name <- paste0(name, "/")
+    }
+    put_object(raw(0), object = name, bucket = bucket, ...)
 }
 
 post_object <- function(file, object, bucket, headers = list(), ...) {

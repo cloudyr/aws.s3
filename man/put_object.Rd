@@ -2,11 +2,14 @@
 % Please edit documentation in R/put_object.R
 \name{put_object}
 \alias{put_object}
+\alias{put_folder}
 \title{Put object}
 \usage{
 put_object(file, object, bucket, multipart = FALSE, acl = c("private",
   "public-read", "public-read-write", "aws-exec-read", "authenticated-read",
   "bucket-owner-read", "bucket-owner-full-control"), headers = list(), ...)
+
+put_folder(name, bucket, ...)
 }
 \arguments{
 \item{file}{A character string containing the filename (or full path) of the file you want to upload to S3. Alternatively, an raw vector containing the file can be passed directly, in which case \code{object} needs to be specified explicitly.}
@@ -30,17 +33,24 @@ If successful, \code{TRUE}.
 Puts an object into an S3 bucket
 }
 \details{
-This provide a generic interface for sending files (or serialized, in-memory representations thereof) to S3. Some convenience wrappers are provided for common tasks: \code{\link{s3save}} and \code{\link{s3saveRDS}}.
+This provide a generic interface for sending files (or serialized, in-memory representations thereof) to S3. Some convenience wrappers are provided for common tasks: e.g., \code{\link{s3save}} and \code{\link{s3saveRDS}}.
+
+Note that S3 is a flat file store. So there is no folder hierarchy as in a traditional hard drive. However, S3 allows users to create pseudo-folders by prepending object keys with \code{foldername/}. The \code{put_folder} function is provided as a high-level convenience function for creating folders. This is not actually necessary as objects with slashes in their key will be displayed in the S3 web console as if they were in folders, but it may be useful for creating an empty directory (which is possible in the web console).
 }
 \examples{
 \dontrun{
   library("datasets")
-
+  
   # write file to S3
   tmp <- tempfile()
   on.exit(unlink(tmp))
   utils::write.csv(mtcars, file = tmp)
   put_object(tmp, object = "mtcars.csv", bucket = "myexamplebucket")
+
+  # create a "folder" in a bucket
+  put_folder("example", bucket = "myexamplebucket")
+  ## write object to the "folder"
+  put_object(tmp, object = "example/mtcars.csv", bucket = "myexamplebucket")
 
   # write serialized, in-memory object to S3
   x <- rawConnection(raw(0), "w")

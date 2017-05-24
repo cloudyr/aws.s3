@@ -2,6 +2,7 @@
 
 * `put_object()` and `put_bucket() now expose explicit `acl` arguments. (#137)
 * `get_acl()` and `put_acl()` are now exported. (#137)
+* Added a high-level `put_folder()` convenience function for creating an empty pseudo-folder.
 
 # CHANGES to aws.s3 0.3.2
 
