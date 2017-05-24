@@ -4,7 +4,9 @@
 \alias{put_object}
 \title{Put object}
 \usage{
-put_object(file, object, bucket, multipart = FALSE, headers = list(), ...)
+put_object(file, object, bucket, multipart = FALSE, acl = c("private",
+  "public-read", "public-read-write", "aws-exec-read", "authenticated-read",
+  "bucket-owner-read", "bucket-owner-full-control"), headers = list(), ...)
 }
 \arguments{
 \item{file}{A character string containing the filename (or full path) of the file you want to upload to S3. Alternatively, an raw vector containing the file can be passed directly, in which case \code{object} needs to be specified explicitly.}
@@ -14,6 +16,8 @@ put_object(file, object, bucket, multipart = FALSE, headers = list(), ...)
 \item{bucket}{Character string with the name of the bucket, or an object of class \dQuote{s3_bucket}.}
 
 \item{multipart}{A logical indicating whether to use multipart uploads. See \url{http://docs.aws.amazon.com/AmazonS3/latest/dev/mpuoverview.html}. If \code{file} is less than 100 MB, this is ignored.}
+
+\item{acl}{A character string indicating a \href{http://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl}{\dQuote{canned} access control list}. By default all bucket contents and objects therein are given the ACL \dQuote{private}. This can later be viewed using \code{\link{get_acl}} and modified using \code{\link{put_acl}}.}
 
 \item{headers}{List of request headers for the REST call.}
 

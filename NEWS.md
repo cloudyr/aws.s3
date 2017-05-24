@@ -1,3 +1,8 @@
+# CHANGES to aws.s3 0.3.3
+
+* `put_object()` and `put_bucket() now expose explicit `acl` arguments. (#137)
+* `get_acl()` and `put_acl()` are now exported. (#137)
+
 # CHANGES to aws.s3 0.3.2
 
 * `put_bucket()` now errors if the request is unsuccessful. (#132, h/t Sean Kross)

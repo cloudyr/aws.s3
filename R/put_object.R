@@ -1,11 +1,13 @@
+#' @rdname put_object
 #' @title Put object
 #' @description Puts an object into an S3 bucket
 #' @param file A character string containing the filename (or full path) of the file you want to upload to S3. Alternatively, an raw vector containing the file can be passed directly, in which case \code{object} needs to be specified explicitly.
-#' @template bucket
 #' @param object A character string containing the name the object should have in S3 (i.e., its "object key"). If missing, the filename is used.
-#' @template dots
+#' @template bucket
 #' @param multipart A logical indicating whether to use multipart uploads. See \url{http://docs.aws.amazon.com/AmazonS3/latest/dev/mpuoverview.html}. If \code{file} is less than 100 MB, this is ignored.
-#' @param headers List of request headers for the REST call.   
+#' @template acl
+#' @param headers List of request headers for the REST call.
+#' @template dots
 #' @details This provide a generic interface for sending files (or serialized, in-memory representations thereof) to S3. Some convenience wrappers are provided for common tasks: \code{\link{s3save}} and \code{\link{s3saveRDS}}.
 #' 
 #' @return If successful, \code{TRUE}.
@@ -40,7 +42,16 @@
 #' @seealso \code{\link{put_bucket}}, \code{\link{get_object}}, \code{\link{delete_object}}
 #' @importFrom utils head
 #' @export
-put_object <- function(file, object, bucket, multipart = FALSE, headers = list(), ...) {
+put_object <- 
+function(file, 
+         object, 
+         bucket, 
+         multipart = FALSE, 
+         acl = c("private", "public-read", "public-read-write", 
+                 "aws-exec-read", "authenticated-read", 
+                 "bucket-owner-read", "bucket-owner-full-control"),
+         headers = list(), 
+         ...) {
     if (missing(object) && is.character(file)) {
         object <- basename(file)
     } else {
@@ -49,6 +60,8 @@ put_object <- function(file, object, bucket, multipart = FALSE, headers = list()
         }
         object <- get_objectkey(object)
     }
+    acl <- match.arg(acl)
+    headers <- c(list(`x-amz-acl` = acl), headers)
     if (isTRUE(multipart)) {
         if (is.character(file) && file.exists(file)) {
             file <- readBin(file, what = "raw")
@@ -77,7 +90,7 @@ put_object <- function(file, object, bucket, multipart = FALSE, headers = list()
         }
         
         # initialize the upload
-        initialize <- post_object(file = NULL, object = object, bucket = bucket, query = list(uploads = ""), ...)
+        initialize <- post_object(file = NULL, object = object, bucket = bucket, query = list(uploads = ""), headers = headers, ...)
         id <- initialize[["UploadId"]]
         
         # loop over parts
@@ -86,7 +99,7 @@ put_object <- function(file, object, bucket, multipart = FALSE, headers = list()
         for (i in seq_along(parts)) {
             query <- list(partNumber = i, uploadId = id)
             r <- try(put_object(file = parts[[i]], object = object, bucket = bucket, 
-                                multipart = FALSE, query = query), 
+                                multipart = FALSE, headers = headers, query = query), 
                      silent = FALSE)
             if (inherits(r, "try-error")) {
                 abort(id)

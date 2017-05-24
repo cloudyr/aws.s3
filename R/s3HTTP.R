@@ -274,6 +274,7 @@ function(bucketname,
         }
     }
     
+    terminal_slash <- endsWith(path, "/")
     path <- if (path == "") "/" else {
         paste(sapply(
             strsplit(path, '/')[[1]],
@@ -285,6 +286,9 @@ function(bucketname,
         paste0(url, path) 
     } else { 
         paste(url, path, sep = "/") 
+    }
+    if (isTRUE(terminal_slash)) {
+        url <- paste0(url, "/")
     }
     if (isTRUE(verbose)) {
         message(sprintf("S3 Request URL: %s", url))

@@ -2,6 +2,7 @@
 #' @description Creates a new S3 bucket.
 #' @template bucket
 #' @param region A character string containing the AWS region. If missing, defaults to value of environment variable \env{AWS_DEFAULT_REGION}.
+#' @template acl
 #' @param headers List of request headers for the REST call.
 #' @template dots
 #' @return \code{TRUE} if successful.
@@ -19,7 +20,14 @@
 #' \href{https://awspolicygen.s3.amazonaws.com/policygen.html}{AWS Policy Generator}
 #' @seealso \code{\link{bucketlist}}, \code{\link{get_bucket}}, \code{\link{delete_bucket}}, \code{\link{put_object}}
 #' @export
-put_bucket <- function(bucket, region = Sys.getenv("AWS_DEFAULT_REGION"), headers = list(), ...){
+put_bucket <- 
+function(bucket, 
+         region = Sys.getenv("AWS_DEFAULT_REGION"), 
+         acl = c("private", "public-read", "public-read-write", 
+                 "aws-exec-read", "authenticated-read", 
+                 "bucket-owner-read", "bucket-owner-full-control"),
+         headers = list(), 
+         ...){
     b <- paste0('<CreateBucketConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><LocationConstraint>', 
                 region, '</LocationConstraint></CreateBucketConfiguration>')
     r <- s3HTTP(verb = "PUT", 
