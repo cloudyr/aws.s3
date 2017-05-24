@@ -71,13 +71,14 @@ S3 can be a bit picky about region specifications. `bucketlist()` will return bu
 
 There are eight main functions that will be useful for working with objects in S3:
 
- 1. `s3read_using()` and `s3write_using()` provide a generic interface for reading from and writing to S3 objects using a user-defined function
- 2. `get_object()` returns a raw vector representation of an S3 object. This might then be parsed in a number of ways, such as `rawToChar()`, `xml2::read_xml()`, `jsonlite::fromJSON()`, and so forth depending on the file format of the object
- 3. `save_object()` saves an S3 object to a specified local file
- 4. `put_object()` stores a local file into an S3 bucket
- 5. `s3save()` saves one or more in-memory R objects to an .Rdata file in S3 (analogously to `save()`). `s3saveRDS()` is an analogue for `saveRDS()`
- 6. `s3load()` loads one or more objects into memory from an .Rdata file stored in S3 (analogously to `load()`). `s3readRDS()` is an analogue for `saveRDS()`
- 7. `s3source()` sources an R script directly from S3
+ 1. `s3read_using()` provides a generic interface for reading from S3 objects using a user-defined function
+ 2. `s3write_using()` provides a generic interface for writing to S3 objects using a user-defined function
+ 3. `get_object()` returns a raw vector representation of an S3 object. This might then be parsed in a number of ways, such as `rawToChar()`, `xml2::read_xml()`, `jsonlite::fromJSON()`, and so forth depending on the file format of the object
+ 4. `save_object()` saves an S3 object to a specified local file
+ 5. `put_object()` stores a local file into an S3 bucket
+ 6. `s3save()` saves one or more in-memory R objects to an .Rdata file in S3 (analogously to `save()`). `s3saveRDS()` is an analogue for `saveRDS()`
+ 7. `s3load()` loads one or more objects into memory from an .Rdata file stored in S3 (analogously to `load()`). `s3readRDS()` is an analogue for `saveRDS()`
+ 8. `s3source()` sources an R script directly from S3
 
 They behave as you would probably expect:
 
