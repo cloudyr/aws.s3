@@ -3,6 +3,7 @@
 #' @description Puts an object into an S3 bucket
 #' @param file A character string containing the filename (or full path) of the file you want to upload to S3. Alternatively, an raw vector containing the file can be passed directly, in which case \code{object} needs to be specified explicitly.
 #' @param object A character string containing the name the object should have in S3 (i.e., its "object key"). If missing, the filename is used.
+#' @param folder A character string containing a folder name. (A trailing slash is not required.)
 #' @template bucket
 #' @param multipart A logical indicating whether to use multipart uploads. See \url{http://docs.aws.amazon.com/AmazonS3/latest/dev/mpuoverview.html}. If \code{file} is less than 100 MB, this is ignored.
 #' @template acl
@@ -136,11 +137,11 @@ function(file,
 
 #' @rdname put_object
 #' @export
-put_folder <- function(name, bucket, ...) {
-    if (!endsWith(name, "/")) {
-        name <- paste0(name, "/")
+put_folder <- function(folder, bucket, ...) {
+    if (!endsWith(folder, "/")) {
+        folder <- paste0(folder, "/")
     }
-    put_object(raw(0), object = name, bucket = bucket, ...)
+    put_object(raw(0), object = folder, bucket = bucket, ...)
 }
 
 post_object <- function(file, object, bucket, headers = list(), ...) {

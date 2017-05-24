@@ -9,7 +9,7 @@ put_object(file, object, bucket, multipart = FALSE, acl = c("private",
   "public-read", "public-read-write", "aws-exec-read", "authenticated-read",
   "bucket-owner-read", "bucket-owner-full-control"), headers = list(), ...)
 
-put_folder(name, bucket, ...)
+put_folder(folder, bucket, ...)
 }
 \arguments{
 \item{file}{A character string containing the filename (or full path) of the file you want to upload to S3. Alternatively, an raw vector containing the file can be passed directly, in which case \code{object} needs to be specified explicitly.}
@@ -25,6 +25,8 @@ put_folder(name, bucket, ...)
 \item{headers}{List of request headers for the REST call.}
 
 \item{\dots}{Additional arguments passed to \code{\link{s3HTTP}}.}
+
+\item{folder}{A character string containing a folder name. (A trailing slash is not required.)}
 }
 \value{
 If successful, \code{TRUE}.
