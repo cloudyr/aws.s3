@@ -40,10 +40,10 @@ function(verb = "GET",
          url_style = c("path", "virtual"),
          base_url = "s3.amazonaws.com",
          verbose = getOption("verbose", FALSE),
-         region = Sys.getenv("AWS_DEFAULT_REGION", "us-east-1"), 
-         key = Sys.getenv("AWS_ACCESS_KEY_ID"), 
-         secret = Sys.getenv("AWS_SECRET_ACCESS_KEY"), 
-         session_token = Sys.getenv("AWS_SESSION_TOKEN"),
+         region = NULL, 
+         key = NULL, 
+         secret = NULL, 
+         session_token = NULL,
          ...) {
     
     bucketname <- get_bucketname(bucket)
@@ -218,8 +218,8 @@ function(bucketname,
             url_style <- "virtual"
         }
         # handle region
-        if (region %in% c("us-east-1", "")) {
-            if (region == "") {
+        if (is.null(region) || region %in% c("us-east-1", "")) {
+            if (is.null(region) || region == "") {
                 if (isTRUE(verbose)) {
                     message("Option 'region' is missing, so 'us-east-1' assumed.")
                 }

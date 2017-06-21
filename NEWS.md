@@ -1,3 +1,7 @@
+# CHANGES to aws.s3 0.3.4
+
+* Update code and documentation to use aws.signature (>=0.3.2) credentials handling.
+
 # CHANGES to aws.s3 0.3.3
 
 * `put_object()` and `put_bucket() now expose explicit `acl` arguments. (#137)

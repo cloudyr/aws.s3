@@ -8,11 +8,8 @@ s3HTTP(verb = "GET", bucket = "", path = "", query = NULL,
   headers = list(), request_body = "", accelerate = FALSE,
   dualstack = FALSE, parse_response = TRUE, check_region = TRUE,
   url_style = c("path", "virtual"), base_url = "s3.amazonaws.com",
-  verbose = getOption("verbose", FALSE),
-  region = Sys.getenv("AWS_DEFAULT_REGION", "us-east-1"),
-  key = Sys.getenv("AWS_ACCESS_KEY_ID"),
-  secret = Sys.getenv("AWS_SECRET_ACCESS_KEY"),
-  session_token = Sys.getenv("AWS_SESSION_TOKEN"), ...)
+  verbose = getOption("verbose", FALSE), region = NULL, key = NULL,
+  secret = NULL, session_token = NULL, ...)
 }
 \arguments{
 \item{verb}{A character string containing an HTTP verb, defaulting to \dQuote{GET}.}
