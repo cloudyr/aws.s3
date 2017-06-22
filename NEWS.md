@@ -1,3 +1,7 @@
+# CHANGES to aws.s3 0.3.5
+
+* Attempt to fix bug introduced in 0.3.4. (#142)
+
 # CHANGES to aws.s3 0.3.4
 
 * Update code and documentation to use aws.signature (>=0.3.2) credentials handling.

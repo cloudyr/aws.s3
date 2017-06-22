@@ -46,6 +46,14 @@ function(verb = "GET",
          session_token = NULL,
          ...) {
     
+    # locate and validate credentials
+    credentials <- locate_credentials(key = key, secret = secret, session_token = session_token, region = region, verbose = verbose)
+    key <- credentials[["key"]]
+    secret <- credentials[["secret"]]
+    session_token <- credentials[["session_token"]]
+    region <- credentials[["region"]]
+    
+    # validate bucket name and region
     bucketname <- get_bucketname(bucket)
     if (isTRUE(check_region) && (bucketname != "")) {
         if (isTRUE(verbose)) {
@@ -60,23 +68,25 @@ function(verb = "GET",
         }
     }
     
+    # validate arguments and setup request URL
+    current <- Sys.time()
+    d_timestamp <- format(current, "%Y%m%dT%H%M%SZ", tz = "UTC")
+    
     url_style <- match.arg(url_style)
     url <- setup_s3_url(bucketname, region, path, accelerate, url_style = url_style, base_url = base_url, verbose = verbose)
     p <- parse_url(url)
-    
-    current <- Sys.time()
-    d_timestamp <- format(current, "%Y%m%dT%H%M%SZ", tz = "UTC")
     action <- if (p$path == "") "/" else paste0("/", p$path)
     canonical_headers <- c(list(host = p$hostname,
                                 `x-amz-date` = d_timestamp), headers)
-
     if (is.null(query) && !is.null(p$query)) {
         query <- p[["query"]]
     }
     if (all(sapply(query, is.null))) {
         query <- NULL
     }
-    if (key == "") {
+    
+    # assess whether request is authenticated or not
+    if (is.null(key) || key == "") {
         if (isTRUE(verbose)) {
             message("Executing request without AWS credentials")
         }
@@ -107,6 +117,8 @@ function(verb = "GET",
         headers[["Authorization"]] <- Sig[["SignatureHeader"]]
         H <- do.call(add_headers, headers)
     }
+    
+    # execute request
     if (verb == "GET") {
         r <- GET(url, H, query = query, ...)
     } else if (verb == "HEAD") {
@@ -149,6 +161,7 @@ function(verb = "GET",
         r <- VERB("OPTIONS", url, H, query = query, ...)
     }
     
+    # handle response, failing if HTTP error occurs
     if (isTRUE(parse_response)) {
         out <- parse_aws_s3_response(r, Sig, verbose = verbose)
     } else {
