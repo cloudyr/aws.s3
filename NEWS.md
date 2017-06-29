@@ -1,3 +1,7 @@
+# CHANGES to aws.s3 0.3.6
+
+* Bump **aws.signature** dependency to 0.3.4. (#142, #143, #144)
+
 # CHANGES to aws.s3 0.3.5
 
 * Attempt to fix bug introduced in 0.3.4. (#142)
