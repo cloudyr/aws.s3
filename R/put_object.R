@@ -138,7 +138,7 @@ function(file,
 #' @rdname put_object
 #' @export
 put_folder <- function(folder, bucket, ...) {
-    if (!endsWith(folder, "/")) {
+    if (!grepl("/$", folder)) {
         folder <- paste0(folder, "/")
     }
     put_object(raw(0), object = folder, bucket = bucket, ...)

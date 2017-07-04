@@ -287,7 +287,7 @@ function(bucketname,
         }
     }
     
-    terminal_slash <- endsWith(path, "/")
+    terminal_slash <- grepl("/$", path)
     path <- if (path == "") "/" else {
         paste(sapply(
             strsplit(path, '/')[[1]],

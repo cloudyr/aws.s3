@@ -1,3 +1,7 @@
+# CHANGES to aws.s3 0.3.7
+
+* Remove usage of `endsWith()` in two places to reduce (implicit) base R dependency. (#147, h/t Huang Pan)
+
 # CHANGES to aws.s3 0.3.6
 
 * Bump **aws.signature** dependency to 0.3.4. (#142, #143, #144)
