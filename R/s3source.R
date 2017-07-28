@@ -39,5 +39,6 @@ s3source <- function(object, bucket, ..., opts = NULL) {
     }
     tmp <- tempfile(fileext = ".R")
     on.exit(unlink(tmp))
+    writeBin(object = r, con = tmp)
     return(source(tmp, ...))
 }
