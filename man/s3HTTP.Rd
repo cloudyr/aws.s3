@@ -9,7 +9,7 @@ s3HTTP(verb = "GET", bucket = "", path = "", query = NULL,
   dualstack = FALSE, parse_response = TRUE, check_region = TRUE,
   url_style = c("path", "virtual"), base_url = "s3.amazonaws.com",
   verbose = getOption("verbose", FALSE), region = NULL, key = NULL,
-  secret = NULL, session_token = NULL, ...)
+  secret = NULL, session_token = NULL, file_writer = NULL, ...)
 }
 \arguments{
 \item{verb}{A character string containing an HTTP verb, defaulting to \dQuote{GET}.}
@@ -57,3 +57,4 @@ This is the workhorse function for executing API requests for S3.
 \details{
 This is mostly an internal function for executing API requests. In almost all cases, users do not need to access this directly.
 }
+

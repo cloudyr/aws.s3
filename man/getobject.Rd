@@ -2,13 +2,14 @@
 % Please edit documentation in R/get_object.R
 \name{get_object}
 \alias{get_object}
-\alias{save_object}
 \alias{head_object}
+\alias{save_object}
 \title{Get object}
 \usage{
 get_object(object, bucket, headers = list(), parse_response = FALSE, ...)
 
-save_object(object, bucket, file, headers = list(), ...)
+save_object(object, bucket, file, headers = list(), write_to_disk = FALSE,
+  ...)
 
 head_object(object, bucket, ...)
 }
@@ -21,9 +22,9 @@ head_object(object, bucket, ...)
 
 \item{parse_response}{Passed through to \code{\link{s3HTTP}}, as this function requires a non-default setting. There is probably no reason to ever change this.}
 
-\item{\dots}{Additional arguments passed to \code{\link{s3HTTP}}.}
-
 \item{file}{An R connection, or file name specifying the local file to save the object into.}
+
+\item{\dots}{Additional arguments passed to \code{\link{s3HTTP}}.}
 }
 \value{
 If \code{file = NULL}, a raw object. Otherwise, a character string containing the file name that the object is saved to.
@@ -72,3 +73,4 @@ Some users may find the raw vector response format of \code{get_object} unfamili
 \seealso{
 \code{\link{get_bucket}}, \code{\link{put_object}}, \code{\link{delete_object}}
 }
+
