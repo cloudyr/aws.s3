@@ -44,6 +44,7 @@ function(verb = "GET",
          key = NULL, 
          secret = NULL, 
          session_token = NULL,
+         file_writer = NULL,
          ...) {
     
     # locate and validate credentials
@@ -120,7 +121,11 @@ function(verb = "GET",
     
     # execute request
     if (verb == "GET") {
-        r <- GET(url, H, query = query, ...)
+        # r <- GET(url, H, query = query, ...)
+        if(is.null(file_writer))
+            r <- GET(url, H, query = query, ...)
+        else 
+            r <- GET(url, H, query = query, file_writer, ...)
     } else if (verb == "HEAD") {
         r <- HEAD(url, H, query = query, ...)
         s <- http_status(r)

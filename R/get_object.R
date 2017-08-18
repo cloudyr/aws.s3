@@ -68,7 +68,8 @@ save_object <-
 function(object, 
          bucket, 
          file, 
-         headers = list(), 
+         headers = list(),
+         write_to_disk = FALSE,
          ...) {
     if (missing(file)) {
         stop('argument "file" is missing, with no default')
@@ -77,16 +78,30 @@ function(object,
         bucket <- get_bucketname(object)
     } 
     object <- get_objectkey(object)
-    r <- s3HTTP(verb = "GET", 
-                bucket = bucket,
-                path = paste0("/", object),
-                headers = headers,
-                ...)
-    d <- dirname(file)
-    if (!dir.exists(d)) {
-        dir.create(d, recursive = TRUE)
+    if(!write_to_disk){
+        r <- s3HTTP(verb = "GET", 
+                    bucket = bucket,
+                    path = paste0("/", object),
+                    headers = headers,
+                    ...)
+        d <- dirname(file)
+        if (!dir.exists(d)) {
+            dir.create(d, recursive = TRUE)
+        }
+        writeBin(httr::content(r, as = "raw"), con = file)        
+    } else {
+        d <- dirname(file)
+        if (!dir.exists(d)) {
+            dir.create(d, recursive = TRUE)
+        }
+        r <- s3HTTP(verb = "GET", 
+            bucket = bucket,
+            path = paste0("/", object),
+            headers = headers,
+            file_writer = httr::write_disk(file),
+            ...
+        )
     }
-    writeBin(httr::content(r, as = "raw"), con = file)
     return(file)
 }
 
