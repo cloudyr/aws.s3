@@ -24,6 +24,8 @@ head_object(object, bucket, ...)
 
 \item{file}{An R connection, or file name specifying the local file to save the object into.}
 
+\item{write_to_disk}{To be used by save_object. Boolean specifying if the downloaded data should be written straight to disk without passing through R.}
+
 \item{\dots}{Additional arguments passed to \code{\link{s3HTTP}}.}
 }
 \value{

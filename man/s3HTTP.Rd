@@ -46,6 +46,8 @@ s3HTTP(verb = "GET", bucket = "", path = "", query = NULL,
 
 \item{session_token}{Optionally, a character string containing an AWS temporary Session Token. If missing, defaults to value stored in environment variable \dQuote{AWS_SESSION_TOKEN}.}
 
+\item{file_writer}{Optional parameter to be used when save_object write directly to disk. Defaults to NULL.}
+
 \item{...}{Additional arguments passed to an HTTP request function. such as \code{\link[httr]{GET}}.}
 }
 \value{
