@@ -5,11 +5,11 @@
 \title{S3 HTTP Requests}
 \usage{
 s3HTTP(verb = "GET", bucket = "", path = "", query = NULL,
-  headers = list(), request_body = "", accelerate = FALSE,
-  dualstack = FALSE, parse_response = TRUE, check_region = TRUE,
-  url_style = c("path", "virtual"), base_url = "s3.amazonaws.com",
-  verbose = getOption("verbose", FALSE), region = NULL, key = NULL,
-  secret = NULL, session_token = NULL, ...)
+  headers = list(), request_body = "", write_disk = NULL,
+  accelerate = FALSE, dualstack = FALSE, parse_response = TRUE,
+  check_region = TRUE, url_style = c("path", "virtual"),
+  base_url = "s3.amazonaws.com", verbose = getOption("verbose", FALSE),
+  region = NULL, key = NULL, secret = NULL, session_token = NULL, ...)
 }
 \arguments{
 \item{verb}{A character string containing an HTTP verb, defaulting to \dQuote{GET}.}
@@ -23,6 +23,8 @@ s3HTTP(verb = "GET", bucket = "", path = "", query = NULL,
 \item{headers}{A list of request headers for the REST call.}
 
 \item{request_body}{A character string containing request body data.}
+
+\item{write_disk}{If \code{verb = "GET"}, this is, Ootionally, an argument like \code{\link[httr]{write_disk}} to write the result directly to disk.}
 
 \item{accelerate}{A logical indicating whether to use AWS transfer acceleration, which can produce significant speed improvements for cross-country transfers. Acceleration only works with buckets that do not have dots in bucket name.}
 

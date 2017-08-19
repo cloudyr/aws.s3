@@ -7,6 +7,7 @@
 #' @param query Any query arguments, passed as a named list of key-value pairs.
 #' @param headers A list of request headers for the REST call.   
 #' @param request_body A character string containing request body data.
+#' @param write_disk If \code{verb = "GET"}, this is, Ootionally, an argument like \code{\link[httr]{write_disk}} to write the result directly to disk.
 #' @param accelerate A logical indicating whether to use AWS transfer acceleration, which can produce significant speed improvements for cross-country transfers. Acceleration only works with buckets that do not have dots in bucket name.
 #' @param dualstack A logical indicating whether to use \dQuote{dual stack} requests, which can resolve to either IPv4 or IPv6. See \url{http://docs.aws.amazon.com/AmazonS3/latest/dev/dual-stack-endpoints.html}.
 #' @param parse_response A logical indicating whether to return the response as is, or parse and return as a list. Default is \code{TRUE}.
@@ -20,8 +21,7 @@
 #' @param session_token Optionally, a character string containing an AWS temporary Session Token. If missing, defaults to value stored in environment variable \dQuote{AWS_SESSION_TOKEN}.
 #' @param ... Additional arguments passed to an HTTP request function. such as \code{\link[httr]{GET}}.
 #' @return the S3 response, or the relevant error.
-#' @importFrom httr GET POST PUT HEAD DELETE VERB upload_file parse_url add_headers
-#' @importFrom httr http_error http_status warn_for_status stop_for_status content headers
+#' @import httr
 #' @importFrom xml2 read_xml as_list
 #' @importFrom utils URLencode
 #' @import aws.signature
@@ -33,6 +33,7 @@ function(verb = "GET",
          query = NULL,
          headers = list(), 
          request_body = "",
+         write_disk = NULL,
          accelerate = FALSE,
          dualstack = FALSE,
          parse_response = TRUE, 
@@ -120,7 +121,11 @@ function(verb = "GET",
     
     # execute request
     if (verb == "GET") {
-        r <- GET(url, H, query = query, ...)
+        if (!is.null(write_disk)) {
+            r <- GET(url, H, query = query, write_disk, ...)
+        } else {
+            r <- GET(url, H, query = query, ...)
+        }
     } else if (verb == "HEAD") {
         r <- HEAD(url, H, query = query, ...)
         s <- http_status(r)

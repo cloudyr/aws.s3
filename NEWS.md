@@ -1,3 +1,7 @@
+# CHANGES to aws.s3 0.3.8
+
+* `save_object()` now uses `httr::write_disk()` to avoid having to load a file into memory. (#158, h/t Arturo Saco)
+
 # CHANGES to aws.s3 0.3.7
 
 * Remove usage of `endsWith()` in two places to reduce (implicit) base R dependency. (#147, h/t Huang Pan)

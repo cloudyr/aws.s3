@@ -63,30 +63,33 @@ function(object,
 }
 
 #' @rdname getobject
+#' @param overwrite A logical indicating whether to overwrite \code{file}. Passed to \code{\link[httr]{write_disk}}.
 #' @export
 save_object <- 
 function(object, 
          bucket, 
-         file, 
-         headers = list(), 
+         file = basename(object),
+         headers = list(),
+         overwrite = FALSE,
          ...) {
-    if (missing(file)) {
-        stop('argument "file" is missing, with no default')
-    }
     if (missing(bucket)) {
         bucket <- get_bucketname(object)
     } 
     object <- get_objectkey(object)
-    r <- s3HTTP(verb = "GET", 
-                bucket = bucket,
-                path = paste0("/", object),
-                headers = headers,
-                ...)
+    
+    # create dir() if missing
     d <- dirname(file)
     if (!dir.exists(d)) {
         dir.create(d, recursive = TRUE)
     }
-    writeBin(httr::content(r, as = "raw"), con = file)
+    
+    # use httr::write_disk() to write directly to disk
+    r <- s3HTTP(verb = "GET", 
+                bucket = bucket,
+                path = paste0("/", object),
+                headers = headers,
+                write_disk = httr::write_disk(path = file, overwrite = overwrite),
+                ...)
     return(file)
 }
 

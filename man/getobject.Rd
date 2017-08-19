@@ -8,7 +8,8 @@
 \usage{
 get_object(object, bucket, headers = list(), parse_response = FALSE, ...)
 
-save_object(object, bucket, file, headers = list(), ...)
+save_object(object, bucket, file = basename(object), headers = list(),
+  overwrite = FALSE, ...)
 
 head_object(object, bucket, ...)
 }
@@ -24,6 +25,8 @@ head_object(object, bucket, ...)
 \item{\dots}{Additional arguments passed to \code{\link{s3HTTP}}.}
 
 \item{file}{An R connection, or file name specifying the local file to save the object into.}
+
+\item{overwrite}{A logical indicating whether to overwrite \code{file}. Passed to \code{\link[httr]{write_disk}}.}
 }
 \value{
 If \code{file = NULL}, a raw object. Otherwise, a character string containing the file name that the object is saved to.
