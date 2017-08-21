@@ -63,14 +63,14 @@ function(object,
 }
 
 #' @rdname getobject
-#' @param overwrite A logical indicating whether to overwrite \code{file}. Passed to \code{\link[httr]{write_disk}}.
+#' @param overwrite A logical indicating whether to overwrite \code{file}. Passed to \code{\link[httr]{write_disk}}. Default is \code{TRUE}.
 #' @export
 save_object <- 
 function(object, 
          bucket, 
          file = basename(object),
          headers = list(),
-         overwrite = FALSE,
+         overwrite = TRUE,
          ...) {
     if (missing(bucket)) {
         bucket <- get_bucketname(object)

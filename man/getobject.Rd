@@ -9,7 +9,7 @@
 get_object(object, bucket, headers = list(), parse_response = FALSE, ...)
 
 save_object(object, bucket, file = basename(object), headers = list(),
-  overwrite = FALSE, ...)
+  overwrite = TRUE, ...)
 
 head_object(object, bucket, ...)
 }
@@ -26,7 +26,7 @@ head_object(object, bucket, ...)
 
 \item{file}{An R connection, or file name specifying the local file to save the object into.}
 
-\item{overwrite}{A logical indicating whether to overwrite \code{file}. Passed to \code{\link[httr]{write_disk}}.}
+\item{overwrite}{A logical indicating whether to overwrite \code{file}. Passed to \code{\link[httr]{write_disk}}. Default is \code{TRUE}.}
 }
 \value{
 If \code{file = NULL}, a raw object. Otherwise, a character string containing the file name that the object is saved to.
