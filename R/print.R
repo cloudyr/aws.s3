@@ -11,7 +11,12 @@ print.s3_object <- function(x, ...){
     cat("LastModified:  ", x$LastModified, "\n")
     cat("ETag:          ", x$ETag, "\n")
     cat("Size (B):      ", x$Size, "\n")
-    cat("Owner:         ", x$Owner$DisplayName, "\n")
+        if(is.atomic(x$Owner)){
+        cat("Owner:         ", x$Owner, "\n")    
+    }
+    else{
+        cat("Owner:         ", x$Owner$DisplayName, "\n")   
+    }
     cat("Storage class: ", x$StorageClass, "\n")
     invisible(x)
 }
