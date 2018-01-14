@@ -7,7 +7,5 @@
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketHEAD.html}{API Documentation}
 #' @export
 bucket_exists <- function(bucket, ...){
-    s3HTTP(verb = "HEAD", 
-           bucket = bucket,
-           ...)
+    s3HTTP(verb = "HEAD", bucket = bucket, ...)
 }

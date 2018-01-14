@@ -39,7 +39,7 @@ function(verb = "GET",
          parse_response = TRUE, 
          check_region = TRUE,
          url_style = c("path", "virtual"),
-         base_url = "s3.amazonaws.com",
+         base_url = get_base_url(),
          verbose = getOption("verbose", FALSE),
          region = NULL, 
          key = NULL, 
@@ -74,10 +74,12 @@ function(verb = "GET",
     d_timestamp <- format(current, "%Y%m%dT%H%M%SZ", tz = "UTC")
     
     url_style <- match.arg(url_style)
-    url <- setup_s3_url(bucketname, region, path, accelerate, url_style = url_style, base_url = base_url, verbose = verbose)
+    url <- setup_s3_url(bucketname, region, path, accelerate, 
+                        url_style = url_style, base_url = base_url, 
+                        verbose = verbose)
     p <- parse_url(url)
     action <- if (p$path == "") "/" else paste0("/", p$path)
-    canonical_headers <- c(list(host = p$hostname,
+    canonical_headers <- c(list(host = paste0(p$hostname, ":", p$port),
                                 `x-amz-date` = d_timestamp), headers)
     if (is.null(query) && !is.null(p$query)) {
         query <- p[["query"]]
@@ -110,6 +112,7 @@ function(verb = "GET",
                key = key, 
                secret = secret, 
                session_token = session_token)
+        headers[["host"]] <- canonical_headers$host
         headers[["x-amz-date"]] <- d_timestamp
         headers[["x-amz-content-sha256"]] <- Sig$BodyHash
         if (!is.null(session_token) && session_token != "") {
@@ -118,7 +121,6 @@ function(verb = "GET",
         headers[["Authorization"]] <- Sig[["SignatureHeader"]]
         H <- do.call(add_headers, headers)
     }
-    
     # execute request
     if (verb == "GET") {
         if (!is.null(write_disk)) {
@@ -214,7 +216,7 @@ function(bucketname,
          accelerate = FALSE, 
          dualstack = FALSE,
          url_style = c("path", "virtual"), 
-         base_url = "s3.amazonaws.com",
+         base_url = get_base_url(),
          verbose = getOption("verbose", FALSE)) 
 {
     url_style <- match.arg(url_style)
