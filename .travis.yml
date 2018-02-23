@@ -4,11 +4,6 @@ cache: packages
 matrix:
   include:
     - os: linux
-      dist: precise
-      sudo: false
-      r_build_args: '--no-build-vignettes'
-      r_check_args: '--ignore-vignettes --no-examples'
-    - os: linux
       dist: trusty
       sudo: required
       env: R_CODECOV=true
