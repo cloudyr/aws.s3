@@ -137,9 +137,11 @@ flatten_list <- function(x) {
     }
     # Load default AWS credentials so calls to S3 'just work', allowing
     # the package to behave like the AWS CLI
-    if (nchar(Sys.getenv("AWS_PROFILE"))) {
-        aws.signature::use_credentials(Sys.getenv("AWS_PROFILE"))
-    } else {
-        aws.signature::use_credentials()
+    if (file.exists(aws.signature::default_credentials_file())) {
+      if (nchar(Sys.getenv("AWS_PROFILE"))) {
+          aws.signature::use_credentials(Sys.getenv("AWS_PROFILE"))
+      } else {
+          aws.signature::use_credentials()
+      }
     }
 }
