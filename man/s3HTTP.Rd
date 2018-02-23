@@ -9,7 +9,8 @@ s3HTTP(verb = "GET", bucket = "", path = "", query = NULL,
   accelerate = FALSE, dualstack = FALSE, parse_response = TRUE,
   check_region = TRUE, url_style = c("path", "virtual"),
   base_url = get_base_url(), verbose = getOption("verbose", FALSE),
-  region = NULL, key = NULL, secret = NULL, session_token = NULL, ...)
+  region = NULL, key = NULL, secret = NULL, session_token = NULL,
+  use_https = TRUE, ...)
 }
 \arguments{
 \item{verb}{A character string containing an HTTP verb, defaulting to \dQuote{GET}.}
@@ -47,6 +48,8 @@ s3HTTP(verb = "GET", bucket = "", path = "", query = NULL,
 \item{secret}{A character string containing an AWS Secret Access Key. If missing, defaults to value stored in environment variable \dQuote{AWS_SECRET_ACCESS_KEY}.}
 
 \item{session_token}{Optionally, a character string containing an AWS temporary Session Token. If missing, defaults to value stored in environment variable \dQuote{AWS_SESSION_TOKEN}.}
+
+\item{use_https}{Optionally, a logical indicating whether to use HTTPS requests. Default is \code{TRUE}.}
 
 \item{...}{Additional arguments passed to an HTTP request function. such as \code{\link[httr]{GET}}.}
 }
