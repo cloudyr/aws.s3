@@ -283,17 +283,24 @@ function(bucketname,
         }
     }
     
+    # define prefix http:// or https://
+    if (isTRUE(use_https)) {
+        prefix <- "https://"
+    } else {
+        prefix <- "http://"
+    }
+    
     # handle bucket name
     if (bucketname == "") {
-        url <- paste0("https://", base_url)
+        url <- paste0(prefix, base_url)
     } else {
         if (url_style == "virtual") {
             if (isTRUE(accelerate) && grepl("\\.", bucketname)) {
                 stop("To use 'accelerate' for bucket name with dots (.), 'url_style' must be 'path'")
             }
-            url <- paste0("https://", bucketname, ".", base_url)
+            url <- paste0(prefix, bucketname, ".", base_url)
         } else {
-            url <- paste0("https://", base_url, "/", bucketname)
+            url <- paste0(prefix, base_url, "/", bucketname)
         }
     }
     

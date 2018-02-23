@@ -79,7 +79,7 @@ function(object,
     
     # create dir() if missing
     d <- dirname(file)
-    if (!dir.exists(d)) {
+    if (!file.exists(d)) {
         dir.create(d, recursive = TRUE)
     }
     
