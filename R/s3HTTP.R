@@ -19,6 +19,7 @@
 #' @param key A character string containing an AWS Access Key ID. If missing, defaults to value stored in environment variable \dQuote{AWS_ACCESS_KEY_ID}.
 #' @param secret A character string containing an AWS Secret Access Key. If missing, defaults to value stored in environment variable \dQuote{AWS_SECRET_ACCESS_KEY}.
 #' @param session_token Optionally, a character string containing an AWS temporary Session Token. If missing, defaults to value stored in environment variable \dQuote{AWS_SESSION_TOKEN}.
+#' @param use_https Optionally, a logical indicating whether to use HTTPS requests. Default is \code{TRUE}.
 #' @param ... Additional arguments passed to an HTTP request function. such as \code{\link[httr]{GET}}.
 #' @return the S3 response, or the relevant error.
 #' @import httr
@@ -45,6 +46,7 @@ function(verb = "GET",
          key = NULL, 
          secret = NULL, 
          session_token = NULL,
+         use_https = TRUE,
          ...) {
     
     # locate and validate credentials
@@ -74,7 +76,7 @@ function(verb = "GET",
     d_timestamp <- format(current, "%Y%m%dT%H%M%SZ", tz = "UTC")
     
     url_style <- match.arg(url_style)
-    url <- setup_s3_url(bucketname, region, path, accelerate, url_style = url_style, base_url = base_url, verbose = verbose)
+    url <- setup_s3_url(bucketname, region, path, accelerate, url_style = url_style, base_url = base_url, verbose = verbose, use_https = use_https)
     p <- parse_url(url)
     action <- if (p$path == "") "/" else paste0("/", p$path)
     canonical_headers <- c(list(host = p$hostname,
@@ -215,7 +217,8 @@ function(bucketname,
          dualstack = FALSE,
          url_style = c("path", "virtual"), 
          base_url = "s3.amazonaws.com",
-         verbose = getOption("verbose", FALSE)) 
+         verbose = getOption("verbose", FALSE),
+         use_https = TRUE) 
 {
     url_style <- match.arg(url_style)
     
@@ -278,17 +281,24 @@ function(bucketname,
         }
     }
     
+    # define prefix http:// or https://
+    if (isTRUE(use_https)) {
+        prefix <- "https://"
+    } else {
+        prefix <- "http://"
+    }
+    
     # handle bucket name
     if (bucketname == "") {
-        url <- paste0("https://", base_url)
+        url <- paste0(prefix, base_url)
     } else {
         if (url_style == "virtual") {
             if (isTRUE(accelerate) && grepl("\\.", bucketname)) {
                 stop("To use 'accelerate' for bucket name with dots (.), 'url_style' must be 'path'")
             }
-            url <- paste0("https://", bucketname, ".", base_url)
+            url <- paste0(prefix, bucketname, ".", base_url)
         } else {
-            url <- paste0("https://", base_url, "/", bucketname)
+            url <- paste0(prefix, base_url, "/", bucketname)
         }
     }
     
