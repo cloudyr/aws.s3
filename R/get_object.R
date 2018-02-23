@@ -63,6 +63,7 @@ function(object,
 }
 
 #' @rdname getobject
+#' @param check_region A logical indicating whether to check region. Default is \code{FALSE}.
 #' @param overwrite A logical indicating whether to overwrite \code{file}. Passed to \code{\link[httr]{write_disk}}. Default is \code{TRUE}.
 #' @export
 save_object <- 
@@ -70,6 +71,7 @@ function(object,
          bucket, 
          file = basename(object),
          headers = list(),
+         check_region = FALSE,
          overwrite = TRUE,
          ...) {
     if (missing(bucket)) {
@@ -88,6 +90,7 @@ function(object,
                 bucket = bucket,
                 path = paste0("/", object),
                 headers = headers,
+                check_region = check_region,
                 write_disk = httr::write_disk(path = file, overwrite = overwrite),
                 ...)
     return(file)
