@@ -63,7 +63,7 @@ s3sync <- function(files = dir(recursive = TRUE), bucket, verbose = TRUE, ...) {
     if (length(missingfiles)) {
         for (i in seq_along(missingfiles)) {
             # create missing directory if needed locally
-            if (!dir.exists(dirname(missingfiles[i]))) {
+            if (!file.exists(dirname(missingfiles[i]))) {
                 if (isTRUE(verbose)) {
                     message(sprintf("Creating directory '%s'", dirname(missingfiles[i])))
                 }
@@ -143,7 +143,7 @@ s3sync <- function(files = dir(recursive = TRUE), bucket, verbose = TRUE, ...) {
             } else if (timediff[i] < 0) {
                 # object is newer than file
                 thisdir <- dirname(tosync[i])
-                if (!dir.exists(thisdir)) {
+                if (!file.exists(thisdir)) {
                     if (isTRUE(verbose)) {
                         message(sprintf("Creating directory '%s'", thisdir))
                     }
