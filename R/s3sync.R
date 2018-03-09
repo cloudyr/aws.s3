@@ -20,101 +20,103 @@
 #' @importFrom tools md5sum
 #' @export
 s3sync <- function(files = dir(recursive = TRUE), bucket, verbose = TRUE, ...) {
-    if (missing(bucket)) {
-        bucket <- get_bucketname(bucket)
-    } 
-    if (!bucket_exists(bucket)) {
-        put_bucket(bucket)
-    }
-    
-    # list all files
-    files <- files
-    if (isTRUE(verbose)) {
-        message(sprintf(ngettext(length(files), 
-                                 "%d local file to sync", 
-                                 "%d local files to sync"), 
-                        length(files)))
-    }
-    
-    # return all bucket objects
-    if (isTRUE(verbose)) {
-        message(sprintf("Getting bucket '%s'", bucket))
-    }
-    b <- get_bucket(bucket, max = Inf, ...)
-    if (isTRUE(verbose)) {
-        message(sprintf(ngettext(length(b), 
-                                 "%d object retrieved from bucket '%s'", 
-                                 "%d objects retrieved from bucket '%s'"), 
-                        length(b), bucket))
-    }
-    # list all object keys
-    keys <- unname(unlist(lapply(b, `[[`, "Key")))
-    
-    # download missing files
-    missingfiles <- keys[!keys %in% files]
-    if (isTRUE(verbose)) {
-        message(sprintf(ngettext(length(missingfiles), 
-                                 "%d bucket object not found in local directory", 
-                                 "%d bucket objects not found in local directory"), 
-                        length(missingfiles)))
-    }
-    
-    # save object that are missing locally
-    if (length(missingfiles)) {
-        for (i in seq_along(missingfiles)) {
-            # create missing directory if needed locally
-            if (!file.exists(dirname(missingfiles[i]))) {
-                if (isTRUE(verbose)) {
-                    message(sprintf("Creating directory '%s'", dirname(missingfiles[i])))
-                }
-                dir.create(dirname(missingfiles[i]), recursive = TRUE)
-            }
-            # save object
-            save_object(object = missingfiles[i], bucket = bucket, file = missingfiles[i], ...)
-            if (isTRUE(verbose)) {
-                message(sprintf("Saving object '%s' to local directory", missingfiles[i]))
-            }
+  if (missing(bucket)) {
+    bucket <- get_bucketname(bucket)
+  } 
+  if (!bucket_exists(bucket)) {
+    put_bucket(bucket)
+  }
+  
+  # list all files
+  files <- files
+  if (isTRUE(verbose)) {
+    message(sprintf(ngettext(length(files), 
+                             "%d local file to sync", 
+                             "%d local files to sync"), 
+                    length(files)))
+  }
+  
+  # return all bucket objects
+  if (isTRUE(verbose)) {
+    message(sprintf("Getting bucket '%s'", bucket))
+  }
+  b <- get_bucket(bucket, max = Inf, ...)
+  if (isTRUE(verbose)) {
+    message(sprintf(ngettext(length(b), 
+                             "%d object retrieved from bucket '%s'", 
+                             "%d objects retrieved from bucket '%s'"), 
+                    length(b), bucket))
+  }
+  # list all object keys
+  keys <- unname(unlist(lapply(b, `[[`, "Key")))
+  
+  # download missing files
+  missingfiles <- keys[!keys %in% files]
+  if (isTRUE(verbose)) {
+    message(sprintf(ngettext(length(missingfiles), 
+                             "%d bucket object not found in local directory", 
+                             "%d bucket objects not found in local directory"), 
+                    length(missingfiles)))
+  }
+  
+  # save object that are missing locally
+  if (length(missingfiles)) {
+    for (i in seq_along(missingfiles)) {
+      # create missing directory if needed locally
+      if (!file.exists(dirname(missingfiles[i]))) {
+        if (isTRUE(verbose)) {
+          message(sprintf("Creating directory '%s'", dirname(missingfiles[i])))
         }
+        dir.create(dirname(missingfiles[i]), recursive = TRUE)
+      }
+      # save object
+      save_object(object = missingfiles[i], bucket = bucket, file = missingfiles[i], ...)
+      if (isTRUE(verbose)) {
+        message(sprintf("Saving object '%s' to local directory", missingfiles[i]))
+      }
     }
+  }
+  
+  # upload files that are missing from bucket
+  missingobjects <- files[!files %in% keys]
+  if (isTRUE(verbose)) {
+    message(sprintf(ngettext(length(missingobjects), 
+                             "%d local file not found in bucket '%s'",
+                             "%d local files not found in bucket '%s'"), 
+                    length(missingobjects), bucket))
+  }
+  if (length(missingobjects)) {
+    for (i in seq_along(missingobjects)) {
+      put_object(file = missingobjects[i], object = missingobjects[i], bucket = bucket, ...)
+      if (isTRUE(verbose)) {
+        message(sprintf("Putting file '%s' to bucket '%s'", missingobjects[i], bucket))
+      }
+    }
+  }
+  
+  # conditionally modify files 
+  whichinboth <- which(keys %in% files)
+  inboth <- keys[whichinboth]
+  ## check md5sums
+  md5files <- sapply(inboth, function(onefile) {
+    out <- try(tools::md5sum(onefile), silent = TRUE)
+    if (inherits(out, "try-error")) {
+      return(NA_character_)
+    } else {
+      return(out)
+    }
+  })
+  md5objects <- gsub("\"", "", unname(unlist(lapply(b[whichinboth], `[[`, "ETag"))))
+  matched <- md5files == md5objects
+  ## only sync files with mismatched md5sums
+  tosync <- inboth[!matched]
+  if (length(tosync)) {
     
-    # upload files that are missing from bucket
-    missingobjects <- files[!files %in% keys]
     if (isTRUE(verbose)) {
-        message(sprintf(ngettext(length(missingfiles), 
-                                 "%d local file not found in bucket '%s'",
-                                 "%d local files not found in bucket '%s'"), 
-                        length(missingfiles), bucket))
-    }
-    if (length(missingobjects)) {
-        for (i in seq_along(missingobjects)) {
-            put_object(file = missingobjects[i], object = missingobjects[i], bucket = bucket, ...)
-            if (isTRUE(verbose)) {
-                message(sprintf("Putting file '%s' to bucket '%s'", missingfiles[i], bucket))
-            }
-        }
-    }
-    
-    # conditionally modify files 
-    whichinboth <- which(keys %in% files)
-    inboth <- keys[whichinboth]
-    ## check md5sums
-    md5files <- sapply(inboth, function(onefile) {
-        out <- try(tools::md5sum(onefile), silent = TRUE)
-        if (inherits(out, "try-error")) {
-            return(NA_character_)
-        } else {
-            return(out)
-        }
-    })
-    md5objects <- gsub("\"", "", unname(unlist(lapply(b[whichinboth], `[[`, "ETag"))))
-    matched <- md5files == md5objects
-    ## only sync files with mismatched md5sums
-    tosync <- inboth[!matched]
-    if (isTRUE(verbose)) {
-        message(sprintf(ngettext(length(tosync), 
-                                 "Checking md5sum for %d updated file/object",
-                                 "Checking md5sums for %d updated files/objects"),
-                        length(tosync), bucket))
+      message(sprintf(ngettext(length(tosync), 
+                               "Checking md5sum for %d updated file/object",
+                               "Checking md5sums for %d updated files/objects"),
+                      length(tosync), bucket))
     }
     ## check time modified
     modifiedfiles <- file.info(tosync)$mtime
@@ -122,42 +124,43 @@ s3sync <- function(files = dir(recursive = TRUE), bucket, verbose = TRUE, ...) {
     modifiedobjects <- strptime(modifiedobjects, format = "%FT%H:%M:%OSZ")
     timediff <- modifiedfiles - modifiedobjects
     if (isTRUE(verbose)) {
-        message(sprintf(ngettext(sum(timediff > 0),
-                                 "%d updated file to upload to bucket '%s'",
-                                 "%d updated files to upload to bucket '%s'"),
-                        sum(timediff > 0), bucket))
-        message(sprintf(ngettext(sum(timediff < 0),
-                                 "%d updated object to save locally from bucket '%s'",
-                                 "%d updated objects to save locally from bucket '%s'"),
-                        sum(timediff < 0), bucket))
+      message(sprintf(ngettext(sum(timediff > 0),
+                               "%d updated file to upload to bucket '%s'",
+                               "%d updated files to upload to bucket '%s'"),
+                      sum(timediff > 0), bucket))
+      message(sprintf(ngettext(sum(timediff < 0),
+                               "%d updated object to save locally from bucket '%s'",
+                               "%d updated objects to save locally from bucket '%s'"),
+                      sum(timediff < 0), bucket))
     }
-    if (length(tosync)) {
-        # sync files
-        for (i in seq_along(tosync)) {
-            if (timediff[i] > 0) {
-                # file is newer than object
-                if (isTRUE(verbose)) {
-                    message(sprintf("Putting file '%s' to bucket '%s'", tosync[i], bucket))
-                }
-                put_object(file = tosync[i], object = tosync[i], bucket = bucket, ...)
-            } else if (timediff[i] < 0) {
-                # object is newer than file
-                thisdir <- dirname(tosync[i])
-                if (!file.exists(thisdir)) {
-                    if (isTRUE(verbose)) {
-                        message(sprintf("Creating directory '%s'", thisdir))
-                    }
-                    dir.create(thisdir, recursive = TRUE)
-                }
-                if (isTRUE(verbose)) {
-                    message(sprintf("Saving object '%s' to local directory", tosync[i]))
-                }
-                save_object(object = tosync[i], bucket = bucket, file = tosync[i], ...)
-                rm(thisdir)
-            } else {
-                warning(paste0("Object and file '", tosync[i], "' differ but have same LastModified time"))
-            }
+    
+    
+    # sync files
+    for (i in seq_along(tosync)) {
+      if (timediff[i] > 0) {
+        # file is newer than object
+        if (isTRUE(verbose)) {
+          message(sprintf("Putting file '%s' to bucket '%s'", tosync[i], bucket))
         }
+        put_object(file = tosync[i], object = tosync[i], bucket = bucket, ...)
+      } else if (timediff[i] < 0) {
+        # object is newer than file
+        thisdir <- dirname(tosync[i])
+        if (!file.exists(thisdir)) {
+          if (isTRUE(verbose)) {
+            message(sprintf("Creating directory '%s'", thisdir))
+          }
+          dir.create(thisdir, recursive = TRUE)
+        }
+        if (isTRUE(verbose)) {
+          message(sprintf("Saving object '%s' to local directory", tosync[i]))
+        }
+        save_object(object = tosync[i], bucket = bucket, file = tosync[i], ...)
+        rm(thisdir)
+      } else {
+        warning(paste0("Object and file '", tosync[i], "' differ but have same LastModified time"))
+      }
     }
-    return(TRUE) # this should probably be a directory listing with some note on what action was performed
+  }
+  return(TRUE) # this should probably be a directory listing with some note on what action was performed
 }
