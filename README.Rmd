@@ -81,7 +81,7 @@ There are eight main functions that will be useful for working with objects in S
  4. `save_object()` saves an S3 object to a specified local file
  5. `put_object()` stores a local file into an S3 bucket
  6. `s3save()` saves one or more in-memory R objects to an .Rdata file in S3 (analogously to `save()`). `s3saveRDS()` is an analogue for `saveRDS()`
- 7. `s3load()` loads one or more objects into memory from an .Rdata file stored in S3 (analogously to `load()`). `s3readRDS()` is an analogue for `saveRDS()`
+ 7. `s3load()` loads one or more objects into memory from an .Rdata file stored in S3 (analogously to `load()`). `s3readRDS()` is an analogue for `readRDS()`
  8. `s3source()` sources an R script directly from S3
 
 They behave as you would probably expect:
