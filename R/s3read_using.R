@@ -42,7 +42,7 @@ s3write_using <- function(x, FUN, ..., object, bucket, opts = NULL) {
     if (is.null(opts)) {
         r <- put_object(file = tmp, bucket = bucket, object = object)
     } else {
-        r <- do.call("put_object", c(list(file = rawConnectionValue(tmp), bucket = bucket, object = object), opts))
+        r <- do.call("put_object", c(list(file = tmp, bucket = bucket, object = object), opts))
     }
     return(invisible(r))
 }
