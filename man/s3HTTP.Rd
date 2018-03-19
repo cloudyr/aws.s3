@@ -8,7 +8,7 @@ s3HTTP(verb = "GET", bucket = "", path = "", query = NULL,
   headers = list(), request_body = "", write_disk = NULL,
   accelerate = FALSE, dualstack = FALSE, parse_response = TRUE,
   check_region = TRUE, url_style = c("path", "virtual"),
-  base_url = "s3.amazonaws.com", verbose = getOption("verbose", FALSE),
+  base_url = get_base_url(), verbose = getOption("verbose", FALSE),
   region = NULL, key = NULL, secret = NULL, session_token = NULL,
   use_https = TRUE, ...)
 }
