@@ -13,12 +13,12 @@
 #' @param parse_response A logical indicating whether to return the response as is, or parse and return as a list. Default is \code{TRUE}.
 #' @param check_region A logical indicating whether to check the value of \code{region} against the apparent bucket region. This is useful for avoiding (often confusing) out-of-region errors. Default is \code{TRUE}.
 #' @param url_style A character string specifying either \dQuote{path} (the default), or \dQuote{virtual}-style S3 URLs.
-#' @param base_url A character string specifying the base URL for the request. There is no need to set this, as it is provided only to generalize the package to (potentially) support S3-compatible storage on non-AWS servers.
+#' @param base_url A character string specifying the base URL for the request. There is no need to set this, as it is provided only to generalize the package to (potentially) support S3-compatible storage on non-AWS servers. The easiest way to use S3-compatible storage is to set the \env{AWS_S3_ENDPOINT} environment variable.
 #' @param verbose A logical indicating whether to be verbose. Default is given by \code{options("verbose")}.
 #' @param region A character string containing the AWS region. Ignored if region can be inferred from \code{bucket}. If missing, defaults to \dQuote{us-east-1}.
-#' @param key A character string containing an AWS Access Key ID. If missing, defaults to value stored in environment variable \dQuote{AWS_ACCESS_KEY_ID}.
-#' @param secret A character string containing an AWS Secret Access Key. If missing, defaults to value stored in environment variable \dQuote{AWS_SECRET_ACCESS_KEY}.
-#' @param session_token Optionally, a character string containing an AWS temporary Session Token. If missing, defaults to value stored in environment variable \dQuote{AWS_SESSION_TOKEN}.
+#' @param key A character string containing an AWS Access Key ID. If missing, defaults to value stored in environment variable \env{AWS_ACCESS_KEY_ID}.
+#' @param secret A character string containing an AWS Secret Access Key. If missing, defaults to value stored in environment variable \env{AWS_SECRET_ACCESS_KEY}.
+#' @param session_token Optionally, a character string containing an AWS temporary Session Token. If missing, defaults to value stored in environment variable \env{AWS_SESSION_TOKEN}.
 #' @param use_https Optionally, a logical indicating whether to use HTTPS requests. Default is \code{TRUE}.
 #' @param ... Additional arguments passed to an HTTP request function. such as \code{\link[httr]{GET}}.
 #' @return the S3 response, or the relevant error.
@@ -40,7 +40,7 @@ function(verb = "GET",
          parse_response = TRUE, 
          check_region = TRUE,
          url_style = c("path", "virtual"),
-         base_url = "s3.amazonaws.com",
+         base_url = Sys.getenv("AWS_S3_ENDPOINT", "s3.amazonaws.com"),
          verbose = getOption("verbose", FALSE),
          region = NULL, 
          key = NULL, 

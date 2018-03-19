@@ -3,6 +3,7 @@
 * Fixed a bug in `s3write_using()`. (#205, h/t Patrick Miller)
 * Bumped **aws.signature** dependency to v0.3.7 to take advantage of automatic credential loading. (#184, h/t Dan Tenenbaum)
 * `acl` argument was ignored by `put_bucket()`. This is now fixed. (#172)
+* The `base_url` argument in `s3HTTP()` now defaults to an environment variable - `AWS_S3_ENDPOINT` - or the AWS S3 default in order to facilitate using the package with S3-compatible storage. (#189, #191, #194)
 
 # aws.s3 0.3.8
 

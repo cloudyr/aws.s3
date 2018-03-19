@@ -31,6 +31,8 @@ aws.signature::use_credentials(profile = "bob")
 
 Temporary session tokens are stored in environment variable `AWS_SESSION_TOKEN` (and will be stored there by the `use_credentials()` function). The [aws.iam package](https://github.com/cloudyr/aws.iam/) provides an R interface to IAM roles and the generation of temporary session tokens via the security token service (STS).
 
+To use the package with S3-compatible storage provided by other cloud platforms, set the `AWS_S3_ENDPOINT` environment variable to the appropriate host name. By default, the package uses the AWS endpoint: `s3.amazonaws.com`
+
 
 ## Code Examples
 

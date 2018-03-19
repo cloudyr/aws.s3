@@ -8,9 +8,9 @@ s3HTTP(verb = "GET", bucket = "", path = "", query = NULL,
   headers = list(), request_body = "", write_disk = NULL,
   accelerate = FALSE, dualstack = FALSE, parse_response = TRUE,
   check_region = TRUE, url_style = c("path", "virtual"),
-  base_url = "s3.amazonaws.com", verbose = getOption("verbose", FALSE),
-  region = NULL, key = NULL, secret = NULL, session_token = NULL,
-  use_https = TRUE, ...)
+  base_url = Sys.getenv("AWS_S3_ENDPOINT", "s3.amazonaws.com"),
+  verbose = getOption("verbose", FALSE), region = NULL, key = NULL,
+  secret = NULL, session_token = NULL, use_https = TRUE, ...)
 }
 \arguments{
 \item{verb}{A character string containing an HTTP verb, defaulting to \dQuote{GET}.}
@@ -37,17 +37,17 @@ s3HTTP(verb = "GET", bucket = "", path = "", query = NULL,
 
 \item{url_style}{A character string specifying either \dQuote{path} (the default), or \dQuote{virtual}-style S3 URLs.}
 
-\item{base_url}{A character string specifying the base URL for the request. There is no need to set this, as it is provided only to generalize the package to (potentially) support S3-compatible storage on non-AWS servers.}
+\item{base_url}{A character string specifying the base URL for the request. There is no need to set this, as it is provided only to generalize the package to (potentially) support S3-compatible storage on non-AWS servers. The easiest way to use S3-compatible storage is to set the \env{AWS_S3_ENDPOINT} environment variable.}
 
 \item{verbose}{A logical indicating whether to be verbose. Default is given by \code{options("verbose")}.}
 
 \item{region}{A character string containing the AWS region. Ignored if region can be inferred from \code{bucket}. If missing, defaults to \dQuote{us-east-1}.}
 
-\item{key}{A character string containing an AWS Access Key ID. If missing, defaults to value stored in environment variable \dQuote{AWS_ACCESS_KEY_ID}.}
+\item{key}{A character string containing an AWS Access Key ID. If missing, defaults to value stored in environment variable \env{AWS_ACCESS_KEY_ID}.}
 
-\item{secret}{A character string containing an AWS Secret Access Key. If missing, defaults to value stored in environment variable \dQuote{AWS_SECRET_ACCESS_KEY}.}
+\item{secret}{A character string containing an AWS Secret Access Key. If missing, defaults to value stored in environment variable \env{AWS_SECRET_ACCESS_KEY}.}
 
-\item{session_token}{Optionally, a character string containing an AWS temporary Session Token. If missing, defaults to value stored in environment variable \dQuote{AWS_SESSION_TOKEN}.}
+\item{session_token}{Optionally, a character string containing an AWS temporary Session Token. If missing, defaults to value stored in environment variable \env{AWS_SESSION_TOKEN}.}
 
 \item{use_https}{Optionally, a logical indicating whether to use HTTPS requests. Default is \code{TRUE}.}
 
