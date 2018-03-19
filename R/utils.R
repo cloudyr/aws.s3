@@ -129,3 +129,21 @@ flatten_list <- function(x) {
         return(x)
     }
 }
+
+# This function gets called on package load.
+.onLoad <- function(libname, pkgname) {
+    # If credentials are in environment variables, use those.
+    creds <- aws.signature::locate_credentials()
+    if (!all(is.null(creds$key), is.null(creds$secret))) {
+        return(invisible(NULL))
+    }
+    # Load default AWS credentials so calls to S3 'just work', allowing
+    # the package to behave like the AWS CLI
+    if (file.exists(aws.signature::default_credentials_file())) {
+      if (nchar(Sys.getenv("AWS_PROFILE"))) {
+          aws.signature::use_credentials(Sys.getenv("AWS_PROFILE"))
+      } else {
+          aws.signature::use_credentials()
+      }
+    }
+}
