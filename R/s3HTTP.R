@@ -216,7 +216,7 @@ function(bucketname,
          accelerate = FALSE, 
          dualstack = FALSE,
          url_style = c("path", "virtual"), 
-         base_url = "s3.amazonaws.com",
+         base_url = Sys.getenv("AWS_S3_ENDPOINT", "s3.amazonaws.com"),
          verbose = getOption("verbose", FALSE),
          use_https = TRUE) 
 {
