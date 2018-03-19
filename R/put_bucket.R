@@ -30,7 +30,9 @@ function(bucket,
          ...){
     b <- paste0('<CreateBucketConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><LocationConstraint>', 
                 region, '</LocationConstraint></CreateBucketConfiguration>')
-    r <- s3HTTP(verb = "PUT", 
+    acl <- match.arg(acl)
+    headers <- c(list(`x-amz-acl` = acl), headers)
+    ir <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
                 request_body = b,
                 headers = headers,
