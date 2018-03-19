@@ -1,10 +1,11 @@
 Package: aws.s3
 Type: Package
 Title: AWS S3 Client Package
-Version: 0.3.8
-Date: 2017-08-19
+Version: 0.3.9
+Date: 2018-03-19
 Authors@R: c(person("Thomas J.", "Leeper", role = c("aut", "cre"),
-                    email = "thosjleeper@gmail.com"),
+                    email = "thosjleeper@gmail.com",
+                    comment = c(ORCID = "0000-0003-4097-6326")),
              person("Boettiger", "Carl", role = "ctb"),
              person("Andrew", "Martin", role = "ctb"),
              person("Mark", "Thompson", role = "ctb"),
@@ -24,7 +25,7 @@ Imports:
     xml2 (> 1.0.0),
     base64enc,
     digest,
-    aws.signature (>= 0.3.4)
+    aws.signature (>= 0.3.7)
 Suggests:
     testthat,
     datasets
