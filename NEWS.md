@@ -1,6 +1,7 @@
-# aws.s3 0.3.9
+# aws.s3 0.3.10
 
 * Fixed a typo in `setup_s3_url()`. (#223, h/t Peter Foley)
+* Signatures are now calculated correctly when a port is specified. (#221, h/t @rvolykh)
 
 # aws.s3 0.3.9
 
