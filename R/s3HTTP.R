@@ -79,7 +79,8 @@ function(verb = "GET",
     url <- setup_s3_url(bucketname, region, path, accelerate, url_style = url_style, base_url = base_url, verbose = verbose, use_https = use_https)
     p <- parse_url(url)
     action <- if (p$path == "") "/" else paste0("/", p$path)
-    canonical_headers <- c(list(host = p$hostname,
+    hostname <- paste(p$hostname, p$port, sep=ifelse(length(p$port), ":", ""))
+    canonical_headers <- c(list(host = hostname,
                                 `x-amz-date` = d_timestamp), headers)
     if (is.null(query) && !is.null(p$query)) {
         query <- p[["query"]]
