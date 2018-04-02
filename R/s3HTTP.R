@@ -249,7 +249,7 @@ function(bucketname,
             if (isTRUE(dualstack)) {
                 # handle accelerate
                 if (isTRUE(accelerate)) {
-                    base_url <- "s3-acclerate.dualstack.amazonaws.com"
+                    base_url <- "s3-accelerate.dualstack.amazonaws.com"
                 } else {
                     base_url <- "s3.dualstack.amazonaws.com"
                 }

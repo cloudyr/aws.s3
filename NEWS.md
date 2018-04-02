@@ -1,5 +1,9 @@
 # aws.s3 0.3.9
 
+* Fixed a typo in `setup_s3_url()`. (#223, h/t Peter Foley)
+
+# aws.s3 0.3.9
+
 * Fixed a bug in `s3write_using()`. (#205, h/t Patrick Miller)
 * Bumped **aws.signature** dependency to v0.3.7 to take advantage of automatic credential loading. (#184, h/t Dan Tenenbaum)
 * `acl` argument was ignored by `put_bucket()`. This is now fixed. (#172)
