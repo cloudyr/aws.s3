@@ -43,5 +43,5 @@ Bucket policies regulate who has what access to a bucket and its contents. The \
 \href{https://awspolicygen.s3.amazonaws.com/policygen.html}{AWS Policy Generator}
 }
 \seealso{
-\code{\link{bucketlist}}, \code{\link{get_bucket}}, \code{\link{delete_bucket}}, \code{\link{put_object}}
+\code{\link{bucketlist}}, \code{\link{get_bucket}}, \code{\link{delete_bucket}}, \code{\link{put_object}}, \code{\link{put_encryption}}, \code{\link{put_versioning}}
 }

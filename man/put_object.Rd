@@ -61,6 +61,7 @@ Note that S3 is a flat file store. So there is no folder hierarchy as in a tradi
 
   # use `headers` for server-side encryption
   ## require appropriate bucket policy
+  ## encryption can also be set at the bucket-level using \\code{\\link{put_encryption}}
   put_object(file = tmp, object = "mtcars.csv", bucket = "myexamplebucket",
              headers = c('x-amz-server-side-encryption' = 'AES256'))
 
@@ -76,5 +77,5 @@ Note that S3 is a flat file store. So there is no folder hierarchy as in a tradi
 \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPUT.html}{API Documentation}
 }
 \seealso{
-\code{\link{put_bucket}}, \code{\link{get_object}}, \code{\link{delete_object}}
+\code{\link{put_bucket}}, \code{\link{get_object}}, \code{\link{delete_object}}, \code{\link{put_encryption}}
 }
