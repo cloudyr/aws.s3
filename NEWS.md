@@ -3,6 +3,7 @@
 * `s3sync()` gains a `direction` argument allowing for unidirectional (upload-only or download-only) synchronization. The default remains bi-directional.
 * New functions `put_encryption()`, `get_encryption()`, and `delete_encryption()` implement bucket-level encryption so that encryption does not need to be specified for each `put_object()` call. (#183, h/t Dan Tenenbaum)
 * Fixed typos in `s3sync()`. (#211, h/t Nirmal Patel)
+* `put_bucket()` only includes a LocationConstraint body when the region != "us-east-1". (#171, h/t David Griswold)
 
 # aws.s3 0.3.10
 

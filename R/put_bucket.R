@@ -28,8 +28,12 @@ function(bucket,
                  "bucket-owner-read", "bucket-owner-full-control"),
          headers = list(), 
          ...){
-    b <- paste0('<CreateBucketConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><LocationConstraint>', 
-                region, '</LocationConstraint></CreateBucketConfiguration>')
+    if (region == "us-east-1") {
+        b <- NULL
+    } else {
+        b <- paste0('<CreateBucketConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><LocationConstraint>', 
+                    region, '</LocationConstraint></CreateBucketConfiguration>')
+    }
     acl <- match.arg(acl)
     headers <- c(list(`x-amz-acl` = acl), headers)
     ir <- s3HTTP(verb = "PUT", 
