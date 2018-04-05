@@ -80,16 +80,16 @@ s3sync <- function(files = dir(recursive = TRUE), bucket, verbose = TRUE, ...) {
     # upload files that are missing from bucket
     missingobjects <- files[!files %in% keys]
     if (isTRUE(verbose)) {
-        message(sprintf(ngettext(length(missingfiles), 
+        message(sprintf(ngettext(length(missingobjects), 
                                  "%d local file not found in bucket '%s'",
                                  "%d local files not found in bucket '%s'"), 
-                        length(missingfiles), bucket))
+                        length(missingobjects), bucket))
     }
     if (length(missingobjects)) {
         for (i in seq_along(missingobjects)) {
             put_object(file = missingobjects[i], object = missingobjects[i], bucket = bucket, ...)
             if (isTRUE(verbose)) {
-                message(sprintf("Putting file '%s' to bucket '%s'", missingfiles[i], bucket))
+                message(sprintf("Putting file '%s' to bucket '%s'", missingobjects[i], bucket))
             }
         }
     }
@@ -110,18 +110,20 @@ s3sync <- function(files = dir(recursive = TRUE), bucket, verbose = TRUE, ...) {
     matched <- md5files == md5objects
     ## only sync files with mismatched md5sums
     tosync <- inboth[!matched]
-    if (isTRUE(verbose)) {
+    if (length(tosync)) {
+      
+      if (isTRUE(verbose)) {
         message(sprintf(ngettext(length(tosync), 
                                  "Checking md5sum for %d updated file/object",
                                  "Checking md5sums for %d updated files/objects"),
                         length(tosync), bucket))
-    }
-    ## check time modified
-    modifiedfiles <- file.info(tosync)$mtime
-    modifiedobjects <- unname(unlist(lapply(b[whichinboth[!matched]], `[[`, "LastModified")))
-    modifiedobjects <- strptime(modifiedobjects, format = "%FT%H:%M:%OSZ")
-    timediff <- modifiedfiles - modifiedobjects
-    if (isTRUE(verbose)) {
+      }
+      ## check time modified
+      modifiedfiles <- file.info(tosync)$mtime
+      modifiedobjects <- unname(unlist(lapply(b[whichinboth[!matched]], `[[`, "LastModified")))
+      modifiedobjects <- strptime(modifiedobjects, format = "%FT%H:%M:%OSZ")
+      timediff <- modifiedfiles - modifiedobjects
+      if (isTRUE(verbose)) {
         message(sprintf(ngettext(sum(timediff > 0),
                                  "%d updated file to upload to bucket '%s'",
                                  "%d updated files to upload to bucket '%s'"),
@@ -130,8 +132,7 @@ s3sync <- function(files = dir(recursive = TRUE), bucket, verbose = TRUE, ...) {
                                  "%d updated object to save locally from bucket '%s'",
                                  "%d updated objects to save locally from bucket '%s'"),
                         sum(timediff < 0), bucket))
-    }
-    if (length(tosync)) {
+      }
         # sync files
         for (i in seq_along(tosync)) {
             if (timediff[i] > 0) {
