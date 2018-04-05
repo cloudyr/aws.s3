@@ -4,12 +4,15 @@
 \alias{s3sync}
 \title{S3 file sync}
 \usage{
-s3sync(files = dir(recursive = TRUE), bucket, verbose = TRUE, ...)
+s3sync(files = dir(recursive = TRUE), bucket, direction = c("upload",
+  "download"), verbose = TRUE, ...)
 }
 \arguments{
 \item{files}{A character vector specifying relative paths to files to be synchronized. The default is all files in the working directory and subdirectories.}
 
 \item{bucket}{Character string with the name of the bucket, or an object of class \dQuote{s3_bucket}.}
+
+\item{direction}{A character vector specifying whether to \dQuote{upload} and/or \dQuote{download} files. By default, \code{s3sync} is two-way, uploading any files missing from the bucket and downloading any objects missing from the local directory.}
 
 \item{verbose}{A logical indicating whether to be verbose (the default is \code{TRUE}).}
 
@@ -28,7 +31,13 @@ Local objects are copied to S3 and S3 objects are copied locally. This copying i
 }
 \examples{
 \dontrun{
- s3sync(bucket = "examplebucket")
+  put_bucket("examplebucket")
+
+  # sync all files in current directory to bucket (upload-only)
+  s3sync(bucket = "examplebucket", direction = "upload")
+
+  # two-way sync
+  s3sync(bucket = "examplebucket")
 }
 
 }

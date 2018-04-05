@@ -1,5 +1,6 @@
 # aws.s3 0.3.11
 
+* `s3sync()` gains a `direction` argument allowing for unidirectional (upload-only or download-only) synchronization. The default remains bi-directional.
 * Fixed typos in `s3sync()`. (#211, h/t Nirmal Patel)
 
 # aws.s3 0.3.10
