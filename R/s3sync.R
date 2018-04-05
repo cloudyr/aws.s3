@@ -111,28 +111,27 @@ s3sync <- function(files = dir(recursive = TRUE), bucket, verbose = TRUE, ...) {
     ## only sync files with mismatched md5sums
     tosync <- inboth[!matched]
     if (length(tosync)) {
-      
-      if (isTRUE(verbose)) {
-        message(sprintf(ngettext(length(tosync), 
-                                 "Checking md5sum for %d updated file/object",
-                                 "Checking md5sums for %d updated files/objects"),
-                        length(tosync), bucket))
-      }
-      ## check time modified
-      modifiedfiles <- file.info(tosync)$mtime
-      modifiedobjects <- unname(unlist(lapply(b[whichinboth[!matched]], `[[`, "LastModified")))
-      modifiedobjects <- strptime(modifiedobjects, format = "%FT%H:%M:%OSZ")
-      timediff <- modifiedfiles - modifiedobjects
-      if (isTRUE(verbose)) {
-        message(sprintf(ngettext(sum(timediff > 0),
-                                 "%d updated file to upload to bucket '%s'",
-                                 "%d updated files to upload to bucket '%s'"),
-                        sum(timediff > 0), bucket))
-        message(sprintf(ngettext(sum(timediff < 0),
-                                 "%d updated object to save locally from bucket '%s'",
-                                 "%d updated objects to save locally from bucket '%s'"),
-                        sum(timediff < 0), bucket))
-      }
+        if (isTRUE(verbose)) {
+            message(sprintf(ngettext(length(tosync), 
+                                     "Checking md5sum for %d updated file/object",
+                                     "Checking md5sums for %d updated files/objects"),
+                            length(tosync), bucket))
+        }
+        ## check time modified
+        modifiedfiles <- file.info(tosync)$mtime
+        modifiedobjects <- unname(unlist(lapply(b[whichinboth[!matched]], `[[`, "LastModified")))
+        modifiedobjects <- strptime(modifiedobjects, format = "%FT%H:%M:%OSZ")
+        timediff <- modifiedfiles - modifiedobjects
+        if (isTRUE(verbose)) {
+            message(sprintf(ngettext(sum(timediff > 0),
+                                     "%d updated file to upload to bucket '%s'",
+                                     "%d updated files to upload to bucket '%s'"),
+                            sum(timediff > 0), bucket))
+            message(sprintf(ngettext(sum(timediff < 0),
+                                     "%d updated object to save locally from bucket '%s'",
+                                     "%d updated objects to save locally from bucket '%s'"),
+                            sum(timediff < 0), bucket))
+        }
         # sync files
         for (i in seq_along(tosync)) {
             if (timediff[i] > 0) {

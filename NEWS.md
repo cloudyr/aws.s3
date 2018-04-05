@@ -1,3 +1,7 @@
+# aws.s3 0.3.11
+
+* Fixed typos in `s3sync()`. (#211, h/t Nirmal Patel)
+
 # aws.s3 0.3.10
 
 * Fixed a typo in `setup_s3_url()`. (#223, h/t Peter Foley)
