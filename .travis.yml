@@ -3,28 +3,29 @@ sudo: false
 cache: packages
 matrix:
   include:
-    - os: linux
-      dist: trusty
-      sudo: required
-      env: R_CODECOV=true
-    - os: osx
-      osx_image: xcode9.2
-    - os: osx
-      osx_image: xcode7.3
-      r_build_args: '--no-build-vignettes'
-      r_check_args: '--ignore-vignettes --no-examples'
+  - os: linux
+    dist: trusty
+    sudo: required
+    env: DRAT_DEPLOY=true
+  - os: osx
+    osx_image: xcode9.2
+  - os: osx
+    osx_image: xcode7.3
+    r_build_args: "--no-build-vignettes"
+    r_check_args: "--ignore-vignettes --no-examples"
 r_packages:
 - covr
 - drat
 r_github_packages:
 - cloudyr/travisci
 after_success:
-- Rscript -e 'library("covr");codecov()'
-- test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && bash
-  drat.sh
-- Rscript -e "travisci::restart_last_build('cloudyr/awspack')"
+- R -q -e 'library("covr");codecov()'
+- test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && test
+  $DRAT_DEPLOY == "true" && bash drat.sh
+- R -q -e "travisci::restart_last_build('cloudyr/awspack')"
 env:
   global:
   - secure: NkoBLN7g9Jjkn1kXfjFbiTmCRXgEFWAeRObLyiJZCA9FzeAN6pARvuV45Jkt8T3pRzma7MbOg1wN/FG7ywAXYYMeijIDUy5VxNZWxbmTOHVOeVBVW+H8qlrGxHF/KXHKKAcjnOnO2Z/rHrvBmXOJQbEXXUwPAlr7RNNxwasrFAY=
   - secure: XT+piKb0x5Tt4Zac/h7K7IuO3/RtH+KatM7GjNKxUuMjCU8BMKon95e5AG3kCUfnKoEbeuPaV+zx2FwJXP72tVHmEfvVuxnPPH5rPQkEWfAd+THeTnVEqfi+64v4d/oDqY1nbdZ7H8PZNiRnMuWigsLjlmwkitXOpzNL2JPivZk=
   - secure: o55+mZ+30+GkUiAjXeiCrKtuMSfpTzX119JS/TDH2E7Sdsnl7RN492K3VpzMQ6V4UjlP4nLMDSqqjvZlxFBUQwiSw9JJupbYjq8OKKN6vl46JJyyJMbt4Vr8C9XfCez5v2cShZt7d7ZRnSRUvl1+PfLVveEvzAo4XSgScO98CNk=
+  - secure: baEhpLdQX8Dw8waUg90CJtGOUiHpF+i2+bM+i+aUTkOVy8l2A/msHf1KLYokt3dbwqONNuMdULH3ktJgPlaJkmcald6vJCFVUu5SJxAoDYCMoDADtHYU4QukgU3S82ZiR2nKNzuxi2sQ+eV5oxZvB0usGxZpVkpxAztdE/p5imE=
