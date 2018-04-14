@@ -110,9 +110,10 @@ function(verb = "GET",
                query_args = query,
                canonical_headers = canonical_headers,
                request_body = request_body,
-               key = key, 
-               secret = secret, 
-               session_token = session_token)
+               key = key,
+               secret = secret,
+               session_token = session_token,
+               verbose = verbose)
         headers[["x-amz-date"]] <- d_timestamp
         headers[["x-amz-content-sha256"]] <- Sig$BodyHash
         if (!is.null(session_token) && session_token != "") {
