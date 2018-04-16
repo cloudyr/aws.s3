@@ -32,7 +32,7 @@
 #' @importFrom tools file_ext
 #' @export
 s3write_using <- function(x, FUN, ..., object, bucket, opts = NULL) {
-    tmp <- tempfile()
+    tmp <- tempfile(fileext = paste0(".", tools::file_ext(object)))
     on.exit(unlink(tmp))
     value <- FUN(x, tmp, ...)
     if (missing(bucket)) {

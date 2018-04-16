@@ -1,3 +1,7 @@
+# aws.s3 0.3.12
+
+* `s3write_using()` now attaches the correct file extension to the temporary file being written to (just as `s3read_using()` already did). (#226, h/t @jon-mago)
+
 # aws.s3 0.3.11
 
 * `s3sync()` gains a `direction` argument allowing for unidirectional (upload-only or download-only) synchronization. The default remains bi-directional.
