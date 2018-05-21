@@ -35,7 +35,7 @@ s3sync <- function(files = dir(recursive = TRUE), bucket, direction = c("upload"
         put_bucket(bucket)
     }
     
-    direction <- match.arg(tolower(direction), several.ok = TRUE)
+    direction <- match.arg(tolower(direction), c("upload", "download"), several.ok = TRUE)
     
     # list all files
     files <- files
