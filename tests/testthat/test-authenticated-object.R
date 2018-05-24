@@ -52,7 +52,7 @@ test_that("basic usage of s3save and s3load", {
     key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
     secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY")
   )
-  expect_true(inherits(p, "s3")
+  expect_true(inherits(p, "s3"))
   
   e <- new.env()
   s3load(p, envir = e)
@@ -75,7 +75,7 @@ test_that("basic usage of s3saveRDS and s3readRDS", {
     key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
     secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY")
   )
-  expect_true(inherits(p, "s3")
+  expect_true(inherits(p, "s3"))
   
   e <- new.env()
   s3load(p, envir = e)
