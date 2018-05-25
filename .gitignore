@@ -3,3 +3,5 @@
 .Rhistory
 .RData
 aws.s3.Rproj
+revdep/
+^revdep/.?$
