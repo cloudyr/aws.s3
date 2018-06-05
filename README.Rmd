@@ -1,10 +1,10 @@
 # AWS S3 Client Package
 
-**aws.s3** is a simple client package for the Amazon Web Services (AWS) Simple Storage Service (S3) REST API. While [other packages](https://github.com/ropensci/webservices#amazon) currently connect R to S3, they do so incompletely (mapping only some of the API endpoints to R) and most implementations rely on the AWS command-line tools, which users may not have installed on their system.
+**aws.s3** is a simple client package for the [Amazon Web Services (AWS) Simple Storage Service (S3)](https://aws.amazon.com/s3/) REST API. While [other packages](https://github.com/ropensci/webservices#amazon) currently connect R to S3, they do so incompletely (mapping only some of the API endpoints to R) and most implementations rely on the AWS command-line tools, which users may not have installed on their system.
 
 To use the package, you will need an AWS account and to enter your credentials into R. Your keypair can be generated on the [IAM Management Console](https://aws.amazon.com/) under the heading *Access Keys*. Note that you only have access to your secret key once. After it is generated, you need to save it in a secure location. New keypairs can be generated at any time if yours has been lost, stolen, or forgotten. The [**aws.iam** package](https://github.com/cloudyr/aws.iam) profiles tools for working with IAM, including creating roles, users, groups, and credentials programmatically; it is not needed to *use* IAM credentials.
 
-A detailed description of how credentials can be specified is provided at: https://github.com/cloudyr/aws.signature/. The easiest way is to simply set environmetn variables on the command line prior to starting R or via an `Renviron.site` or `.Renviron` file, which are used to set environment variables in R during startup (see `? Startup`). Or they can be set within R:
+A detailed description of how credentials can be specified is provided at: https://github.com/cloudyr/aws.signature/. The easiest way is to simply set environment variables on the command line prior to starting R or via an `Renviron.site` or `.Renviron` file, which are used to set environment variables in R during startup (see `? Startup`). They can be also set within R:
 
 ```R
 Sys.setenv("AWS_ACCESS_KEY_ID" = "mykey",
@@ -37,7 +37,7 @@ get_bucket(bucket = '1000genomes')
 
 Amazon maintains a listing of [Public Data Sets](https://aws.amazon.com/datasets) on S3.
 
-To get a listing for all objects in a private bucket, pass your AWS key and secret in as parameters.  (As described above, all functions in **aws.s3** will look for your keys as environment variables by default, greatly simplifying the process of making a s3 request.)
+To get a listing for all objects in a private bucket, pass your AWS key and secret in as parameters.  (As described above, all functions in **aws.s3** will look for your keys as environment variables by default, greatly simplifying the process of making an s3 request.)
 
 ```R
 # specify keys in-line
