@@ -18,8 +18,6 @@ object_size(object, bucket, ...)
 \item{bucket}{Character string with the name of the bucket, or an object of class \dQuote{s3_bucket}.}
 
 \item{\dots}{Additional arguments passed to \code{\link{s3HTTP}}.}
-
-\item{headers}{List of request headers for the REST call.}
 }
 \value{
 \code{head_object} returns a logical. \code{object_exists} returns \code{TRUE} if bucket exists and is accessible, else \code{FALSE}. \code{object_size} returns an integer, which is \code{NA} if the request fails.

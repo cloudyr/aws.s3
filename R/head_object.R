@@ -3,7 +3,6 @@
 #' @description Check if an object from an S3 bucket exists. To retrieve the object, see \code{\link{get_object}}
 #' @template object
 #' @template bucket
-#' @param headers List of request headers for the REST call.
 #' @template dots
 #' @details \code{head_object} is a low-level API wrapper that checks whether an object exists by executing an HTTP HEAD request; this can be useful for checking object headers such as \dQuote{content-length} or \dQuote{content-type}. \code{object_exists} is sugar that returns only the logical.
 #' 
