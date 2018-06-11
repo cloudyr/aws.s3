@@ -22,7 +22,8 @@
 #'   tmp <- tempfile()
 #'   on.exit(unlink(tmp))
 #'   utils::write.csv(mtcars, file = tmp)
-#'   put_object(tmp, object = "mtcars.csv", bucket = "myexamplebucket")
+#'   # put object with an upload progress bar
+#'   put_object(tmp, object = "mtcars.csv", bucket = "myexamplebucket", show_progress = TRUE)
 #' 
 #'   # create a "folder" in a bucket
 #'   put_folder("example", bucket = "myexamplebucket")

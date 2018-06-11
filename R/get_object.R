@@ -29,8 +29,8 @@
 #'   y <- save_object(obj[[1]], file = object[[1]][["Key"]])
 #'   y %in% dir()
 #' 
-#'   # return object using 'S3 URI' syntax
-#'   get_object("s3://myexamplebucket/mtcars")
+#'   # return object using 'S3 URI' syntax, with progress bar
+#'   get_object("s3://myexamplebucket/mtcars", show_progress = TRUE)
 #' 
 #'   # return parts of an object
 #'   ## use 'Range' header to specify bytes

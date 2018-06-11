@@ -1,5 +1,6 @@
 # aws.s3 0.3.13
 
+* `s3HTTP()` gains a `show_progress` logical argument specifying whether to print a progress bar for PUT, POST, and GET requests. (#235, h/t R. Roebuck)
 * `head_object()` now simply returns as a logical without an extraneous class.
 * New function `object_size()` provides a convenient wrapper around the "content-length" attribute of `head_object()`. (#234, h/t P. Roebuck)
 * `object_exists()` is now implemented as a synonym for `head_object()` (#234, h/t P. Roebuck)

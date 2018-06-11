@@ -15,6 +15,7 @@
 #' @param url_style A character string specifying either \dQuote{path} (the default), or \dQuote{virtual}-style S3 URLs.
 #' @param base_url A character string specifying the base URL for the request. There is no need to set this, as it is provided only to generalize the package to (potentially) support S3-compatible storage on non-AWS servers. The easiest way to use S3-compatible storage is to set the \env{AWS_S3_ENDPOINT} environment variable.
 #' @param verbose A logical indicating whether to be verbose. Default is given by \code{options("verbose")}.
+#' @param show_progress A logical indicating whether to show a progress bar for downloads and uploads. Default is given by \code{options("verbose")}.
 #' @param region A character string containing the AWS region. Ignored if region can be inferred from \code{bucket}. If missing, defaults to \dQuote{us-east-1}.
 #' @param key A character string containing an AWS Access Key ID. If missing, defaults to value stored in environment variable \env{AWS_ACCESS_KEY_ID}.
 #' @param secret A character string containing an AWS Secret Access Key. If missing, defaults to value stored in environment variable \env{AWS_SECRET_ACCESS_KEY}.
@@ -42,6 +43,7 @@ function(verb = "GET",
          url_style = c("path", "virtual"),
          base_url = Sys.getenv("AWS_S3_ENDPOINT", "s3.amazonaws.com"),
          verbose = getOption("verbose", FALSE),
+         show_progress = getOption("verbose", FALSE),
          region = NULL, 
          key = NULL, 
          secret = NULL, 
@@ -55,6 +57,17 @@ function(verb = "GET",
     secret <- credentials[["secret"]]
     session_token <- credentials[["session_token"]]
     region <- credentials[["region"]]
+    
+    # handle 'show_progress' argument
+    if (isTRUE(show_progress)) {
+        if (verb %in% c("GET")) {
+            show_progress <- httr::progress(type = "down")
+        } else {
+            show_progress <- httr::progress(type = "up")
+        }
+    } else {
+        show_progress <- NULL
+    }
     
     # validate bucket name and region
     bucketname <- get_bucketname(bucket)
@@ -126,9 +139,9 @@ function(verb = "GET",
     # execute request
     if (verb == "GET") {
         if (!is.null(write_disk)) {
-            r <- GET(url, H, query = query, write_disk, ...)
+            r <- GET(url, H, query = query, write_disk, show_progress, ...)
         } else {
-            r <- GET(url, H, query = query, ...)
+            r <- GET(url, H, query = query, show_progress, ...)
         }
     } else if (verb == "HEAD") {
         r <- HEAD(url, H, query = query, ...)
@@ -157,14 +170,14 @@ function(verb = "GET",
             return(out)
         }
     } else if (verb == "POST") {
-        r <- POST(url, H, query = query, ...)
+        r <- POST(url, H, query = query, show_progress, ...)
     } else if (verb == "PUT") {
         if (is.character(request_body) && request_body == "") {
-            r <- PUT(url, H, query = query, ...)
+            r <- PUT(url, H, query = query, show_progress, ...)
         } else if (is.character(request_body) && file.exists(request_body)) {
-            r <- PUT(url, H, body = upload_file(request_body), query = query, ...)
+            r <- PUT(url, H, body = upload_file(request_body), query = query, show_progress, ...)
         } else {
-            r <- PUT(url, H, body = request_body, query = query, ...)
+            r <- PUT(url, H, body = request_body, query = query, show_progress, ...)
         }
     } else if (verb == "OPTIONS") {
         r <- VERB("OPTIONS", url, H, query = query, ...)
