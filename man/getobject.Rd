@@ -3,15 +3,12 @@
 \name{get_object}
 \alias{get_object}
 \alias{save_object}
-\alias{head_object}
 \title{Get object}
 \usage{
 get_object(object, bucket, headers = list(), parse_response = FALSE, ...)
 
 save_object(object, bucket, file = basename(object), headers = list(),
   overwrite = TRUE, ...)
-
-head_object(object, bucket, ...)
 }
 \arguments{
 \item{object}{Character string with the object key, or an object of class \dQuote{s3_object}. In most cases, if \code{object} is specified as the latter, \code{bucket} can be omitted because the bucket name will be extracted from \dQuote{Bucket} slot in \code{object}.}
@@ -32,10 +29,10 @@ head_object(object, bucket, ...)
 If \code{file = NULL}, a raw object. Otherwise, a character string containing the file name that the object is saved to.
 }
 \description{
-Retrieve an object from an S3 bucket
+Retrieve an object from an S3 bucket. To check if an object exists, see \code{\link{head_object}}
 }
 \details{
-\code{get_object} retrieves an object into memory as a raw vector. \code{save_object} saves an object to a local file. \code{head_object} checks whether an object exists by executing an HTTP HEAD request; this can be useful for checking object headers such as \dQuote{content-length} or \dQuote{content-type}.
+\code{get_object} retrieves an object into memory as a raw vector. \code{save_object} saves an object to a local file. By contrast, \code{\link{head_object}} checks whether an object exists by executing an HTTP HEAD request; this can be useful for checking object headers such as \dQuote{content-length} or \dQuote{content-type}.
 
 Some users may find the raw vector response format of \code{get_object} unfamiliar. The object will also carry attributes, including \dQuote{content-type}, which may be useful for deciding how to subsequently process the vector. Two common strategies are as follows. For text content types, running \code{\link[base]{charToRaw}} may be the most useful first step to make the response human-readable. Alternatively, converting the raw vector into a connection using \code{\link[base]{rawConnection}} may also be useful, as that can often then be passed to parsing functions just like a file connection would be.
 }
@@ -69,9 +66,7 @@ Some users may find the raw vector response format of \code{get_object} unfamili
 \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectGET.html}{API Documentation: GET Object}
 
 \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectGET.html}{API Documentation: GET Object torrent}
-
-\href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectHEAD.html}{API Document: HEAD Object}
 }
 \seealso{
-\code{\link{get_bucket}}, \code{\link{put_object}}, \code{\link{delete_object}}
+\code{\link{get_bucket}}, \code{\link{head_object}}, \code{\link{put_object}}, \code{\link{delete_object}}
 }

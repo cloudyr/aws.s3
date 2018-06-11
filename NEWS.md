@@ -1,3 +1,9 @@
+# aws.s3 0.3.13
+
+* `head_object()` now simply returns as a logical without an extraneous class.
+* New function `object_size()` provides a convenient wrapper around the "content-length" attribute of `head_object()`. (#234, h/t P. Roebuck)
+* `object_exists()` is now implemented as a synonym for `head_object()` (#234, h/t P. Roebuck)
+
 # aws.s3 0.3.12
 
 * `s3write_using()` now attaches the correct file extension to the temporary file being written to (just as `s3read_using()` already did). (#226, h/t @jon-mago)

@@ -1,13 +1,13 @@
 #' @rdname getobject
 #' @title Get object
-#' @description Retrieve an object from an S3 bucket
+#' @description Retrieve an object from an S3 bucket. To check if an object exists, see \code{\link{head_object}}
 #' @template object
 #' @template bucket
 #' @param file An R connection, or file name specifying the local file to save the object into.
 #' @param headers List of request headers for the REST call.
 #' @param parse_response Passed through to \code{\link{s3HTTP}}, as this function requires a non-default setting. There is probably no reason to ever change this.
 #' @template dots
-#' @details \code{get_object} retrieves an object into memory as a raw vector. \code{save_object} saves an object to a local file. \code{head_object} checks whether an object exists by executing an HTTP HEAD request; this can be useful for checking object headers such as \dQuote{content-length} or \dQuote{content-type}.
+#' @details \code{get_object} retrieves an object into memory as a raw vector. \code{save_object} saves an object to a local file. By contrast, \code{\link{head_object}} checks whether an object exists by executing an HTTP HEAD request; this can be useful for checking object headers such as \dQuote{content-length} or \dQuote{content-type}.
 #'
 #' Some users may find the raw vector response format of \code{get_object} unfamiliar. The object will also carry attributes, including \dQuote{content-type}, which may be useful for deciding how to subsequently process the vector. Two common strategies are as follows. For text content types, running \code{\link[base]{charToRaw}} may be the most useful first step to make the response human-readable. Alternatively, converting the raw vector into a connection using \code{\link[base]{rawConnection}} may also be useful, as that can often then be passed to parsing functions just like a file connection would be.
 #' 
@@ -39,8 +39,7 @@
 #' @return If \code{file = NULL}, a raw object. Otherwise, a character string containing the file name that the object is saved to.
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectGET.html}{API Documentation: GET Object}
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectGET.html}{API Documentation: GET Object torrent}
-#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectHEAD.html}{API Document: HEAD Object}
-#' @seealso \code{\link{get_bucket}}, \code{\link{put_object}}, \code{\link{delete_object}}
+#' @seealso \code{\link{get_bucket}}, \code{\link{head_object}}, \code{\link{put_object}}, \code{\link{delete_object}}
 #' @export
 get_object <- 
 function(object, 
@@ -91,20 +90,6 @@ function(object,
                 write_disk = httr::write_disk(path = file, overwrite = overwrite),
                 ...)
     return(file)
-}
-
-#' @rdname getobject
-#' @export
-head_object <- function(object, bucket, ...) {
-    if (missing(bucket)) {
-        bucket <- get_bucketname(object)
-    } 
-    object <- get_objectkey(object)
-    r <- s3HTTP(verb = "HEAD", 
-                bucket = bucket,
-                path = paste0("/", object),
-                ...)
-    structure(r, class = "HEAD")
 }
 
 #' @title Get object torrent
