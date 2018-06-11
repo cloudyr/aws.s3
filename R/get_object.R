@@ -1,4 +1,4 @@
-#' @rdname getobject
+#' @rdname get_object
 #' @title Get object
 #' @description Retrieve an object from an S3 bucket. To check if an object exists, see \code{\link{head_object}}
 #' @template object
@@ -61,7 +61,7 @@ function(object,
     return(cont)
 }
 
-#' @rdname getobject
+#' @rdname get_object
 #' @param overwrite A logical indicating whether to overwrite \code{file}. Passed to \code{\link[httr]{write_disk}}. Default is \code{TRUE}.
 #' @export
 save_object <- 
