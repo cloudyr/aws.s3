@@ -1,3 +1,7 @@
+# aws.s3 0.3.14
+
+* Tentatively, `s3HTTP()` argument `check_region` argument now defaults to FALSE. (#45, #46, #106, #122, #185, #230)
+
 # aws.s3 0.3.13
 
 * `s3HTTP()` gains a `show_progress` logical argument specifying whether to print a progress bar for PUT, POST, and GET requests. (#235, h/t R. Roebuck)
