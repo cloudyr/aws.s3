@@ -14,16 +14,16 @@
 #' @importFrom base64enc base64encode
 #' @importFrom xml2 read_xml write_xml xml_add_child
 #' @export
-delete_object <- function(object, bucket, quiet = TRUE, ...) {
+delete_object <- function(object, bucket, quiet = TRUE, region = NULL, ...) {
     if (missing(bucket)) {
         bucket <- get_bucketname(object)
     }
-    regionname <- get_region(bucket)
     object <- get_objectkey(object)
     if (length(object) == 1) {
         r <- s3HTTP(verb = "DELETE", 
                     bucket = bucket,
                     path = paste0("/", object),
+                    region = region,
                     ...)
         return(TRUE)
     } else {
@@ -39,6 +39,7 @@ delete_object <- function(object, bucket, quiet = TRUE, ...) {
                     bucket = bucket,
                     query = list(delete = ""),
                     request_body = tmpfile,
+                    region = region,
                     headers = list(`Content-Length` = file.size(tmpfile), 
                                    `Content-MD5` = md), 
                     ...)

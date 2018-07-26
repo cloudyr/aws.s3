@@ -63,6 +63,7 @@ function(file,
          object,
          bucket,
          multipart = FALSE,
+         region = NULL,
          acl = acl_list,
          headers = list(),
          ...) {
@@ -88,7 +89,8 @@ function(file,
             # if the raw vector is small, there is no need to store it content into temporary file and no need
             # for multipart upload
             if (length(file) < partsize) {
-                res <- put_object_non_multipart(file = file, object = object, bucket = bucket, multipart = FALSE, headers = headers, ...)
+                res <- put_object_non_multipart(file = file, object = object, bucket = bucket, multipart = FALSE,
+                                                headers = headers, region = region, ...)
 
                 return (TRUE)
             }
@@ -100,7 +102,8 @@ function(file,
             file <- tmp
         }
 
-        res <- tryCatch(put_object_multipart(connection = file, object = object, bucket = bucket, headers = headers, ...),
+        res <- tryCatch(put_object_multipart(connection = file, object = object, bucket = bucket, headers = headers,
+                        region = region, ...),
                         finally={
                             if (!is.null(tmp) && file.exists(tmp)) {
                                 unlink(tmp)
@@ -110,7 +113,8 @@ function(file,
         return (res)
 
     } else {
-        res <- put_object_non_multipart(file = file, object = object, bucket = bucket, headers = headers, ...)
+        res <- put_object_non_multipart(file = file, object = object, bucket = bucket, headers = headers,
+                                        region = region, ...)
 
         return (TRUE)
     }
@@ -125,7 +129,7 @@ put_folder <- function(folder, bucket, ...) {
     put_object(raw(0), object = folder, bucket = bucket, ...)
 }
 
-post_object <- function(file, object, bucket, headers = list(), ...) {
+post_object <- function(file, object, bucket, headers = list(), region = NULL, ...) {
     if (missing(object) && is.character(file)) {
         object <- basename(file)
     } else {
@@ -148,6 +152,7 @@ post_object <- function(file, object, bucket, headers = list(), ...) {
                 path = paste0("/", object),
                 headers = headers,
                 request_body = file,
+                region = region,
                 ...)
 
     structure(r, class = "s3_object")
@@ -170,7 +175,7 @@ upload_part <- function(part, object, bucket, number, id, ...) {
     put_object(file = part, object = object, bucket = bucket, query = query, multipart = FALSE, ...)
 }
 
-complete_parts <- function(object, bucket, id, parts, ...) {
+complete_parts <- function(object, bucket, id, parts, region = NULL, ...) {
     if (missing(bucket)) {
         bucket <- get_bucketname(object)
     }
@@ -182,13 +187,14 @@ complete_parts <- function(object, bucket, id, parts, ...) {
               "<ETag>", parts[["ETag"]], "</ETag></Part>", collapse = ""),
        "</CompleteMultipartUpload>", collapse = "")
 
-    post_object(file = bod, object = object, bucket = bucket, query = list(uploadId = id), ...)
+    post_object(file = bod, object = object, bucket = bucket, query = list(uploadId = id), region = region, ...)
 }
 
 put_object_multipart <- function(connection,
     object,
     bucket,
     headers = list(),
+    region = NULL,
     ...) {
 
     size <- file.size(connection)
@@ -196,7 +202,8 @@ put_object_multipart <- function(connection,
 
     # if file is small, there is no need for multipart upload
     if (size < partsize) {
-        res <- put_object_non_multipart(file = connection, object = object, bucket = bucket, headers = headers, ...)
+        res <- put_object_non_multipart(file = connection, object = object, bucket = bucket, headers = headers,
+                                        region = region, ...)
 
         return (TRUE)
     }
@@ -217,27 +224,38 @@ put_object_multipart <- function(connection,
     }
 
     # function to call abort if any part fails
-    abort <- function(id) delete_object(object = object, bucket = bucket, query = list(uploadId = id), ...)
+    abort <- function(id) delete_object(object = object, bucket = bucket, query = list(uploadId = id),
+                                        region = region, ...)
+
+    # browser()
 
     # initialize the upload
     initialize <- post_object(file = NULL, object = object, bucket = bucket,
-                              query = list(uploads = ""), headers = headers, ...)
+                              query = list(uploads = ""), headers = headers, region = region, ...)
     id <- initialize[["UploadId"]]
 
     # split object into parts
     partlist <- list(Number = character(nparts), ETag = character(nparts))
 
+    # AWS does not accept `x-amz-acl` header for UploadPart request
+    canonical_headers <- headers
+    canonical_headers$`x-amz-acl` <- NULL
+
     for (i in seq_len(nparts)) {
         data <- readBin(connection, raw(), n=partsize)
 
         query <- list(partNumber = i, uploadId = id)
+
+        # put_object_non_multipart(file = data, object = object, bucket = bucket,
+        # multipart = FALSE, headers = canonical_headers, query = query)
+
         r <- try(put_object_non_multipart(file = data, object = object, bucket = bucket,
-                            multipart = FALSE, headers = headers, query = query),
+                            multipart = FALSE, headers = canonical_headers, query = query, region = region),
                  silent = FALSE)
         if (inherits(r, "try-error")) {
             close(connection)
             abort(id)
-            stop("Multipart upload failed.")
+            stop(paste0("Multipart upload failed.", r))
         } else {
             partlist[["Number"]][i] <- i
             partlist[["ETag"]][i] <- get_response_attibute(r, "ETag")
@@ -245,7 +263,7 @@ put_object_multipart <- function(connection,
     }
 
     # complete
-    complete_parts(object = object, bucket = bucket, id = id, parts = partlist, ...)
+    complete_parts(object = object, bucket = bucket, id = id, parts = partlist, region = region, ...)
 
     res <- close(connection)
 
@@ -256,6 +274,7 @@ put_object_non_multipart <- function(file,
     object,
     bucket,
     headers = list(),
+    region = NULL,
     ...) {
 
     headers <- c(headers, list(
@@ -267,6 +286,7 @@ put_object_non_multipart <- function(file,
                 path = paste0('/', object),
                 headers = headers,
                 request_body = file,
+                region = region,
                 ...)
 
     return(r)

@@ -57,7 +57,7 @@ function(verb = "GET",
     secret <- credentials[["secret"]]
     session_token <- credentials[["session_token"]]
     region <- credentials[["region"]]
-    
+
     # handle 'show_progress' argument
     if (isTRUE(show_progress)) {
         if (verb %in% c("GET")) {
@@ -214,7 +214,7 @@ parse_aws_s3_response <- function(r, Sig, verbose = getOption("verbose")){
     if (isTRUE(verbose)) {
         message(http_status(r)[["message"]])
     }
-    if (http_error(r) | (http_status(r)[["category"]] == "Redirection")) {
+    if (http_error(r) || (http_status(r)[["category"]] == "Redirection")) {
         h <- headers(r)
         out <- structure(response, headers = h, class = "aws_error")
         attr(out, "request_canonical") <- Sig$CanonicalRequest
