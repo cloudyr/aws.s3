@@ -101,7 +101,7 @@ function(verb = "GET",
     if (all(sapply(query, is.null))) {
         query <- NULL
     }
-    
+
     # assess whether request is authenticated or not
     if (is.null(key) || key == "") {
         if (isTRUE(verbose)) {
@@ -135,7 +135,7 @@ function(verb = "GET",
         headers[["Authorization"]] <- Sig[["SignatureHeader"]]
         H <- do.call(add_headers, headers)
     }
-    
+
     # execute request
     if (verb == "GET") {
         if (!is.null(write_disk)) {
@@ -169,20 +169,22 @@ function(verb = "GET",
             attributes(out) <- c(attributes(out), headers(r))
             return(out)
         }
-    } else if (verb == "POST") {
-        r <- POST(url, H, query = query, show_progress, ...)
-    } else if (verb == "PUT") {
+    } else if (verb == "POST" || verb == "PUT") {
+        req_func <- POST
+        if (verb == "PUT") {
+            req_func <- PUT
+        }
         if (is.character(request_body) && request_body == "") {
-            r <- PUT(url, H, query = query, show_progress, ...)
+            r <- req_func(url, H, query = query, show_progress, ...)
         } else if (is.character(request_body) && file.exists(request_body)) {
-            r <- PUT(url, H, body = upload_file(request_body), query = query, show_progress, ...)
+            r <- req_func(url, H, body = upload_file(request_body), query = query, show_progress, ...)
         } else {
-            r <- PUT(url, H, body = request_body, query = query, show_progress, ...)
+            r <- req_func(url, H, body = request_body, query = query, show_progress, ...)
         }
     } else if (verb == "OPTIONS") {
         r <- VERB("OPTIONS", url, H, query = query, ...)
     }
-    
+
     # handle response, failing if HTTP error occurs
     if (isTRUE(parse_response)) {
         out <- parse_aws_s3_response(r, Sig, verbose = verbose)
