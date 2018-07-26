@@ -106,20 +106,3 @@ function(bucket,
 
     as.data.frame(r)
 }
-
-#' @title Multipart uploads
-#' @description Get a list of multipart uploads for a bucket.
-#'
-#' @template bucket
-#' @template dots
-#'
-#' @return A list containing the multipart upload information.
-#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/mpUploadListMPUpload.html}{API Documentation}
-#' @export
-get_uploads <- function(bucket, ...){
-    r <- s3HTTP(verb = "GET",
-                bucket = bucket,
-                query = list(uploads = ""),
-                ...)
-    return(r)
-}
