@@ -1,5 +1,6 @@
 # aws.s3 0.3.14
 
+* Fixed several bugs in `put_object(multipart = TRUE)`. (#80)
 * Tentatively, `s3HTTP()` argument `check_region` argument now defaults to FALSE. (#45, #46, #106, #122, #185, #230)
 
 # aws.s3 0.3.13

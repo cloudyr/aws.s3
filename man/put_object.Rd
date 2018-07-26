@@ -5,9 +5,9 @@
 \alias{put_folder}
 \title{Put object}
 \usage{
-put_object(file, object, bucket, multipart = FALSE, acl = c("private",
-  "public-read", "public-read-write", "aws-exec-read", "authenticated-read",
-  "bucket-owner-read", "bucket-owner-full-control"), headers = list(), ...)
+put_object(file, object, bucket, multipart = FALSE, acl = NULL,
+  headers = list(), verbose = getOption("verbose", FALSE),
+  show_progress = getOption("verbose", FALSE), ...)
 
 put_folder(folder, bucket, ...)
 }
@@ -22,7 +22,11 @@ put_folder(folder, bucket, ...)
 
 \item{acl}{A character string indicating a \href{http://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl}{\dQuote{canned} access control list}. By default all bucket contents and objects therein are given the ACL \dQuote{private}. This can later be viewed using \code{\link{get_acl}} and modified using \code{\link{put_acl}}.}
 
-\item{headers}{List of request headers for the REST call.}
+\item{headers}{List of request headers for the REST call. If \code{multipart = TRUE}, this only applies to the initialization call.}
+
+\item{verbose}{A logical indicating whether to be verbose. Default is given by \code{options("verbose")}.}
+
+\item{show_progress}{A logical indicating whether to show a progress bar for uploads. Default is given by \code{options("verbose")}.}
 
 \item{\dots}{Additional arguments passed to \code{\link{s3HTTP}}.}
 
@@ -72,6 +76,15 @@ Note that S3 is a flat file store. So there is no folder hierarchy as in a tradi
 
   # read the object back from S3
   read.csv(text = rawToChar(get_object(object = "s3://myexamplebucketname/mtcars.csv")))
+
+  # multi-part uploads for objects over 5MB
+  \donttest{
+  x <- rnorm(3e6)
+  saveRDS(x, tmp)
+  put_object(tmp, object = "rnorm.rds", bucket = "myexamplebucket",
+             show_progress = TRUE, multipart = TRUE)
+  identical(x, s3readRDS("s3://myexamplebucket/rnorm.rds"))
+  }
 }
 }
 \references{

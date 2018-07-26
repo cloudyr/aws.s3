@@ -7,7 +7,9 @@
 #' @template bucket
 #' @param multipart A logical indicating whether to use multipart uploads. See \url{http://docs.aws.amazon.com/AmazonS3/latest/dev/mpuoverview.html}. If \code{file} is less than 100 MB, this is ignored.
 #' @template acl
-#' @param headers List of request headers for the REST call.
+#' @param headers List of request headers for the REST call. If \code{multipart = TRUE}, this only applies to the initialization call.
+#' @param verbose A logical indicating whether to be verbose. Default is given by \code{options("verbose")}.
+#' @param show_progress A logical indicating whether to show a progress bar for uploads. Default is given by \code{options("verbose")}.
 #' @template dots
 #' @details This provide a generic interface for sending files (or serialized, in-memory representations thereof) to S3. Some convenience wrappers are provided for common tasks: e.g., \code{\link{s3save}} and \code{\link{s3saveRDS}}.
 #' 
@@ -47,6 +49,15 @@
 #' 
 #'   # read the object back from S3
 #'   read.csv(text = rawToChar(get_object(object = "s3://myexamplebucketname/mtcars.csv")))
+#' 
+#'   # multi-part uploads for objects over 5MB
+#'   \donttest{
+#'   x <- rnorm(3e6)
+#'   saveRDS(x, tmp)
+#'   put_object(tmp, object = "rnorm.rds", bucket = "myexamplebucket",
+#'              show_progress = TRUE, multipart = TRUE)
+#'   identical(x, s3readRDS("s3://myexamplebucket/rnorm.rds"))
+#'   }
 #' }
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPUT.html}{API Documentation}
 #' @seealso \code{\link{put_bucket}}, \code{\link{get_object}}, \code{\link{delete_object}}, \code{\link{put_encryption}}
@@ -57,10 +68,10 @@ function(file,
          object, 
          bucket, 
          multipart = FALSE, 
-         acl = c("private", "public-read", "public-read-write", 
-                 "aws-exec-read", "authenticated-read", 
-                 "bucket-owner-read", "bucket-owner-full-control"),
-         headers = list(), 
+         acl = NULL,
+         headers = list(),
+         verbose = getOption("verbose", FALSE),
+         show_progress = getOption("verbose", FALSE),
          ...) {
     if (missing(object) && is.character(file)) {
         object <- basename(file)
@@ -70,68 +81,99 @@ function(file,
         }
         object <- get_objectkey(object)
     }
-    acl <- match.arg(acl)
-    headers <- c(list(`x-amz-acl` = acl), headers)
+    if (!is.null(acl) && !"x-amz-acl" %in% names(headers)) {
+        acl <- match.arg(acl, c("private", "public-read", "public-read-write", "aws-exec-read", "authenticated-read", "bucket-owner-read", "bucket-owner-full-control"))
+        headers <- c(headers, list(`x-amz-acl` = acl))
+    } else {
+        headers <- c(headers, list(`x-amx-acl` = "private"))
+    }
     if (isTRUE(multipart)) {
         if (is.character(file) && file.exists(file)) {
-            file <- readBin(file, what = "raw")
+            file <- readBin(file, what = "raw", n = file.size(file))
         }
         size <- length(file)
-        partsize <- 1e8 # 100 MB
+        partsize <- 1e7 # 10 MB
         nparts <- ceiling(size/partsize)
         
         # if file is small, there is no need for multipart upload
         if (size < partsize) {
-            put_object(file = file, object = object, bucket = bucket, multipart = FALSE, headers = headers, ...)
+            if (isTRUE(verbose)) {
+                message("Uploading file as a single part")
+            }
+            put_object(file = file, object = object, bucket = bucket, multipart = FALSE, headers = headers, show_progress = show_progress, ...)
             return(TRUE)
         }
         
-        # function to call abort if any part fails
-        abort <- function(id) delete_object(object = object, bucket = bucket, query = list(uploadId = id), ...)
-        
-        # split object into parts
-        seqparts <- seq_len(partsize)
-        parts <- list()
-        for (i in seq_len(nparts)) {
-            parts[[i]] <- head(file, partsize)
-            if (i < nparts) {
-                file <- file[-seqparts]
-            }
-        }
-        
         # initialize the upload
-        initialize <- post_object(file = NULL, object = object, bucket = bucket, query = list(uploads = ""), headers = headers, ...)
+        if (isTRUE(verbose)) {
+            message("Initializing multi-part upload")
+        }
+        initialize <- post_object(file = raw(0),
+                                  object = object,
+                                  bucket = bucket,
+                                  query = list(uploads = ""),
+                                  headers = headers,
+                                  ...)
         id <- initialize[["UploadId"]]
         
+        # function to call abort if any part fails
+        abort <- function(id) delete_object(object = object, bucket = bucket, query = list(uploadId = id), ...)
+        on.exit(abort(id))
+        
         # loop over parts
-        partlist <- list(Number = character(length(parts)),
-                         ETag = character(length(parts)))
-        for (i in seq_along(parts)) {
-            query <- list(partNumber = i, uploadId = id)
-            r <- try(put_object(file = parts[[i]], object = object, bucket = bucket, 
-                                multipart = FALSE, headers = headers, query = query), 
-                     silent = FALSE)
+        partlist <- list()
+        
+        # index of first byte
+        first_byte <- 1L
+        # loop over parts
+        for (i in seq_len(nparts)) {
+            if (isTRUE(verbose) | isTRUE(show_progress)) {
+                message(sprintf("Uploading part %d of %d-part upload", i, nparts))
+            }
+            last_byte <- min(c(length(file), (first_byte + (partsize-1L))))
+            r <- s3HTTP(verb = "PUT", 
+                        bucket = bucket,
+                        path = paste0('/', object),
+                        headers = list(`Content-Length` = length(file[first_byte:last_byte])),
+                        query = list(partNumber = i, uploadId = id),
+                        request_body = file[first_byte:last_byte],
+                        verbose = verbose,
+                        show_progress = show_progress,
+                        ...)
             if (inherits(r, "try-error")) {
-                abort(id)
-                stop("Multipart upload failed.")
+                stop("Multi-part upload failed")
             } else {
-                partlist[["Number"]][i] <- i
-                partlist[["ETag"]][i] <- attributes(r)[["ETag"]]
+                # record upload details
+                partlist[[i]] <- list(Part = list(PartNumber = list(i), ETag = list(attributes(r)[["etag"]])))
+                # increment byte count
+                first_byte <- last_byte + 1L
             }
         }
         
         # complete
-        complete_parts(object = object, bucket = bucket, id = id, parts = partlist, ...)
+        if (isTRUE(verbose) | isTRUE(show_progress)) {
+            message("Completing multi-part upload")
+        }
+        finalize <- complete_parts(object = object, bucket = bucket, id = id, parts = partlist, ...)
+        on.exit(NULL, add = FALSE)
         return(TRUE)
     } else {
+        if (!"Content-Length" %in% names(headers)) {
+            headers <- c(headers, list(
+                         `Content-Length` = ifelse(is.character(file) && file.exists(file), 
+                                                   file.size(file), length(file))
+                         ))
+        }
+        if (headers[["Content-Length"]] > 1e7) {
+            message(sprintf("File size is %d. Consider setting 'multipart = TRUE'.", headers[["Content-Length"]]))
+        }
         r <- s3HTTP(verb = "PUT", 
                     bucket = bucket,
                     path = paste0('/', object),
-                    headers = c(headers, list(
-                      `Content-Length` = ifelse(is.character(file) && file.exists(file), 
-                                                           file.size(file), length(file))
-                      )), 
+                    headers = headers, 
                     request_body = file,
+                    verbose = verbose,
+                    show_progress = show_progress,
                     ...)
         return(TRUE)
     }
@@ -155,13 +197,19 @@ post_object <- function(file, object, bucket, headers = list(), ...) {
         }
         object <- get_objectkey(object)
     }
+    if (!"Content-Length" %in% names(headers)) {
+        headers <- c(headers, list(
+                     `Content-Length` = if (is.character(file) && file.exists(file)) {
+                                            file.size(file)
+                                        } else {
+                                            length(file)
+                                        }
+                     ))
+    }
     r <- s3HTTP(verb = "POST", 
                 bucket = bucket,
                 path = paste0("/", object),
-                headers = c(headers, list(
-                  `Content-Length` = ifelse(is.character(file) && file.exists(file), 
-                                                       file.size(file), length(file))
-                  )), 
+                headers = headers, 
                 request_body = file,
                 ...)
     structure(r, class = "s3_object")
@@ -190,11 +238,24 @@ complete_parts <- function(object, bucket, id, parts, ...) {
     }
     object <- get_objectkey(object)
     
-    # construct body
-    bod <- paste0("<CompleteMultipartUpload>",
-       paste0("<Part><PartNumber>", parts[["Number"]], "</PartNumber>", 
-              "<ETag>", parts[["ETag"]], "</ETag></Part>", collapse = ""),
-       "</CompleteMultipartUpload>", collapse = "")
+    tmp <- tempfile()
+    xml2::write_xml(xml2::as_xml_document(list(CompleteMultipartUpload = parts)), tmp, options = "no_declaration")
+    post_object(file = tmp, object = object, bucket = bucket, query = list(uploadId = id), ...)
+}
 
-    post_object(object = object, bucket = bucket, query = list(uploadId = id), body = bod, ...)
+#' @title Multipart uploads
+#' @description Get a list of multipart uploads for a bucket.
+#'
+#' @template bucket
+#' @template dots
+#'
+#' @return A list containing the multipart upload information.
+#' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/mpUploadListMPUpload.html}{API Documentation}
+#' @export
+get_uploads <- function(bucket, ...){
+    r <- s3HTTP(verb = "GET",
+                bucket = bucket,
+                query = list(uploads = ""),
+                ...)
+    return(r)
 }

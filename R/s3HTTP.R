@@ -170,7 +170,13 @@ function(verb = "GET",
             return(out)
         }
     } else if (verb == "POST") {
-        r <- httr::POST(url, H, query = query, show_progress, ...)
+        if (is.character(request_body) && request_body == "") {
+            r <- httr::POST(url, H, query = query, show_progress, ...)
+        } else if (is.character(request_body) && file.exists(request_body)) {
+            r <- httr::POST(url, H, body = httr::upload_file(request_body), query = query, show_progress, ...)
+        } else {
+            r <- httr::POST(url, H, body = request_body, query = query, show_progress, ...)
+        }
     } else if (verb == "PUT") {
         if (is.character(request_body) && request_body == "") {
             r <- httr::PUT(url, H, query = query, show_progress, ...)
