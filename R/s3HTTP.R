@@ -143,6 +143,12 @@ function(verb = "GET",
         } else {
             r <- httr::GET(url, H, query = query, show_progress, ...)
         }
+    } else if (verb == "connection") {
+        # support for a streaming GET connection
+        stream_handle <- curl::new_handle()
+        curl::handle_setheaders(stream_handle, .list = headers)
+        connection <- curl::curl(url, open = "rb", handle = stream_handle)
+        return(connection)
     } else if (verb == "HEAD") {
         r <- httr::HEAD(url, H, query = query, ...)
         s <- httr::http_status(r)
