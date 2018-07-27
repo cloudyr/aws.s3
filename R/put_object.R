@@ -81,17 +81,16 @@ function(file,
         }
         object <- get_objectkey(object)
     }
-    if (!is.null(acl) && !"x-amz-acl" %in% names(headers)) {
-        acl <- match.arg(acl, c("private", "public-read", "public-read-write", "aws-exec-read", "authenticated-read", "bucket-owner-read", "bucket-owner-full-control"))
-        headers <- c(headers, list(`x-amz-acl` = acl))
-    } else {
-        headers <- c(headers, list(`x-amx-acl` = "private"))
+    if (!"x-amz-acl" %in% names(headers)) {
+        if (!is.null(acl)) {
+            acl <- match.arg(acl, c("private", "public-read", "public-read-write", "aws-exec-read", "authenticated-read", "bucket-owner-read", "bucket-owner-full-control"))
+            headers <- c(headers, list(`x-amz-acl` = acl))
+        } else {
+            headers <- c(headers, list(`x-amz-acl` = "private"))
+        }
     }
     if (isTRUE(multipart)) {
-        if (is.character(file) && file.exists(file)) {
-            file <- readBin(file, what = "raw", n = file.size(file))
-        }
-        size <- length(file)
+        size <- calculate_data_size(file)
         partsize <- 1e7 # 10 MB
         nparts <- ceiling(size/partsize)
         
@@ -103,7 +102,25 @@ function(file,
             put_object(file = file, object = object, bucket = bucket, multipart = FALSE, headers = headers, show_progress = show_progress, ...)
             return(TRUE)
         }
-        
+
+        if (is.character(file) && file.exists(file)) {
+            # connection is file
+            file <- file(file, open="rb", raw=TRUE)
+            on.exit(close(file))
+        } else if (is.character(file)) {
+            # connection is character string
+            file <- rawConnection(charToRaw(file), "r")
+            on.exit(close(file))
+        } else if (is.vector(file)) {
+            # connection is binary vector
+            file <- rawConnection(file, "r")
+            on.exit(close(file))
+        } else if (!inherits(file, "connection")) {
+            # open connection in binary mode
+            stop(paste0("Invalid value of the file parameter: ", typeof(file),
+            " but file, character string or binary vector expected"))
+        }
+
         # initialize the upload
         if (isTRUE(verbose)) {
             message("Initializing multi-part upload")
@@ -122,21 +139,21 @@ function(file,
         
         # loop over parts
         partlist <- list()
-        
-        # index of first byte
-        first_byte <- 1L
+
         # loop over parts
         for (i in seq_len(nparts)) {
             if (isTRUE(verbose) | isTRUE(show_progress)) {
                 message(sprintf("Uploading part %d of %d-part upload", i, nparts))
             }
-            last_byte <- min(c(length(file), (first_byte + (partsize-1L))))
+
+            data <- readBin(file, raw(), n=partsize)
+
             r <- s3HTTP(verb = "PUT", 
                         bucket = bucket,
                         path = paste0('/', object),
-                        headers = list(`Content-Length` = length(file[first_byte:last_byte])),
+                        headers = list(`Content-Length` = length(data)),
                         query = list(partNumber = i, uploadId = id),
-                        request_body = file[first_byte:last_byte],
+                        request_body = data,
                         verbose = verbose,
                         show_progress = show_progress,
                         ...)
@@ -145,8 +162,6 @@ function(file,
             } else {
                 # record upload details
                 partlist[[i]] <- list(Part = list(PartNumber = list(i), ETag = list(attributes(r)[["etag"]])))
-                # increment byte count
-                first_byte <- last_byte + 1L
             }
         }
         
@@ -160,8 +175,7 @@ function(file,
     } else {
         if (!"Content-Length" %in% names(headers)) {
             headers <- c(headers, list(
-                         `Content-Length` = ifelse(is.character(file) && file.exists(file), 
-                                                   file.size(file), length(file))
+                         `Content-Length` = calculate_data_size(file)
                          ))
         }
         if (headers[["Content-Length"]] > 1e7) {
@@ -198,13 +212,7 @@ post_object <- function(file, object, bucket, headers = list(), ...) {
         object <- get_objectkey(object)
     }
     if (!"Content-Length" %in% names(headers)) {
-        headers <- c(headers, list(
-                     `Content-Length` = if (is.character(file) && file.exists(file)) {
-                                            file.size(file)
-                                        } else {
-                                            length(file)
-                                        }
-                     ))
+        headers <- c(headers, list(`Content-Length` = calculate_data_size(file)))
     }
     r <- s3HTTP(verb = "POST", 
                 bucket = bucket,
@@ -258,4 +266,21 @@ get_uploads <- function(bucket, ...){
                 query = list(uploads = ""),
                 ...)
     return(r)
+}
+
+calculate_data_size <- function(data) {
+    post_size <- 0
+    if (is.character(data)) {
+        if (file.exists(data)) {
+            post_size <- file.size(data)
+        } else {
+            post_size <- nchar(data)
+        }
+    } else if (is.null(data)) {
+        post_size <- 0
+    } else {
+        post_size <- length((data))
+    }
+
+    return(post_size)
 }
