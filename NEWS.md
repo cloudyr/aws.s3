@@ -1,5 +1,10 @@
 # aws.s3 0.3.14
 
+* Refactored `put_object(multipart = TRUE)` to improve memory efficiency. (h/t Andrii Degtiarov, #242)
+* Added provisional support for S3 SELECT via the `select_object()` function. (#224)
+
+# aws.s3 0.3.14
+
 * Fixed several bugs in `put_object(multipart = TRUE)`. (#80)
 * Tentatively, `s3HTTP()` argument `check_region` argument now defaults to FALSE. (#45, #46, #106, #122, #185, #230)
 
