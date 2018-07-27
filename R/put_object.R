@@ -115,17 +115,13 @@ function(file,
             # othewise store the file content into temporary file and assign the name of the temporary file to
             # global variable `tmp` to being cleaned up in `finally` block
             tmp <- tempfile(fileext = paste0(".", tools::file_ext(file)))
+            on.exit(unlink(tmp))
             writeBin(file, tmp)
             file <- tmp
         }
 
-        res <- tryCatch(put_object_multipart(connection = file, object = object, bucket = bucket, headers = headers,
-                        region = region, verbose = verbose, show_progress = show_progress, ...),
-                        finally={
-                            if (!is.null(tmp) && file.exists(tmp)) {
-                                unlink(tmp)
-                            }
-                        })
+        res <- put_object_multipart(connection = file, object = object, bucket = bucket, headers = headers,
+                        region = region, verbose = verbose, show_progress = show_progress, ...)
 
         return (res)
 
