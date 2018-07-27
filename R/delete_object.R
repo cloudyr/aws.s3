@@ -27,7 +27,7 @@ delete_object <- function(object, bucket, quiet = TRUE, ...) {
                     ...)
         return(TRUE)
     } else {
-        xml <- read_xml(paste0('<?xml version="1.0" encoding="UTF-8"?><Delete><Quiet>', tolower(quiet),'</Quiet></Delete>'))
+        xml <- xml2::read_xml(paste0('<?xml version="1.0" encoding="UTF-8"?><Delete><Quiet>', tolower(quiet),'</Quiet></Delete>'))
         for (i in seq_along(object)) {
             xml2::xml_add_child(xml, xml2::read_xml(paste0("<Object><Key>", get_objectkey(object[[i]]), "</Key></Object>")))
         }

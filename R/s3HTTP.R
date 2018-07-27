@@ -52,7 +52,7 @@ function(verb = "GET",
          ...) {
     
     # locate and validate credentials
-    credentials <- locate_credentials(key = key, secret = secret, session_token = session_token, region = region, verbose = verbose)
+    credentials <- aws.signature::locate_credentials(key = key, secret = secret, session_token = session_token, region = region, verbose = verbose)
     key <- credentials[["key"]]
     secret <- credentials[["secret"]]
     session_token <- credentials[["session_token"]]
@@ -90,7 +90,7 @@ function(verb = "GET",
     
     url_style <- match.arg(url_style)
     url <- setup_s3_url(bucketname, region, path, accelerate, url_style = url_style, base_url = base_url, verbose = verbose, use_https = use_https)
-    p <- parse_url(url)
+    p <- httr::parse_url(url)
     action <- if (p$path == "") "/" else paste0("/", p$path)
     hostname <- paste(p$hostname, p$port, sep=ifelse(length(p$port), ":", ""))
     canonical_headers <- c(list(host = hostname,
@@ -109,7 +109,7 @@ function(verb = "GET",
         }
         headers[["x-amz-date"]] <- d_timestamp
         Sig <- list()
-        H <- do.call(add_headers, headers)
+        H <- do.call(httr::add_headers, headers)
     } else {
         if (isTRUE(verbose)) {
             message("Executing request with AWS credentials")
@@ -133,54 +133,60 @@ function(verb = "GET",
             headers[["x-amz-security-token"]] <- session_token
         }
         headers[["Authorization"]] <- Sig[["SignatureHeader"]]
-        H <- do.call(add_headers, headers)
+        H <- do.call(httr::add_headers, headers)
     }
     
     # execute request
     if (verb == "GET") {
         if (!is.null(write_disk)) {
-            r <- GET(url, H, query = query, write_disk, show_progress, ...)
+            r <- httr::GET(url, H, query = query, write_disk, show_progress, ...)
         } else {
-            r <- GET(url, H, query = query, show_progress, ...)
+            r <- httr::GET(url, H, query = query, show_progress, ...)
         }
     } else if (verb == "HEAD") {
-        r <- HEAD(url, H, query = query, ...)
-        s <- http_status(r)
+        r <- httr::HEAD(url, H, query = query, ...)
+        s <- httr::http_status(r)
         if (tolower(s$category) == "success") {
             out <- TRUE
-            attributes(out) <- c(attributes(out), headers(r))
+            attributes(out) <- c(attributes(out), httr::headers(r))
             return(out)
         } else {
             message(s$message)
             out <- FALSE
-            attributes(out) <- c(attributes(out), headers(r))
+            attributes(out) <- c(attributes(out), httr::headers(r))
             return(out)
         }
     } else if (verb == "DELETE") {
-        r <- DELETE(url, H, query = query, ...)
-        s <- http_status(r)
+        r <- httr::DELETE(url, H, query = query, ...)
+        s <- httr::http_status(r)
         if (tolower(s$category) == "success") {
             out <- TRUE
-            attributes(out) <- c(attributes(out), headers(r))
+            attributes(out) <- c(attributes(out), httr::headers(r))
             return(out)
         } else {
             message(s$message)
             out <- FALSE
-            attributes(out) <- c(attributes(out), headers(r))
+            attributes(out) <- c(attributes(out), httr::headers(r))
             return(out)
         }
     } else if (verb == "POST") {
-        r <- POST(url, H, query = query, show_progress, ...)
+        if (is.character(request_body) && request_body == "") {
+            r <- httr::POST(url, H, query = query, show_progress, ...)
+        } else if (is.character(request_body) && file.exists(request_body)) {
+            r <- httr::POST(url, H, body = httr::upload_file(request_body), query = query, show_progress, ...)
+        } else {
+            r <- httr::POST(url, H, body = request_body, query = query, show_progress, ...)
+        }
     } else if (verb == "PUT") {
         if (is.character(request_body) && request_body == "") {
-            r <- PUT(url, H, query = query, show_progress, ...)
+            r <- httr::PUT(url, H, query = query, show_progress, ...)
         } else if (is.character(request_body) && file.exists(request_body)) {
-            r <- PUT(url, H, body = upload_file(request_body), query = query, show_progress, ...)
+            r <- httr::PUT(url, H, body = httr::upload_file(request_body), query = query, show_progress, ...)
         } else {
-            r <- PUT(url, H, body = request_body, query = query, show_progress, ...)
+            r <- httr::PUT(url, H, body = request_body, query = query, show_progress, ...)
         }
     } else if (verb == "OPTIONS") {
-        r <- VERB("OPTIONS", url, H, query = query, ...)
+        r <- httr::VERB("OPTIONS", url, H, query = query, ...)
     }
     
     # handle response, failing if HTTP error occurs
@@ -189,7 +195,7 @@ function(verb = "GET",
     } else {
         out <- r
     }
-    attributes(out) <- c(attributes(out), headers(r))
+    attributes(out) <- c(attributes(out), httr::headers(r))
     out
 }
 
@@ -197,11 +203,11 @@ parse_aws_s3_response <- function(r, Sig, verbose = getOption("verbose")){
     if (isTRUE(verbose)) {
         message("Parsing AWS API response")
     }
-    ctype <- headers(r)[["content-type"]]
+    ctype <- httr::headers(r)[["content-type"]]
     if (is.null(ctype) || ctype == "application/xml"){
-        content <- content(r, as = "text", encoding = "UTF-8")
+        content <- httr::content(r, as = "text", encoding = "UTF-8")
         if (content != "") {
-            response_contents <- as_list(read_xml(content))
+            response_contents <- xml2::as_list(xml2::read_xml(content))
             response <- flatten_list(response_contents)
         } else {
             response <- NULL
@@ -210,16 +216,16 @@ parse_aws_s3_response <- function(r, Sig, verbose = getOption("verbose")){
         response <- r
     }
     if (isTRUE(verbose)) {
-        message(http_status(r)[["message"]])
+        message(httr::http_status(r)[["message"]])
     }
-    if (http_error(r) | (http_status(r)[["category"]] == "Redirection")) {
-        h <- headers(r)
+    if (httr::http_error(r) | (httr::http_status(r)[["category"]] == "Redirection")) {
+        h <- httr::headers(r)
         out <- structure(response, headers = h, class = "aws_error")
         attr(out, "request_canonical") <- Sig$CanonicalRequest
         attr(out, "request_string_to_sign") <- Sig$StringToSign
         attr(out, "request_signature") <- Sig$SignatureHeader
         print(out)
-        stop_for_status(r)
+        httr::stop_for_status(r)
     }
     return(response)
 }
