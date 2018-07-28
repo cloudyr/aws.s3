@@ -26,6 +26,7 @@
 #' @import httr
 #' @importFrom xml2 read_xml as_list
 #' @importFrom utils URLencode
+#' @importFrom curl handle_setheaders new_handle curl
 #' @import aws.signature
 #' @export
 s3HTTP <- 
@@ -118,7 +119,7 @@ function(verb = "GET",
                datetime = d_timestamp,
                region = region,
                service = "s3",
-               verb = verb,
+               verb = if (verb == "connection") "GET" else verb,
                action = action,
                query_args = query,
                canonical_headers = canonical_headers,
@@ -138,6 +139,7 @@ function(verb = "GET",
     
     # execute request
     if (verb == "GET") {
+        # GET verb
         if (!is.null(write_disk)) {
             r <- httr::GET(url, H, query = query, write_disk, show_progress, ...)
         } else {
@@ -150,6 +152,7 @@ function(verb = "GET",
         connection <- curl::curl(url, open = "rb", handle = stream_handle)
         return(connection)
     } else if (verb == "HEAD") {
+        # HEAD verb
         r <- httr::HEAD(url, H, query = query, ...)
         s <- httr::http_status(r)
         if (tolower(s$category) == "success") {
@@ -163,6 +166,7 @@ function(verb = "GET",
             return(out)
         }
     } else if (verb == "DELETE") {
+        # DELETE verb
         r <- httr::DELETE(url, H, query = query, ...)
         s <- httr::http_status(r)
         if (tolower(s$category) == "success") {
@@ -176,6 +180,7 @@ function(verb = "GET",
             return(out)
         }
     } else if (verb == "POST") {
+        # POST verb
         if (is.character(request_body) && request_body == "") {
             r <- httr::POST(url, H, query = query, show_progress, ...)
         } else if (is.character(request_body) && file.exists(request_body)) {
@@ -184,6 +189,7 @@ function(verb = "GET",
             r <- httr::POST(url, H, body = request_body, query = query, show_progress, ...)
         }
     } else if (verb == "PUT") {
+        # PUT verb
         if (is.character(request_body) && request_body == "") {
             r <- httr::PUT(url, H, query = query, show_progress, ...)
         } else if (is.character(request_body) && file.exists(request_body)) {
@@ -192,6 +198,7 @@ function(verb = "GET",
             r <- httr::PUT(url, H, body = request_body, query = query, show_progress, ...)
         }
     } else if (verb == "OPTIONS") {
+        # OPTIONS verb
         r <- httr::VERB("OPTIONS", url, H, query = query, ...)
     }
     

@@ -1,3 +1,7 @@
+# aws.s3 0.3.17
+
+* Added `s3connection()` function to stream objects from S3. (#217)
+
 # aws.s3 0.3.16
 
 * Refactored `put_object(multipart = TRUE)` to improve memory efficiency. (h/t Andrii Degtiarov, #242)
