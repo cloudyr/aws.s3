@@ -18,7 +18,6 @@ delete_object <- function(object, bucket, quiet = TRUE, ...) {
     if (missing(bucket)) {
         bucket <- get_bucketname(object)
     }
-    regionname <- get_region(bucket)
     object <- get_objectkey(object)
     if (length(object) == 1) {
         r <- s3HTTP(verb = "DELETE", 
