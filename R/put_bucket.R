@@ -3,6 +3,7 @@
 #' @template bucket
 #' @param region A character string containing the AWS region. If missing, defaults to value of environment variable \env{AWS_DEFAULT_REGION}.
 #' @template acl
+#' @param location_constraint A character string specifying a location constraint. If \code{NULL} (for example, for S3-compatible storage), no LocationConstraint body is passed.
 #' @param headers List of request headers for the REST call.
 #' @template dots
 #' @return \code{TRUE} if successful.
@@ -26,19 +27,20 @@ function(bucket,
          acl = c("private", "public-read", "public-read-write", 
                  "aws-exec-read", "authenticated-read", 
                  "bucket-owner-read", "bucket-owner-full-control"),
-         headers = list(), 
+         location_constraint = region,
+         headers = list(),
          ...){
-    if (region == "us-east-1") {
-        b <- ""
+    
+    if (!is.null(location_constraint) && location_constraint != "us-east-1") {
+        bod <- paste0('<CreateBucketConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><LocationConstraint>',
+                    location_constraint, '</LocationConstraint></CreateBucketConfiguration>')
     } else {
-        b <- paste0('<CreateBucketConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><LocationConstraint>', 
-                    region, '</LocationConstraint></CreateBucketConfiguration>')
+        bod <- ""
     }
-    acl <- match.arg(acl)
-    headers <- c(list(`x-amz-acl` = acl), headers)
+    headers <- c(list(`x-amz-acl` = match.arg(acl)), headers)
     ir <- s3HTTP(verb = "PUT", 
                 bucket = bucket,
-                request_body = b,
+                request_body = bod,
                 headers = headers,
                 region = region,
                 check_region = FALSE,

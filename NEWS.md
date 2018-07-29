@@ -1,3 +1,7 @@
+# aws.s3 0.3.19
+
+* `put_bucket()` gains a `location_constraint` argument, which - if NULL - does not pass a LocationConstraint body argument. This is useful for S3-compatible storage. (#189)
+
 # aws.s3 0.3.18
 
 * Allowed both virtual- and path-style URLs for S3-compatible storage and fixed region handling for S3-compatible URLs. (#189)

@@ -7,7 +7,7 @@
 put_bucket(bucket, region = Sys.getenv("AWS_DEFAULT_REGION"),
   acl = c("private", "public-read", "public-read-write", "aws-exec-read",
   "authenticated-read", "bucket-owner-read", "bucket-owner-full-control"),
-  headers = list(), ...)
+  location_constraint = region, headers = list(), ...)
 }
 \arguments{
 \item{bucket}{Character string with the name of the bucket, or an object of class \dQuote{s3_bucket}.}
@@ -15,6 +15,8 @@ put_bucket(bucket, region = Sys.getenv("AWS_DEFAULT_REGION"),
 \item{region}{A character string containing the AWS region. If missing, defaults to value of environment variable \env{AWS_DEFAULT_REGION}.}
 
 \item{acl}{A character string indicating a \href{http://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl}{\dQuote{canned} access control list}. By default all bucket contents and objects therein are given the ACL \dQuote{private}. This can later be viewed using \code{\link{get_acl}} and modified using \code{\link{put_acl}}.}
+
+\item{location_constraint}{A character string specifying a location constraint. If \code{NULL} (for example, for S3-compatible storage), no LocationConstraint body is passed.}
 
 \item{headers}{List of request headers for the REST call.}
 
