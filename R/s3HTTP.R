@@ -102,7 +102,6 @@ function(verb = "GET",
     if (all(sapply(query, is.null))) {
         query <- NULL
     }
-    
     # assess whether request is authenticated or not
     if (is.null(key) || key == "") {
         if (isTRUE(verbose)) {

@@ -29,7 +29,7 @@ function(bucket,
          headers = list(), 
          ...){
     if (region == "us-east-1") {
-        b <- NULL
+        b <- ""
     } else {
         b <- paste0('<CreateBucketConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><LocationConstraint>', 
                     region, '</LocationConstraint></CreateBucketConfiguration>')
