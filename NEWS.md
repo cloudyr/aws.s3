@@ -1,3 +1,8 @@
+# aws.s3 0.3.18
+
+* Allowed both virtual- and path-style URLs for S3-compatible storage and fixed region handling for S3-compatible URLs. (#189)
+* Fixed a request signature bug in `put_bucket()` when `region = "us-east-1"`. (#243)
+
 # aws.s3 0.3.17
 
 * Added `s3connection()` function to stream objects from S3. (#217)

@@ -94,8 +94,11 @@ function(verb = "GET",
     p <- httr::parse_url(url)
     action <- if (p$path == "") "/" else paste0("/", p$path)
     hostname <- paste(p$hostname, p$port, sep=ifelse(length(p$port), ":", ""))
+    
+    # parse headers
     canonical_headers <- c(list(host = hostname,
                                 `x-amz-date` = d_timestamp), headers)
+    # parse query arguments
     if (is.null(query) && !is.null(p$query)) {
         query <- p[["query"]]
     }
@@ -111,6 +114,7 @@ function(verb = "GET",
         Sig <- list()
         H <- do.call(httr::add_headers, headers)
     } else {
+        # if authenticated, figure out the request signature
         if (isTRUE(verbose)) {
             message("Executing request with AWS credentials")
         }
@@ -118,6 +122,7 @@ function(verb = "GET",
                datetime = d_timestamp,
                region = region,
                service = "s3",
+               # For s3connection() we hack the 'verb' argument. It's otherwise a GET request.
                verb = if (verb == "connection") "GET" else verb,
                action = action,
                query_args = query,
@@ -253,16 +258,19 @@ function(bucketname,
          verbose = getOption("verbose", FALSE),
          use_https = TRUE) 
 {
+    # Figure out 'path' or 'virtual' style. Default is 'path'.
     url_style <- match.arg(url_style)
     
     # handle S3-compatible storage URLs
     if (base_url != "s3.amazonaws.com") {
-        if (isTRUE(verbose) && url_style != "path") {
-            message("Non-AWS base URL requested. Switching to path-style URLs.")
+        if (isTRUE(verbose)) {
+            message("Non-AWS base URL requested.")
         }
-        url_style <- "path"
         accelerate <- FALSE
         dualstack <- FALSE
+        if (!is.null(region) && region != "") {
+            base_url <- paste0(region, ".", base_url)
+        }
     } else {
         # if accelerate = TRUE, must use virtual paths
         if (isTRUE(accelerate)) {
@@ -326,15 +334,18 @@ function(bucketname,
         url <- paste0(prefix, base_url)
     } else {
         if (url_style == "virtual") {
+            # virtual-style URL
             if (isTRUE(accelerate) && grepl("\\.", bucketname)) {
                 stop("To use 'accelerate' for bucket name with dots (.), 'url_style' must be 'path'")
             }
             url <- paste0(prefix, bucketname, ".", base_url)
         } else {
+            # path-style URL (the default)
             url <- paste0(prefix, base_url, "/", bucketname)
         }
     }
     
+    # cleanup terminal slashes
     terminal_slash <- grepl("/$", path)
     path <- if (path == "") "/" else {
         paste(sapply(
