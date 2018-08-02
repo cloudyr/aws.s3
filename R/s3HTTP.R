@@ -268,7 +268,7 @@ function(bucketname,
         }
         accelerate <- FALSE
         dualstack <- FALSE
-        if (!is.null(region) && region != "") {
+        if (!is.null(region) && region != "" && !region %in% c("us-east-1", "")) {
             base_url <- paste0(region, ".", base_url)
         }
     } else {
