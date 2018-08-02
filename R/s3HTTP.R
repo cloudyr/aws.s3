@@ -57,7 +57,7 @@ function(verb = "GET",
     secret <- credentials[["secret"]]
     session_token <- credentials[["session_token"]]
     region <- credentials[["region"]]
-
+    
     # handle 'show_progress' argument
     if (isTRUE(show_progress)) {
         if (verb %in% c("GET")) {
@@ -101,7 +101,7 @@ function(verb = "GET",
     if (all(sapply(query, is.null))) {
         query <- NULL
     }
-
+    
     # assess whether request is authenticated or not
     if (is.null(key) || key == "") {
         if (isTRUE(verbose)) {
@@ -135,7 +135,7 @@ function(verb = "GET",
         headers[["Authorization"]] <- Sig[["SignatureHeader"]]
         H <- do.call(httr::add_headers, headers)
     }
-
+    
     # execute request
     if (verb == "GET") {
         if (!is.null(write_disk)) {
@@ -169,22 +169,26 @@ function(verb = "GET",
             attributes(out) <- c(attributes(out), httr::headers(r))
             return(out)
         }
-    } else if (verb == "POST" || verb == "PUT") {
-        req_func <- httr::POST
-        if (verb == "PUT") {
-            req_func <- httr::PUT
-        }
+    } else if (verb == "POST") {
         if (is.character(request_body) && request_body == "") {
-            r <- req_func(url, H, query = query, show_progress, ...)
+            r <- httr::POST(url, H, query = query, show_progress, ...)
         } else if (is.character(request_body) && file.exists(request_body)) {
-            r <- req_func(url, H, body = httr::upload_file(request_body), query = query, show_progress, ...)
+            r <- httr::POST(url, H, body = httr::upload_file(request_body), query = query, show_progress, ...)
         } else {
-            r <- req_func(url, H, body = request_body, query = query, show_progress, ...)
+            r <- httr::POST(url, H, body = request_body, query = query, show_progress, ...)
+        }
+    } else if (verb == "PUT") {
+        if (is.character(request_body) && request_body == "") {
+            r <- httr::PUT(url, H, query = query, show_progress, ...)
+        } else if (is.character(request_body) && file.exists(request_body)) {
+            r <- httr::PUT(url, H, body = httr::upload_file(request_body), query = query, show_progress, ...)
+        } else {
+            r <- httr::PUT(url, H, body = request_body, query = query, show_progress, ...)
         }
     } else if (verb == "OPTIONS") {
         r <- httr::VERB("OPTIONS", url, H, query = query, ...)
     }
-
+    
     # handle response, failing if HTTP error occurs
     if (isTRUE(parse_response)) {
         out <- parse_aws_s3_response(r, Sig, verbose = verbose)
