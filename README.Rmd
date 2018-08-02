@@ -57,16 +57,17 @@ S3 can be a bit picky about region specifications. `bucketlist()` will return bu
 
 ### Objects
 
-There are eight main functions that will be useful for working with objects in S3:
+This package contains many functions. The following are those that will be useful for working with objects in S3:
 
- 1. `s3read_using()` provides a generic interface for reading from S3 objects using a user-defined function
- 2. `s3write_using()` provides a generic interface for writing to S3 objects using a user-defined function
- 3. `get_object()` returns a raw vector representation of an S3 object. This might then be parsed in a number of ways, such as `rawToChar()`, `xml2::read_xml()`, `jsonlite::fromJSON()`, and so forth depending on the file format of the object
- 4. `save_object()` saves an S3 object to a specified local file
- 5. `put_object()` stores a local file into an S3 bucket
- 6. `s3save()` saves one or more in-memory R objects to an .Rdata file in S3 (analogously to `save()`). `s3saveRDS()` is an analogue for `saveRDS()`
- 7. `s3load()` loads one or more objects into memory from an .Rdata file stored in S3 (analogously to `load()`). `s3readRDS()` is an analogue for `readRDS()`
- 8. `s3source()` sources an R script directly from S3
+ 1. `bucketlist()` provides the data frames of buckets to which the user has access.
+ 2. `get_bucket()` and `get_bucket_df()` provide a list and data frame, respectively, of objects in a given bucket.
+ 3. `object_exists()` provides a logical for whether an object exists. `bucket_exists()` provides the same for buckets.
+ 4. `s3read_using()` provides a generic interface for reading from S3 objects using a user-defined function. `s3write_using()` provides a generic interface for writing to S3 objects using a user-defined function
+ 5. `get_object()` returns a raw vector representation of an S3 object. This might then be parsed in a number of ways, such as `rawToChar()`, `xml2::read_xml()`, `jsonlite::fromJSON()`, and so forth depending on the file format of the object. `save_object()` saves an S3 object to a specified local file without reading it into memory.
+ 6. `s3connection()` provides a binary readable connection to stream an S3 object into R. This can be useful for reading for very large files. `get_object()` also allows reading of byte ranges of functions (see the documentation for examples).
+ 7. `put_object()` stores a local file into an S3 bucket. The `multipart = TRUE` argument can be used to upload large files in pieces.
+ 8. `s3save()` saves one or more in-memory R objects to an .Rdata file in S3 (analogously to `save()`). `s3saveRDS()` is an analogue for `saveRDS()`. `s3load()` loads one or more objects into memory from an .Rdata file stored in S3 (analogously to `load()`). `s3readRDS()` is an analogue for `readRDS()`
+ 9. `s3source()` sources an R script directly from S3
 
 They behave as you would probably expect:
 

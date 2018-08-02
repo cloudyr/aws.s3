@@ -1,3 +1,21 @@
+# aws.s3 0.3.19
+
+* `put_bucket()` gains a `location_constraint` argument, which - if NULL - does not pass a LocationConstraint body argument. This is useful for S3-compatible storage. (#189)
+
+# aws.s3 0.3.18
+
+* Allowed both virtual- and path-style URLs for S3-compatible storage and fixed region handling for S3-compatible URLs. (#189)
+* Fixed a request signature bug in `put_bucket()` when `region = "us-east-1"`. (#243)
+
+# aws.s3 0.3.17
+
+* Added `s3connection()` function to stream objects from S3. (#217)
+
+# aws.s3 0.3.16
+
+* Refactored `put_object(multipart = TRUE)` to improve memory efficiency. (h/t Andrii Degtiarov, #242)
+* Added provisional support for S3 SELECT via the `select_object()` function. (#224)
+
 # aws.s3 0.3.14
 
 * Fixed several bugs in `put_object(multipart = TRUE)`. (#80)

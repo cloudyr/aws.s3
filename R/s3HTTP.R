@@ -26,6 +26,7 @@
 #' @import httr
 #' @importFrom xml2 read_xml as_list
 #' @importFrom utils URLencode
+#' @importFrom curl handle_setheaders new_handle curl
 #' @import aws.signature
 #' @export
 s3HTTP <- 
@@ -93,15 +94,17 @@ function(verb = "GET",
     p <- httr::parse_url(url)
     action <- if (p$path == "") "/" else paste0("/", p$path)
     hostname <- paste(p$hostname, p$port, sep=ifelse(length(p$port), ":", ""))
+    
+    # parse headers
     canonical_headers <- c(list(host = hostname,
                                 `x-amz-date` = d_timestamp), headers)
+    # parse query arguments
     if (is.null(query) && !is.null(p$query)) {
         query <- p[["query"]]
     }
     if (all(sapply(query, is.null))) {
         query <- NULL
     }
-    
     # assess whether request is authenticated or not
     if (is.null(key) || key == "") {
         if (isTRUE(verbose)) {
@@ -111,6 +114,7 @@ function(verb = "GET",
         Sig <- list()
         H <- do.call(httr::add_headers, headers)
     } else {
+        # if authenticated, figure out the request signature
         if (isTRUE(verbose)) {
             message("Executing request with AWS credentials")
         }
@@ -118,7 +122,8 @@ function(verb = "GET",
                datetime = d_timestamp,
                region = region,
                service = "s3",
-               verb = verb,
+               # For s3connection() we hack the 'verb' argument. It's otherwise a GET request.
+               verb = if (verb == "connection") "GET" else verb,
                action = action,
                query_args = query,
                canonical_headers = canonical_headers,
@@ -138,12 +143,20 @@ function(verb = "GET",
     
     # execute request
     if (verb == "GET") {
+        # GET verb
         if (!is.null(write_disk)) {
             r <- httr::GET(url, H, query = query, write_disk, show_progress, ...)
         } else {
             r <- httr::GET(url, H, query = query, show_progress, ...)
         }
+    } else if (verb == "connection") {
+        # support for a streaming GET connection
+        stream_handle <- curl::new_handle()
+        curl::handle_setheaders(stream_handle, .list = headers)
+        connection <- curl::curl(url, open = "rb", handle = stream_handle)
+        return(connection)
     } else if (verb == "HEAD") {
+        # HEAD verb
         r <- httr::HEAD(url, H, query = query, ...)
         s <- httr::http_status(r)
         if (tolower(s$category) == "success") {
@@ -157,6 +170,7 @@ function(verb = "GET",
             return(out)
         }
     } else if (verb == "DELETE") {
+        # DELETE verb
         r <- httr::DELETE(url, H, query = query, ...)
         s <- httr::http_status(r)
         if (tolower(s$category) == "success") {
@@ -170,6 +184,7 @@ function(verb = "GET",
             return(out)
         }
     } else if (verb == "POST") {
+        # POST verb
         if (is.character(request_body) && request_body == "") {
             r <- httr::POST(url, H, query = query, show_progress, ...)
         } else if (is.character(request_body) && file.exists(request_body)) {
@@ -178,6 +193,7 @@ function(verb = "GET",
             r <- httr::POST(url, H, body = request_body, query = query, show_progress, ...)
         }
     } else if (verb == "PUT") {
+        # PUT verb
         if (is.character(request_body) && request_body == "") {
             r <- httr::PUT(url, H, query = query, show_progress, ...)
         } else if (is.character(request_body) && file.exists(request_body)) {
@@ -186,6 +202,7 @@ function(verb = "GET",
             r <- httr::PUT(url, H, body = request_body, query = query, show_progress, ...)
         }
     } else if (verb == "OPTIONS") {
+        # OPTIONS verb
         r <- httr::VERB("OPTIONS", url, H, query = query, ...)
     }
     
@@ -241,16 +258,19 @@ function(bucketname,
          verbose = getOption("verbose", FALSE),
          use_https = TRUE) 
 {
+    # Figure out 'path' or 'virtual' style. Default is 'path'.
     url_style <- match.arg(url_style)
     
     # handle S3-compatible storage URLs
     if (base_url != "s3.amazonaws.com") {
-        if (isTRUE(verbose) && url_style != "path") {
-            message("Non-AWS base URL requested. Switching to path-style URLs.")
+        if (isTRUE(verbose)) {
+            message("Non-AWS base URL requested.")
         }
-        url_style <- "path"
         accelerate <- FALSE
         dualstack <- FALSE
+        if (!is.null(region) && region != "") {
+            base_url <- paste0(region, ".", base_url)
+        }
     } else {
         # if accelerate = TRUE, must use virtual paths
         if (isTRUE(accelerate)) {
@@ -314,15 +334,18 @@ function(bucketname,
         url <- paste0(prefix, base_url)
     } else {
         if (url_style == "virtual") {
+            # virtual-style URL
             if (isTRUE(accelerate) && grepl("\\.", bucketname)) {
                 stop("To use 'accelerate' for bucket name with dots (.), 'url_style' must be 'path'")
             }
             url <- paste0(prefix, bucketname, ".", base_url)
         } else {
+            # path-style URL (the default)
             url <- paste0(prefix, base_url, "/", bucketname)
         }
     }
     
+    # cleanup terminal slashes
     terminal_slash <- grepl("/$", path)
     path <- if (path == "") "/" else {
         paste(sapply(
