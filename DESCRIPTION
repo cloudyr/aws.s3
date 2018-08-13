@@ -1,8 +1,8 @@
 Package: aws.s3
 Type: Package
 Title: 'AWS S3' Client Package
-Version: 0.3.19
-Date: 2018-07-29
+Version: 0.3.20
+Date: 2018-08-13
 Authors@R: c(person("Thomas J.", "Leeper", role = c("aut", "cre"),
                     email = "thosjleeper@gmail.com",
                     comment = c(ORCID = "0000-0003-4097-6326")),

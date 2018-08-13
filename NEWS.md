@@ -1,3 +1,7 @@
+# aws.s3 0.3.20
+
+* Add `acl` and `header` arguments to `put_acl()`, ala `put_object()`. (#137)
+
 # aws.s3 0.3.19
 
 * `put_bucket()` gains a `location_constraint` argument, which - if NULL - does not pass a LocationConstraint body argument. This is useful for S3-compatible storage. (#189)

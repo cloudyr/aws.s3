@@ -63,16 +63,18 @@
 #' @seealso \code{\link{put_bucket}}, \code{\link{get_object}}, \code{\link{delete_object}}, \code{\link{put_encryption}}
 #' @importFrom utils head
 #' @export
-put_object <- 
-function(file, 
-         object, 
-         bucket, 
-         multipart = FALSE, 
-         acl = NULL,
-         headers = list(),
-         verbose = getOption("verbose", FALSE),
-         show_progress = getOption("verbose", FALSE),
-         ...) {
+put_object <-
+function(
+  file,
+  object,
+  bucket,
+  multipart = FALSE,
+  acl = NULL,
+  headers = list(),
+  verbose = getOption("verbose", FALSE),
+  show_progress = getOption("verbose", FALSE),
+  ...
+) {
     if (missing(object) && is.character(file)) {
         object <- basename(file)
     } else {
