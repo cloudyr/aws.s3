@@ -15,12 +15,12 @@
 #' @export
 get_acl <- function(object, bucket, ...) {
     if (!missing(object)) {
-        object <- get_objectkey(object)
         if (!missing(bucket)) {
             bucket <- get_bucketname(bucket)
         } else {
             bucket <- get_bucketname(object)
         }
+        object <- get_objectkey(object)
         r <- s3HTTP(verb = "GET", 
                     path = paste0('/', object),
                     bucket = bucket,
