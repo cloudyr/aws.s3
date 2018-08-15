@@ -52,7 +52,6 @@ function(
     if (missing(bucket)) {
         bucket <- get_bucketname(object)
     }
-    object <- get_objectkey(object)
     if (!"x-amz-acl" %in% names(headers)) {
         if (!is.null(acl)) {
             acl <- match.arg(acl, c("private", "public-read", "public-read-write", "aws-exec-read", "authenticated-read", "bucket-owner-read", "bucket-owner-full-control"))
@@ -78,6 +77,7 @@ function(
                         ...)
         }
     } else {
+        object <- get_objectkey(object)
         if (inherits(object, "s3_object"))
             object <- object$Key
         if (is.null(body)) {
