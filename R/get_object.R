@@ -7,7 +7,7 @@
 #' @param request_body For \code{select_object}, an XML request body as described in the \href{https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectSELECTContent.html}{SELECT API documentation}.
 #' @param headers List of request headers for the REST call.
 #' @param parse_response Passed through to \code{\link{s3HTTP}}, as this function requires a non-default setting. There is probably no reason to ever change this.
-#' @param as Passed through to \code{\link{httr::content}}. 
+#' @param as Passed through to \code{httr::content}. 
 #' @template dots
 #' @details \code{get_object} retrieves an object into memory as a raw vector. This page describes \code{get_object} and several wrappers that provide additional useful functionality.
 #' 
@@ -61,7 +61,8 @@
 #' 
 #'   ## use data.table::fread without saving object to file
 #'   library(data.table)
-#'   fread(get_object("s3://myexamplebucket/mtcars", as = "text"))
+#'   s3write_using(as.data.table(mtcars), bucket = b, object = "mtcars2.csv", FUN = data.table::fwrite)
+#'   fread(get_object("mtcars2.csv", bucket = b, as = "text"))
 #' 
 #'   ## cleanup
 #'   close(con)

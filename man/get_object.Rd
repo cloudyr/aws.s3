@@ -27,7 +27,7 @@ s3connection(object, bucket, headers = list(), ...)
 
 \item{parse_response}{Passed through to \code{\link{s3HTTP}}, as this function requires a non-default setting. There is probably no reason to ever change this.}
 
-\item{as}{Passed through to \code{\link{httr::content}}.}
+\item{as}{Passed through to \code{httr::content}.}
 
 \item{\dots}{Additional arguments passed to \code{\link{s3HTTP}}.}
 
@@ -96,7 +96,8 @@ Higher-level functions
 
   ## use data.table::fread without saving object to file
   library(data.table)
-  fread(get_object("s3://myexamplebucket/mtcars", as = "text"))
+  s3write_using(as.data.table(mtcars), bucket = b, object = "mtcars2.csv", FUN = data.table::fwrite)
+  fread(get_object("mtcars2.csv", bucket = b, as = "text"))
 
   ## cleanup
   close(con)
