@@ -57,6 +57,7 @@ s3read_using <- function(FUN, ..., object, bucket, opts = NULL) {
     object <- get_objectkey(object)
     
     tmp <- tempfile(fileext = paste0(".", tools::file_ext(object)))
+    on.exit(unlink(tmp), add = TRUE)
     if (is.null(opts)) {
         r <- save_object(bucket = bucket, object = object, file = tmp)
     } else {
