@@ -7,7 +7,8 @@
 \alias{s3connection}
 \title{Get object}
 \usage{
-get_object(object, bucket, headers = list(), parse_response = FALSE, ...)
+get_object(object, bucket, headers = list(), parse_response = FALSE,
+  as = "raw", ...)
 
 save_object(object, bucket, file = basename(object), headers = list(),
   overwrite = TRUE, ...)
@@ -25,6 +26,8 @@ s3connection(object, bucket, headers = list(), ...)
 \item{headers}{List of request headers for the REST call.}
 
 \item{parse_response}{Passed through to \code{\link{s3HTTP}}, as this function requires a non-default setting. There is probably no reason to ever change this.}
+
+\item{as}{Passed through to \code{httr::content}.}
 
 \item{\dots}{Additional arguments passed to \code{\link{s3HTTP}}.}
 
@@ -90,6 +93,12 @@ Higher-level functions
   while(length(x <- readLines(con, n = 1L))) {
     print(x)
   }
+
+  ## use data.table::fread without saving object to file
+  library(data.table)
+  s3write_using(as.data.table(mtcars), bucket = b, object = "mtcars2.csv", FUN = data.table::fwrite)
+  fread(get_object("mtcars2.csv", bucket = b, as = "text"))
+
   ## cleanup
   close(con)
   delete_bucket("myexamplebucket")
