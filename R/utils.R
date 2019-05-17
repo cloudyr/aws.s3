@@ -83,9 +83,9 @@ as.data.frame.s3_bucket <- function(x, row.names = NULL, optional = FALSE, ...) 
               ETag = z[["ETag"]],
               Size = z[["Size"]],
               Owner_ID =
-                ifelse(is.null(z[["Owner"]]), NA, z[["Owner"]][["ID"]]),
+                ifelse(is.null(z[["Owner"]][["ID"]]), NA, z[["Owner"]][["ID"]]),
               Owner_DisplayName =
-                ifelse(is.null(z[["Owner"]]), NA, z[["Owner"]][["DisplayName"]]),
+                ifelse(is.null(z[["Owner"]][["DisplayName"]]), NA, z[["Owner"]][["DisplayName"]]),
               StorageClass = z[["StorageClass"]],
               Bucket = z[["Bucket"]])
         })
