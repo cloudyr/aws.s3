@@ -133,7 +133,7 @@ s3sync <- function(files = dir(recursive = TRUE), bucket, direction = c("upload"
         ## check time modified
         modifiedfiles <- file.info(tosync)$mtime
         modifiedobjects <- unname(unlist(lapply(b[whichinboth[!matched]], `[[`, "LastModified")))
-        modifiedobjects <- strptime(modifiedobjects, format = "%FT%H:%M:%OSZ")
+        modifiedobjects <- strptime(modifiedobjects, format = "%FT%H:%M:%OSZ", tz = "UTC")
         timediff <- modifiedfiles - modifiedobjects
         
         # sync files
