@@ -2,6 +2,7 @@
 
 * Add `acl` and `header` arguments to `put_acl()`, ala `put_object()`. (#137)
 * Make sure content-length is an integer (#254)
+* Fix bug with `s3sync()` not uploading recently updated files (#297)` 
 
 # aws.s3 0.3.19
 
