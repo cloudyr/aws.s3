@@ -38,7 +38,7 @@ delete_object <- function(object, bucket, quiet = TRUE, ...) {
                     bucket = bucket,
                     query = list(delete = ""),
                     request_body = tmpfile,
-                    headers = list(`Content-Length` = file.size(tmpfile), 
+                    headers = list(`Content-Length` = formatSize(file.size(tmpfile)), 
                                    `Content-MD5` = md), 
                     ...)
         return(TRUE)
