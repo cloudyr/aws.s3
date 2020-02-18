@@ -49,14 +49,14 @@ s3write_using <- function(x, FUN, ..., object, bucket, opts = NULL) {
 
 #' @rdname s3read_using
 #' @export
-s3read_using <- function(FUN, ..., object, bucket, opts = NULL) {
+s3read_using <- function(FUN, ..., object, bucket, opts = NULL, tmp_dir = tools::file_ext(object)) {
     
     if (missing(bucket)) {
         bucket <- get_bucketname(object)
     }
     object <- get_objectkey(object)
     
-    tmp <- tempfile(fileext = paste0(".", tools::file_ext(object)))
+    tmp <- tempfile(fileext = paste0(".", tmp_dir))
     if (is.null(opts)) {
         r <- save_object(bucket = bucket, object = object, file = tmp)
     } else {
