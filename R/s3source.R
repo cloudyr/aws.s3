@@ -37,7 +37,7 @@ s3source <- function(object, bucket, ..., opts = NULL) {
     } else {
         r <- do.call("get_object", c(list(bucket = bucket, object = object), opts))
     }
-    rc <- rawConnection(r, "r+")
+    rc <- rawConnection(r, "r")
     on.exit(close(rc))
     return(source(rc, ...))
 }
