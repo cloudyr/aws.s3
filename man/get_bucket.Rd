@@ -5,11 +5,24 @@
 \alias{get_bucket_df}
 \title{List bucket contents}
 \usage{
-get_bucket(bucket, prefix = NULL, delimiter = NULL, max = NULL,
-  marker = NULL, parse_response = TRUE, ...)
+get_bucket(
+  bucket,
+  prefix = NULL,
+  delimiter = NULL,
+  max = NULL,
+  marker = NULL,
+  parse_response = TRUE,
+  ...
+)
 
-get_bucket_df(bucket, prefix = NULL, delimiter = NULL, max = NULL,
-  marker = NULL, ...)
+get_bucket_df(
+  bucket,
+  prefix = NULL,
+  delimiter = NULL,
+  max = NULL,
+  marker = NULL,
+  ...
+)
 }
 \arguments{
 \item{bucket}{Character string with the name of the bucket, or an object of class \dQuote{s3_bucket}.}

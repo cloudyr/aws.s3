@@ -7,14 +7,32 @@
 \alias{s3connection}
 \title{Get object}
 \usage{
-get_object(object, bucket, headers = list(), parse_response = FALSE,
-  as = "raw", ...)
+get_object(
+  object,
+  bucket,
+  headers = list(),
+  parse_response = FALSE,
+  as = "raw",
+  ...
+)
 
-save_object(object, bucket, file = basename(object), headers = list(),
-  overwrite = TRUE, ...)
+save_object(
+  object,
+  bucket,
+  file = basename(object),
+  headers = list(),
+  overwrite = TRUE,
+  ...
+)
 
-select_object(object, bucket, request_body, headers = list(),
-  parse_response = FALSE, ...)
+select_object(
+  object,
+  bucket,
+  request_body,
+  headers = list(),
+  parse_response = FALSE,
+  ...
+)
 
 s3connection(object, bucket, headers = list(), ...)
 }
