@@ -40,8 +40,4 @@ s3source <- function(object, bucket, ..., opts = NULL) {
     rc <- rawConnection(r, "r+")
     on.exit(close(rc))
     return(source(rc, ...))
-#    tmp <- tempfile(fileext = ".R")
-#    on.exit(unlink(tmp))
-#    writeBin(object = r, con = tmp)
-#    return(source(tmp, ...))
 }
