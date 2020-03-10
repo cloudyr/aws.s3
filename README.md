@@ -53,7 +53,7 @@ Sys.setenv("AWS_ACCESS_KEY_ID" = "mykey",
 get_bucket("my_bucket")
 ```
 
-S3 can be a bit picky about region specifications. `bucketlist()` will return buckets from all regions, but all other functions require specifying a region. A default of `"us-east-1"` is relied upon if none is specified explicitly and the correct region can't be detected automatically. (Note: using an incorrect region is one of the most common - and hardest to figure out - errors when working with S3.)
+S3 can be a bit picky about region specifications. `bucketlist()` will return buckets from all regions, but all other functions require specifying a region. A default of `"us-east-1"` is relied upon if none is specified explicitly and the correct region can't be detected automatically. (Note: Using an incorrect region is one of the most common and hardest to figure out - error when working with S3).
 
 ### Objects
 
