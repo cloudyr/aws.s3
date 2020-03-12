@@ -14,7 +14,7 @@ Sys.setenv("AWS_ACCESS_KEY_ID" = "mykey",
 ```
 
 **Remarks:**
-* To use the package with S3-compatible storage provided by other cloud platforms, set the `AWS_S3_ENDPOINT` environment variable to the appropriate host name. By default, the package uses the AWS endpoint: `s3.amazonaws.com`
+* To use the package with S3-compatible storage provided by other cloud platforms, set the `AWS_S3_ENDPOINT` environment variable to the appropriate host name. By default, the package uses the AWS endpoint: `s3.amazonaws.com`. Note that you may have to set `region=""` in the request as well if the back-end uses only a single server with no concept of regions.
 * To use the package from an EC2 instance, you would need to install `aws.ec2metadata`. This way, credential will be obtained from the machine's role.
 
 
@@ -55,7 +55,7 @@ Sys.setenv("AWS_ACCESS_KEY_ID" = "mykey",
 get_bucket("my_bucket")
 ```
 
-S3 can be a bit picky about region specifications. `bucketlist()` will return buckets from all regions, but all other functions require specifying a region. A default of `"us-east-1"` is relied upon if none is specified explicitly and the correct region can't be detected automatically. (Note: Using an incorrect region is one of the most common and hardest to figure out - error when working with S3).
+S3 can be a bit picky about region specifications. `bucketlist()` will return buckets from all regions, but all other functions require specifying a region. A default of `"us-east-1"` is relied upon if none is specified explicitly and the correct region can't be detected automatically. (Note: using an incorrect region is one of the most common - and hardest to figure out - errors when working with S3.)
 
 ### Objects
 
