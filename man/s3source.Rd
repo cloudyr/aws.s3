@@ -27,7 +27,7 @@ Source R code (a la \code{\link[base]{source}}) from S3
 b <- put_bucket("myexamplebucket")
 
 # save some code to the bucket
-cat("x <- 'hello world!'\\nx", file = "example.R")
+cat("x <- 'hello world!'\nx", file = "example.R")
 put_object("example.R", object = "example.R", bucket = b)
 get_bucket(b)
 
