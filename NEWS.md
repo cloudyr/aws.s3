@@ -2,6 +2,7 @@
 
 * Replace `sprintf()` where possible to avoid type mismatches. (#329)
 * Handle result of length one in `bucketlist()` correctly. (#333)
+* Setting `region=""` and custom `base_url` enables the use of single-host non-AWS back-ends (e.g., [minio](https://github.com/minio/minio)). (#340)
 
 # aws.s3 0.3.20
 
