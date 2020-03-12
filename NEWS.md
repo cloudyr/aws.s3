@@ -1,3 +1,8 @@
+# aws.s3 0.3.21 (under development)
+
+* Replace `sprintf()` where possible to avoid type mismatches. (#329)
+* Handle result of length one in `bucketlist()` correctly. (#333)
+
 # aws.s3 0.3.20
 
 * Add `acl` and `header` arguments to `put_acl()`, ala `put_object()`. (#137)
