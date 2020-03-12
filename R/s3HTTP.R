@@ -74,14 +74,14 @@ function(verb = "GET",
     bucketname <- get_bucketname(bucket)
     if (isTRUE(check_region) && (bucketname != "")) {
         if (isTRUE(verbose)) {
-            message(sprintf("Checking bucket region using get_location('%s')", bucketname))
+            message("Checking bucket region using get_location('", bucketname, "')")
         }
         bucketregion <- get_region(x = bucket, key = key, secret = secret, session_token = session_token, ...)
         if (!is.null(bucketregion) && bucketregion != "") {
             region <- bucketregion
         }
         if (isTRUE(verbose)) {
-            message(sprintf("Executing request using bucket region %s", region))
+            message("Executing request using bucket region ", region)
         }
     }
     
@@ -363,7 +363,7 @@ function(bucketname,
         url <- paste0(url, "/")
     }
     if (isTRUE(verbose)) {
-        message(sprintf("S3 Request URL: %s", url))
+        message("S3 Request URL: ", url)
     }
     return(url)
 }
