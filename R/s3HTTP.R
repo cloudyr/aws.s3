@@ -13,10 +13,10 @@
 #' @param parse_response A logical indicating whether to return the response as is, or parse and return as a list. Default is \code{TRUE}.
 #' @param check_region A logical indicating whether to check the value of \code{region} against the apparent bucket region. This is useful for avoiding (often confusing) out-of-region errors. Default is \code{FALSE}.
 #' @param url_style A character string specifying either \dQuote{path} (the default), or \dQuote{virtual}-style S3 URLs.
-#' @param base_url A character string specifying the base URL for the request. There is no need to set this, as it is provided only to generalize the package to (potentially) support S3-compatible storage on non-AWS servers. The easiest way to use S3-compatible storage is to set the \env{AWS_S3_ENDPOINT} environment variable.
+#' @param base_url A character string specifying the base hostname for the request (it is a misnomer, the actual URL is constructed from this name, region and \code{use_https} flag. There is no need to set this, as it is provided only to generalize the package to (potentially) support S3-compatible storage on non-AWS servers. The easiest way to use S3-compatible storage is to set the \env{AWS_S3_ENDPOINT} environment variable. When using non-AWS servers, you may also want to set \code{region=""}.
 #' @param verbose A logical indicating whether to be verbose. Default is given by \code{options("verbose")}.
 #' @param show_progress A logical indicating whether to show a progress bar for downloads and uploads. Default is given by \code{options("verbose")}.
-#' @param region A character string containing the AWS region. Ignored if region can be inferred from \code{bucket}. If missing, defaults to \dQuote{us-east-1}.
+#' @param region A character string containing the AWS region. Ignored if region can be inferred from \code{bucket}. If missing, an attempt is made to locate it from credentials. Defaults to \dQuote{us-east-1} if all else fails. Should be set to \code{""} when using non-AWS endpoints that don't include regions (and \code{base_url} must be set).
 #' @param key A character string containing an AWS Access Key ID. If missing, defaults to value stored in environment variable \env{AWS_ACCESS_KEY_ID}.
 #' @param secret A character string containing an AWS Secret Access Key. If missing, defaults to value stored in environment variable \env{AWS_SECRET_ACCESS_KEY}.
 #' @param session_token Optionally, a character string containing an AWS temporary Session Token. If missing, defaults to value stored in environment variable \env{AWS_SESSION_TOKEN}.
@@ -57,7 +57,8 @@ function(verb = "GET",
     key <- credentials[["key"]]
     secret <- credentials[["secret"]]
     session_token <- credentials[["session_token"]]
-    region <- credentials[["region"]]
+    ## allow region="" to override any config - the only way to use 3rd party URLs without region
+    region <- if (length(region) && !nzchar(region)) region else credentials[["region"]]
     
     # handle 'show_progress' argument
     if (isTRUE(show_progress)) {
