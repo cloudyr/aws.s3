@@ -7,7 +7,7 @@
 \usage{
 s3write_using(x, FUN, ..., object, bucket, opts = NULL)
 
-s3read_using(FUN, ..., object, bucket, opts = NULL)
+s3read_using(FUN, ..., object, bucket, opts = NULL, filename = NULL)
 }
 \arguments{
 \item{x}{For \code{s3write_using}, a single R object to be saved via the first argument to \code{FUN} and uploaded to S3.}
@@ -21,6 +21,8 @@ s3read_using(FUN, ..., object, bucket, opts = NULL)
 \item{bucket}{Character string with the name of the bucket, or an object of class \dQuote{s3_bucket}.}
 
 \item{opts}{Optional additional arguments passed to \code{\link{put_object}} or \code{\link{save_object}}, respectively.}
+
+\item{filename}{Optional string, name of the temporary file that will be created. If not specified, \code{tempfile()} with the extension of the object is used.}
 }
 \value{
 For \code{s3write_using}, a logical, invisibly. For \code{s3read_using}, the output of \code{FUN} applied to the file from \code{object}.
