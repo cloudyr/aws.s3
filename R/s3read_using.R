@@ -7,6 +7,7 @@
 #' @template object
 #' @template bucket
 #' @param opts Optional additional arguments passed to \code{\link{put_object}} or \code{\link{save_object}}, respectively.
+#' @param filename Optional string, name of the temporary file that will be created. If not specified, \code{tempfile()} with the extension of the object is used.
 #' @return For \code{s3write_using}, a logical, invisibly. For \code{s3read_using}, the output of \code{FUN} applied to the file from \code{object}.
 #' @examples
 #' \dontrun{
@@ -49,14 +50,19 @@ s3write_using <- function(x, FUN, ..., object, bucket, opts = NULL) {
 
 #' @rdname s3read_using
 #' @export
-s3read_using <- function(FUN, ..., object, bucket, opts = NULL) {
+s3read_using <- function(FUN, ..., object, bucket, opts = NULL, filename = NULL) {
     
     if (missing(bucket)) {
         bucket <- get_bucketname(object)
     }
     object <- get_objectkey(object)
     
-    tmp <- tempfile(fileext = paste0(".", tools::file_ext(object)))
+    tmp <- if (is.character(filename)) {
+               file.path(tempdir(TRUE), filename)
+           } else {
+               tempfile(fileext = paste0(".", tools::file_ext(object)))
+           }
+    on.exit(unlink(tmp))
     if (is.null(opts)) {
         r <- save_object(bucket = bucket, object = object, file = tmp)
     } else {
