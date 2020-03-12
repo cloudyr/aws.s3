@@ -4,6 +4,7 @@
 * Handle result of length one in `bucketlist()` correctly. (#333)
 * Setting `region=""` and custom `base_url` enables the use of single-host non-AWS back-ends (e.g., [minio](https://github.com/minio/minio)). (#340)
 * `s3read_using()` now cleans up after itself. (#270) It also gains a new argument `filename` which allows to specify the actual name of the file that will be used. (#341)
+* Avoid invalid scientific notation in content sizes. (#299, h/t Martijn Schuemie)
 
 # aws.s3 0.3.20
 
