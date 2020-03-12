@@ -42,7 +42,7 @@ put_tagging <- function(bucket, tags = list(), ...){
                 bucket = bucket,
                 query = list(tagging = ""),
                 request_body = tmpfile,
-                headers = list(`Content-Length` = file.size(tmpfile), 
+                headers = list(`Content-Length` = formatSize(file.size(tmpfile)), 
                                    `Content-MD5` = md),
                 ...)
     return(TRUE)
