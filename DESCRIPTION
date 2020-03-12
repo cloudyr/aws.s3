@@ -1,9 +1,8 @@
 Package: aws.s3
 Type: Package
 Title: 'AWS S3' Client Package
-Version: 0.3.20
-Date: 2018-08-13
-Authors@R: c(person("Thomas J.", "Leeper", role = c("aut", "cre"),
+Version: 0.3.21
+Authors@R: c(person("Thomas J.", "Leeper", role = "aut",
                     email = "thosjleeper@gmail.com",
                     comment = c(ORCID = "0000-0003-4097-6326")),
              person("Boettiger", "Carl", role = "ctb"),
@@ -13,7 +12,13 @@ Authors@R: c(person("Thomas J.", "Leeper", role = c("aut", "cre"),
              person("Steven", "Akins", role = "ctb"),
              person("Bao", "Nguyen", role = "ctb"),
              person("Thierry", "Onkelinx", role = "ctb"),
-             person("Andrii", "Degtiarov", role = "ctb"))
+             person("Andrii", "Degtiarov", role = "ctb"),
+             person("Dhruv", "Aggarwal", role = "ctb"),
+             person("Alyssa", "Columbus", role = "ctb"),
+             person("Simon", "Urbanek", role = c("cre", "ctb"),
+                    email = "simon.urbanek@R-project.org")
+	     )
+Maintainer: Simon Urbanek <simon.urbanek@R-project.org>
 Description: A simple client package for the Amazon Web Services ('AWS') Simple
     Storage Service ('S3') 'REST' 'API' <https://aws.amazon.com/s3/>.
 License: GPL (>= 2)
@@ -31,4 +36,4 @@ Imports:
 Suggests:
     testthat,
     datasets
-RoxygenNote: 6.0.1
+RoxygenNote: 7.0.2

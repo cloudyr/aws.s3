@@ -145,7 +145,7 @@ function(
         # loop over parts
         for (i in seq_len(nparts)) {
             if (isTRUE(verbose) | isTRUE(show_progress)) {
-                message(sprintf("Uploading part %d of %d-part upload", i, nparts))
+                message("Uploading part ", i, " of ", nparts, "-part upload")
             }
 
             data <- readBin(file, raw(), n=partsize)
@@ -181,7 +181,7 @@ function(
                          ))
         }
         if (as.numeric(headers[["Content-Length"]]) > 1e7) {
-            message(sprintf("File size is %s. Consider setting 'multipart = TRUE'.", headers[["Content-Length"]]))
+            message("File size is ", headers[["Content-Length"]], ". Consider setting 'multipart = TRUE'.")
         }
         r <- s3HTTP(verb = "PUT", 
                     bucket = bucket,
@@ -288,5 +288,5 @@ calculate_data_size <- function(data) {
 }
 
 formatSize <- function(size) {
-  return(format(size, scientific = FALSE)) 
+    format(size, scientific = FALSE)
 }

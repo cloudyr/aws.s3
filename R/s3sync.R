@@ -48,7 +48,7 @@ s3sync <- function(files = dir(recursive = TRUE), bucket, direction = c("upload"
     
     # return all bucket objects
     if (isTRUE(verbose)) {
-        message(sprintf("Getting bucket '%s'", bucket))
+        message("Getting bucket '", bucket, "'")
     }
     b <- get_bucket(bucket, max = Inf, ...)
     if (isTRUE(verbose)) {
@@ -75,14 +75,14 @@ s3sync <- function(files = dir(recursive = TRUE), bucket, direction = c("upload"
                 # create missing directory if needed locally
                 if (!file.exists(dirname(missingfiles[i]))) {
                     if (isTRUE(verbose)) {
-                        message(sprintf("Creating directory '%s'", dirname(missingfiles[i])))
+                        message("Creating directory '", dirname(missingfiles[i]), "'")
                     }
                     dir.create(dirname(missingfiles[i]), recursive = TRUE)
                 }
                 # save object
                 save_object(object = missingfiles[i], bucket = bucket, file = missingfiles[i], ...)
                 if (isTRUE(verbose)) {
-                    message(sprintf("Saving object '%s' to local directory", missingfiles[i]))
+                    message("Saving object '", missingfiles[i], "' to local directory")
                 }
             }
         }
@@ -101,7 +101,7 @@ s3sync <- function(files = dir(recursive = TRUE), bucket, direction = c("upload"
             for (i in seq_along(missingobjects)) {
                 put_object(file = missingobjects[i], object = missingobjects[i], bucket = bucket, ...)
                 if (isTRUE(verbose)) {
-                    message(sprintf("Putting file '%s' to bucket '%s'", missingobjects[i], bucket))
+                    message("Putting file '", missingobjects[i], "' to bucket '", bucket, "'")
                 }
             }
         }
@@ -148,7 +148,7 @@ s3sync <- function(files = dir(recursive = TRUE), bucket, direction = c("upload"
             }
             for (i in seq_along(filestoupload)) {
                 if (isTRUE(verbose)) {
-                    message(sprintf("Putting file '%s' to bucket '%s'", filestoupload[i], bucket))
+                    message("Putting file '",  filestoupload[i], "' to bucket '", bucket, "'")
                 }
                 put_object(file = filestoupload[i], object = filestoupload[i], bucket = bucket, ...)
             }
@@ -168,13 +168,13 @@ s3sync <- function(files = dir(recursive = TRUE), bucket, direction = c("upload"
                 thisdir <- dirname(filestodownload[i])
                 if (!file.exists(thisdir)) {
                     if (isTRUE(verbose)) {
-                        message(sprintf("Creating directory '%s'", thisdir))
+                        message("Creating directory '", thisdir, "'")
                     }
                     dir.create(thisdir, recursive = TRUE)
                 }
                 rm(thisdir)
                 if (isTRUE(verbose)) {
-                    message(sprintf("Saving object '%s' to local directory", filestodownload[i]))
+                    message("Saving object '", filestodownload[i], "' to local directory")
                 }
                 save_object(object = filestodownload[i], bucket = bucket, file = filestodownload[i], ...)
             }

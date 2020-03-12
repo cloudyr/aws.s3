@@ -13,7 +13,9 @@ Sys.setenv("AWS_ACCESS_KEY_ID" = "mykey",
            "AWS_SESSION_TOKEN" = "mytoken")
 ```
 
-To use the package with S3-compatible storage provided by other cloud platforms, set the `AWS_S3_ENDPOINT` environment variable to the appropriate host name. By default, the package uses the AWS endpoint: `s3.amazonaws.com`
+**Remarks:**
+* To use the package with S3-compatible storage provided by other cloud platforms, set the `AWS_S3_ENDPOINT` environment variable to the appropriate host name. By default, the package uses the AWS endpoint: `s3.amazonaws.com`. Note that you may have to set `region=""` in the request as well if the back-end uses only a single server with no concept of regions.
+* To use the package from an EC2 instance, you would need to install `aws.ec2metadata`. This way, credential will be obtained from the machine's role.
 
 
 ## Code Examples

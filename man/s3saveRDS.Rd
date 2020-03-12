@@ -5,8 +5,13 @@
 \alias{s3readRDS}
 \title{saveRDS/readRDS}
 \usage{
-s3saveRDS(x, object = paste0(as.character(substitute(x)), ".rds"), bucket,
-  compress = TRUE, ...)
+s3saveRDS(
+  x,
+  object = paste0(as.character(substitute(x)), ".rds"),
+  bucket,
+  compress = TRUE,
+  ...
+)
 
 s3readRDS(object, bucket, ...)
 }
