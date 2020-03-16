@@ -1,5 +1,6 @@
 # aws.s3 0.3.21 (under development)
 
+* `s3HTTP()` (and thus all API functions) gain `write_fn=function(x) {...}` argument which allows chunk-wise streaming output for `GET` requests.
 * Replace `sprintf()` where possible to avoid type mismatches. (#329)
 * Handle result of length one in `bucketlist()` correctly. (#333)
 * Setting `region=""` and custom `base_url` enables the use of single-host non-AWS back-ends (e.g., [minio](https://github.com/minio/minio)). (#340)
