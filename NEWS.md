@@ -6,6 +6,7 @@
 * Setting `region=""` and custom `base_url` enables the use of single-host non-AWS back-ends (e.g., [minio](https://github.com/minio/minio)). (#340)
 * `s3read_using()` now cleans up after itself. (#270) It also gains a new argument `filename` which allows to specify the actual name of the file that will be used. (#341)
 * Avoid invalid scientific notation in content sizes. (#299, h/t Martijn Schuemie)
+* `s3sync` has been re-factored to work on directories instead of file lists. Please read the documentation, the arguments have changed. The previous version has never really worked for any other cases than sync of the working directory. Addresses many `s3sync()` issues including #346.
 
 # aws.s3 0.3.20
 
