@@ -5,21 +5,27 @@
 \title{S3 file sync}
 \usage{
 s3sync(
-  files = dir(recursive = TRUE),
+  path = ".",
   bucket,
+  prefix = "",
   direction = c("upload", "download"),
   verbose = TRUE,
+  create = FALSE,
   ...
 )
 }
 \arguments{
-\item{files}{A character vector specifying relative paths to files to be synchronized. The default is all files in the working directory and subdirectories.}
+\item{path}{string, path to the directory to synchronize, it will be expanded as needed (NOTE: older versions had a \code{files} argument which expected a full list of files which was ambiguous).}
 
 \item{bucket}{Character string with the name of the bucket, or an object of class \dQuote{s3_bucket}.}
+
+\item{prefix}{string, if set to non-empty string, leading part of the objects in the bucket much have that prefix, other objects are not considered. In practice, this alows the immitation of sub-directories in the bucket and in that case it is typically required that the training slash is included in the prefix.}
 
 \item{direction}{A character vector specifying whether to \dQuote{upload} and/or \dQuote{download} files. By default, \code{s3sync} is two-way, uploading any files missing from the bucket and downloading any objects missing from the local directory.}
 
 \item{verbose}{A logical indicating whether to be verbose (the default is \code{TRUE}).}
+
+\item{create}{logical, if \code{TRUE} the bucket is created if it doesn't exist, otherwise synchronizing a non-existing bucket is an error.}
 
 \item{\dots}{Additional arguments passed to \code{\link{s3HTTP}}.}
 }
@@ -30,9 +36,9 @@ A logical.
 Sync files/directories to/from S3
 }
 \details{
-\code{s3sync} synchronizes specified files to an S3 bucket. This works best if a local directory (and its subdirectories) correspond directly to the contents of an S3 bucket.
-If the bucket does not exist, it is created. Similarly, if local directories do not exist (corresponding to leading portions of object keys), they are created, recursively. Object keys are generated based on \code{files} and local files are named (and organized into directories) based on object keys. A slash is interpreted as a directory level.
-Local objects are copied to S3 and S3 objects are copied locally. This copying is performed conditionally. Objects existing locally but not in S3 are uploaded using \code{\link{put_object}}. Objects existing in S3 but not locally, are saved using \code{\link{save_object}}. If objects exist in both places, the MD5 checksum for each is compared; when identical, no copying is performed. If the checksums differ, local files are replaced with the bucket version if the local file is older and the S3 object is replaced if the local file is newer. If checksums differ but modified times match (which seems unlikely), a warning is issued.
+\code{s3sync} synchronizes specified files to an S3 bucket.
+If the bucket does not exist, it is created (unless \code{create=FALSE}). Similarly, if local directories do not exist (corresponding to leading portions of object keys), they are created, recursively. Object keys are generated based on \code{files} and local files are named (and organized into directories) based on object keys. A slash is interpreted as a directory level.
+Local objects are copied to S3 and S3 objects are copied locally. This copying is performed conditionally. Objects existing locally but not in S3 are uploaded using \code{\link{put_object}}. Objects existing in S3 but not locally, are saved using \code{\link{save_object}}. If objects exist in both places, the MD5 checksum for each is compared; when identical, no copying is performed. If the checksums differ, local files are replaced with the bucket version if the local file is older and the S3 object is replaced if the local file is newer. If checksums differ but modified times match (which seems unlikely), a warning is issued. Note that multi-part files don't have a full MD5 sum recorded in S3 so they cannot be compared and thus are always assumed to be different.
 }
 \examples{
 \dontrun{
@@ -43,6 +49,12 @@ Local objects are copied to S3 and S3 objects are copied locally. This copying i
 
   # two-way sync
   s3sync(bucket = "examplebucket")
+
+  # full sync between a subset of the bucket and a test directory in user's home
+  # corresponding roughly to:
+  #   aws s3 sync ~/test s3://examplebucket/test/
+  #   aws s3 sync s3://examplebucket/test/ ~/test
+  s3sync("~/test", "examplebucket", prefix="test/", region="us-east-2")
 }
 
 }
