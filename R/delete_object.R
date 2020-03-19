@@ -14,18 +14,17 @@
 #' @importFrom base64enc base64encode
 #' @importFrom xml2 read_xml write_xml xml_add_child
 #' @export
-delete_object <- function(object, bucket, quiet = TRUE, ...) {
-    if (missing(bucket)) {
+delete_object <- function(object, bucket, quiet = TRUE, silent = TRUE, follow = TRUE, ...) {
+    if (missing(bucket))
         bucket <- get_bucketname(object)
-    }
     object <- get_objectkey(object)
     if (length(object) == 1) {
-        r <- s3HTTP(verb = "DELETE", 
-                    bucket = bucket,
-                    path = paste0("/", object),
-                    ...)
-        return(TRUE)
-    } else {
+        args <- list(verb = "DELETE", 
+                     bucket = bucket,
+                     path = paste0("/", object),
+                     ...)
+        r <- .s3HTTP(args, sys.call(), follow, silent)
+     } else {
         xml <- xml2::read_xml(paste0('<?xml version="1.0" encoding="UTF-8"?><Delete><Quiet>', tolower(quiet),'</Quiet></Delete>'))
         for (i in seq_along(object)) {
             xml2::xml_add_child(xml, xml2::read_xml(paste0("<Object><Key>", get_objectkey(object[[i]]), "</Key></Object>")))
@@ -34,13 +33,14 @@ delete_object <- function(object, bucket, quiet = TRUE, ...) {
         on.exit(unlink(tmpfile))
         xml2::write_xml(xml, tmpfile)
         md <- base64enc::base64encode(digest::digest(file = tmpfile, raw = TRUE))
-        r <- s3HTTP(verb = "POST", 
-                    bucket = bucket,
-                    query = list(delete = ""),
-                    request_body = tmpfile,
-                    headers = list(`Content-Length` = formatSize(file.size(tmpfile)), 
-                                   `Content-MD5` = md), 
-                    ...)
-        return(TRUE)
-    }
+        args <- list(verb = "POST", 
+                     bucket = bucket,
+                     query = list(delete = ""),
+                     request_body = tmpfile,
+                     headers = list(`Content-Length` = formatSize(file.size(tmpfile)), 
+                                    `Content-MD5` = md), 
+                     ...)
+        r <- .s3HTTP(args, sys.call(), follow, silent)
+     }
+    if (s3_ok(r)) TRUE else r
 }

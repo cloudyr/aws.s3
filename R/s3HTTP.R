@@ -53,7 +53,7 @@ function(verb = "GET",
          session_token = NULL,
          use_https = TRUE,
          ...) {
-    
+
     # locate and validate credentials
     credentials <- aws.signature::locate_credentials(key = key, secret = secret, session_token = session_token, region = region, verbose = verbose)
     key <- credentials[["key"]]
@@ -167,12 +167,12 @@ function(verb = "GET",
         s <- httr::http_status(r)
         if (tolower(s$category) == "success") {
             out <- TRUE
-            attributes(out) <- c(attributes(out), httr::headers(r))
+            attributes(out) <- c(attributes(out), httr::headers(r), list(status_code=r$status_code))
             return(out)
         } else {
             message(s$message)
             out <- FALSE
-            attributes(out) <- c(attributes(out), httr::headers(r))
+            attributes(out) <- c(attributes(out), httr::headers(r), list(status_code=r$status_code))
             return(out)
         }
     } else if (verb == "DELETE") {
@@ -181,12 +181,12 @@ function(verb = "GET",
         s <- httr::http_status(r)
         if (tolower(s$category) == "success") {
             out <- TRUE
-            attributes(out) <- c(attributes(out), httr::headers(r))
+            attributes(out) <- c(attributes(out), httr::headers(r), list(status_code=r$status_code))
             return(out)
         } else {
             message(s$message)
             out <- FALSE
-            attributes(out) <- c(attributes(out), httr::headers(r))
+            attributes(out) <- c(attributes(out), httr::headers(r), list(status_code=r$status_code))
             return(out)
         }
     } else if (verb == "POST") {
@@ -218,8 +218,35 @@ function(verb = "GET",
     } else {
         out <- r
     }
-    attributes(out) <- c(attributes(out), httr::headers(r))
+    attributes(out) <- c(attributes(out), httr::headers(r), list(status_code=r$status_code))
     out
+}
+
+## internal verison which supports region re-directs and uses do-call form, not expected to be use by users.
+.s3HTTP <- function(args, call, follow=TRUE, silent=FALSE) {
+    .hdr <- function(x, name) if (name %in% names(x$headers)) x$headers[[name]] else NULL
+    r <- do.call(function(...) aws.s3::s3HTTP(...), args)
+    if (follow && inherits(r, "response") && r$status_code == 301L &&
+        length(args$region <- .hdr(r, "x-amz-bucket-region"))) {
+        if (isTRUE(args$verbose))
+            message("Response was a re-direct with x-amz-bucket-region set, retrying with region '", args$region, "'")
+        r <- do.call(s3HTTP, args)
+    }
+    if (!isTRUE(silent) && as.integer(s3_status(r) / 100L) != 2L) {
+        extra <- if (inherits(r, "response")) paste0(" (", httr::http_status(r)[["message"]], ")") else ""
+        stop(errorCondition(paste0("S3 request was unsuccessful", extra), result=r, args=args, call=call, class="S3error"))
+    }
+    r
+}
+
+s3_status <- function(x) {
+    status <- if (inherits(x, "response")) as.integer(x$status_code) else attr(x, "status_code")
+    if (!length(status)) 0L else status
+}
+
+s3_ok <- function(x) {
+    status <- s3_status(x)
+    isTRUE(x >= 200L && x < 300L)
 }
 
 parse_aws_s3_response <- function(r, Sig, verbose = getOption("verbose")){
@@ -241,7 +268,8 @@ parse_aws_s3_response <- function(r, Sig, verbose = getOption("verbose")){
     if (isTRUE(verbose)) {
         message(httr::http_status(r)[["message"]])
     }
-    if (httr::http_error(r) | (httr::http_status(r)[["category"]] == "Redirection")) {
+    if (httr::http_error(r) || isTRUE((httr::http_status(r)[["category"]] == "Redirection"))) return(r)
+    if (FALSE && (httr::http_error(r) | (httr::http_status(r)[["category"]] == "Redirection"))) {
         h <- httr::headers(r)
         out <- structure(response, headers = h, class = "aws_error")
         attr(out, "request_canonical") <- Sig$CanonicalRequest

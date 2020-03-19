@@ -80,20 +80,22 @@ function(object,
          bucket, 
          headers = list(), 
          parse_response = FALSE, 
-		 as = "raw",
+         as = "raw",
+         silent = FALSE,
+         follow = TRUE,
          ...) {
     if (missing(bucket)) {
         bucket <- get_bucketname(object)
     } 
     object <- get_objectkey(object)
-    r <- s3HTTP(verb = "GET", 
-                bucket = bucket,
-                path = paste0("/", object),
-                headers = headers,
-                parse_response = parse_response,
-                ...)
-    cont <- httr::content(r, as = as)
-    return(cont)
+    args <- list(verb = "GET", 
+                 bucket = bucket,
+                 path = paste0("/", object),
+                 headers = headers,
+                 parse_response = parse_response,
+                 ...)
+    r <- .s3HTTP(args, sys.call(), follow, silent)
+    httr::content(r, as = as)
 }
 
 #' @rdname get_object
@@ -105,6 +107,8 @@ function(object,
          file = basename(object),
          headers = list(),
          overwrite = TRUE,
+         follow = TRUE,
+         silent = FALSE,
          ...) {
     if (missing(bucket)) {
         bucket <- get_bucketname(object)
@@ -118,12 +122,13 @@ function(object,
     }
     
     # use httr::write_disk() to write directly to disk
-    r <- s3HTTP(verb = "GET", 
-                bucket = bucket,
-                path = paste0("/", object),
-                headers = headers,
-                write_disk = httr::write_disk(path = file, overwrite = overwrite),
-                ...)
+    args <- list(verb = "GET", 
+                 bucket = bucket,
+                 path = paste0("/", object),
+                 headers = headers,
+                 write_disk = httr::write_disk(path = file, overwrite = overwrite),
+                 ...)
+    r <- .s3HTTP(args, sys.call(), follow, silent)
     return(file)
 }
 
@@ -136,21 +141,24 @@ function(
   request_body,
   headers = list(),
   parse_response = FALSE,
+  follow = TRUE,
+  silent = FALSE,
   ...
 ) {
-    if (missing(bucket)) {
+    if (missing(bucket))
         bucket <- get_bucketname(object)
-    } 
+
     object <- get_objectkey(object)
     
-    r <- s3HTTP(verb = "POST", 
-                bucket = bucket,
-                path = paste0("/", object),
-                headers = headers,
-                query = list(select = "", "select-type" = "2"),
-                request_body = request_body,
-                parse_response = parse_response,
-                ...)
+    args <- list(verb = "POST", 
+                 bucket = bucket,
+                 path = paste0("/", object),
+                 headers = headers,
+                 query = list(select = "", "select-type" = "2"),
+                 request_body = request_body,
+                 parse_response = parse_response,
+                 ...)
+    r <- .s3HTTP(args, sys.call(), follow, silent)
     cont <- httr::content(r, as = "raw")
     return(cont)
 }
@@ -165,17 +173,18 @@ function(
 #' @return Something.
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectGETtorrent.html}{API Documentation}
 #' @export
-get_torrent <- function(object, bucket, ...) {
-    if (missing(bucket)) {
+get_torrent <- function(object, bucket, follow=TRUE, silent=FALSE, ...) {
+    if (missing(bucket))
         bucket <- get_bucketname(object)
-    } 
+
     object <- get_objectkey(object)
-    r <- s3HTTP(verb = "GET", 
-                bucket = bucket,
-                path = paste0("/", object),
-                query = list(torrent =""),
-                ...)
-    return(content(r, "raw"))
+    args <- list(verb = "GET", 
+                 bucket = bucket,
+                 path = paste0("/", object),
+                 query = list(torrent =""),
+                 ...)
+    r <- .s3HTTP(args, sys.call(), follow, silent)
+    content(r, "raw")
 }
 
 #' @rdname get_object
@@ -189,10 +198,9 @@ function(object,
         bucket <- get_bucketname(object)
     } 
     object <- get_objectkey(object)
-    r <- s3HTTP(verb = "connection",
-                bucket = bucket,
-                path = paste0("/", object),
-                headers = headers,
-                ...)
-    return(r)
+    s3HTTP(verb = "connection",
+           bucket = bucket,
+           path = paste0("/", object),
+           headers = headers,
+           ...)
 }

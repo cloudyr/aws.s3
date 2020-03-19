@@ -34,6 +34,8 @@ get_bucket <- function(bucket,
                        max = NULL,
                        marker = NULL,
                        parse_response = TRUE,
+                       follow = TRUE,
+                       silent = FALSE,
                        ...) {
 
     if (is.null(max)) {
@@ -41,8 +43,8 @@ get_bucket <- function(bucket,
     } else {
         query <- list(prefix = prefix, delimiter = delimiter, "max-keys" = as.integer(pmin(1000, max)), marker = marker)
     }
-    r <- s3HTTP(verb = "GET", bucket = bucket, query = query, parse_response = parse_response, ...)
-
+    args <- list(verb = "GET", bucket = bucket, query = query, parse_response = parse_response, ...)
+    r <- .s3HTTP(args, sys.call(), follow, silent)
     if (isTRUE(parse_response)) {
         while (
             r[["IsTruncated"]] == "true" &&

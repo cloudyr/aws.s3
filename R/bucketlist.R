@@ -13,8 +13,9 @@
 #' @keywords service
 #' @seealso \code{\link{get_bucket}}, \code{\link{get_object}}
 #' @export
-bucketlist <- function(add_region = FALSE, ...) {
-    r <- s3HTTP(verb = "GET", ...)
+bucketlist <- function(add_region = FALSE, follow = TRUE, silent = FALSE, ...) {
+    args <- list(verb = "GET", ...)
+    r <- .s3HTTP(args, sys.call(), follow, silent)
     bl <- r[["Buckets"]]
     ## no buckets - empty data frame
     if (!length(bl)) return(data.frame())
