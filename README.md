@@ -100,25 +100,19 @@ put_object(file = "mtcars.Rdata", object = "mtcars2.Rdata", bucket = "my_bucket"
 [![Build Status](https://travis-ci.org/cloudyr/aws.s3.png?branch=master)](https://travis-ci.org/cloudyr/aws.s3)
 [![codecov.io](https://codecov.io/github/cloudyr/aws.s3/coverage.svg?branch=master)](https://codecov.io/github/cloudyr/aws.s3?branch=master)
 
-This package is not yet on CRAN. To install the latest development version you can install from the cloudyr drat repository:
+Latest stable release from CRAN:
 
 ```R
-# latest stable version
-install.packages("aws.s3", repos = c("cloudyr" = "http://cloudyr.github.io/drat"))
-
-# on windows you may need:
-install.packages("aws.s3", repos = c("cloudyr" = "http://cloudyr.github.io/drat"), INSTALL_opts = "--no-multiarch")
+install.packages("aws.s3", repos = "https://cloud.R-project.org")
 ```
 
-Or, to pull a potentially unstable version directly from GitHub:
+Lastest development version from RForge.net:
 
 ```R
-if (!require("remotes")) {
-    install.packages("remotes")
-}
-remotes::install_github("cloudyr/aws.s3")
+install.packages("aws.s3", repos = c("https://RForge.net", "https://cloud.R-project.org"))
 ```
 
+On windows you may need to add `INSTALL_opts = "--no-multiarch"`
 
 ---
 [![cloudyr project logo](http://i.imgur.com/JHS98Y7.png)](https://github.com/cloudyr)
