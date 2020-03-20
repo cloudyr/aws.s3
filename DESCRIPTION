@@ -24,6 +24,7 @@ Description: A simple client package for the Amazon Web Services ('AWS') Simple
 License: GPL (>= 2)
 URL: https://github.com/cloudyr/aws.s3
 BugReports: https://github.com/cloudyr/aws.s3/issues
+Encoding: UTF-8
 Imports:
     utils,
     tools,
