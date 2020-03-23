@@ -2,9 +2,9 @@
 #' @title Utility Functions
 #' @description Some utility functions for working with S3 objects and buckets
 
-#' @param x An object.
+#' @param x An object, typically a string (can be s3://.. URL) or S3 bucket object
 #' @param \dots Ignored.
-#' @return \code{get_bucketname} returns a character string with name of the bucket.
+#' @return \code{get_bucketname} returns a character string with the name of the bucket.
 #' @export
 get_bucketname <- function(x, ...) {
     UseMethod("get_bucketname")
@@ -13,12 +13,11 @@ get_bucketname <- function(x, ...) {
 #' @rdname utilities
 #' @export
 get_bucketname.character <- function(x, ...) {
-    if (grepl("^s3://", x)) {
-        x <- substring(x, 6, nchar(x))
-        substring(x, 1, regexpr("/", x)-1L)
-    } else {
-        x
-    }
+    url <- grepl("^s3://", x, TRUE)
+    res <- x
+    if (any(url))
+        res[url] <- gsub("/.*", "", substring(x[url], 6, nchar(x[url])))
+    res
 }
 
 #' @rdname utilities
@@ -59,7 +58,8 @@ get_region.s3_bucket <- function(x, ...) {
 
 # get_objectkey
 #' @rdname utilities
-#' @return \code{get_objectkey} returns a character string with S3 key.
+#' @param x S3 object, s3:// URL or a string
+#' @return \code{get_objectkey} returns a character string with S3 key which is the part excluding bucket name and leading slashes
 #' @export
 get_objectkey <- function(x, ...) {
     UseMethod("get_objectkey")
@@ -68,18 +68,25 @@ get_objectkey <- function(x, ...) {
 #' @rdname utilities
 #' @export
 get_objectkey.character <- function(x, ...) {
-    if (grepl("^s3://", x)) {
-        x <- substring(x, 6, nchar(x))
-        substring(x, regexpr("/", x)+1L, nchar(x))
-    } else {
-        gsub("^/{1}", "", x)
+    url <- grepl("^s3://", x, TRUE)
+    ret <- x
+    if (any(url)) {
+        ## remove s3://
+        ret[url] <- substring(x[url], 6, nchar(x[url]))
+        ## remove bucket name
+        y <- sub("^[^/]*/", "", ret[url])
+        ## if there was no / the key is empty (just a bucket)
+        y[y == ret[url]] <- ""
+        ret[url] <- y
     }
+    ## strip leading /
+    sub("^/+", "", ret)
 }
 
 #' @rdname utilities
 #' @export
 get_objectkey.s3_object <- function(x, ...) {
-    gsub("^/{1}", "", x[["Key"]])
+    sub("^/+", "", x[["Key"]])
 }
 
 #' @export
