@@ -10,7 +10,7 @@
 #' s3read_using(read_delim, delim = ";", object = s3_path(path)[2],bucket = s3_path(path[1]))
 #'}
 
-read_s3_path <- function(s3_path) {
+s3_path <- function(s3_path) {
   
   bucket <- stringr::str_match(s3_path, "s3://([^/]*)/")[2]
   object <- stringr::str_match(s3_path, paste0(bucket,"/(.*)"))[2]
