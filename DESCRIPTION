@@ -35,5 +35,6 @@ Imports:
     aws.signature (>= 0.3.7)
 Suggests:
     testthat,
-    datasets
+    datasets,
+    stringr
 RoxygenNote: 7.0.2
