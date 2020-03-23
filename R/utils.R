@@ -1,9 +1,10 @@
 #' @rdname utilities
 #' @title Utility Functions
 #' @description Some utility functions for working with S3 objects and buckets
+
 #' @param x An object.
 #' @param \dots Ignored.
-#' @return \code{get_bucketname} returns a character string.
+#' @return \code{get_bucketname} returns a character string with name of the bucket.
 #' @export
 get_bucketname <- function(x, ...) {
     UseMethod("get_bucketname")
@@ -57,10 +58,15 @@ get_region.s3_bucket <- function(x, ...) {
 
 
 # get_objectkey
+#' @rdname utilities
+#' @return \code{get_objectkey} returns a character string with S3 key.
+#' @export
 get_objectkey <- function(x, ...) {
     UseMethod("get_objectkey")
 }
 
+#' @rdname utilities
+#' @export
 get_objectkey.character <- function(x, ...) {
     if (grepl("^s3://", x)) {
         x <- substring(x, 6, nchar(x))
@@ -70,6 +76,8 @@ get_objectkey.character <- function(x, ...) {
     }
 }
 
+#' @rdname utilities
+#' @export
 get_objectkey.s3_object <- function(x, ...) {
     gsub("^/{1}", "", x[["Key"]])
 }
