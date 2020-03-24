@@ -1,3 +1,5 @@
+Before filing an issue, please make sure you are using the latest *development* version which you can install using `install.packages("aws.s3",repo="https://rforge.net")` (see README) since the issue may have been fixed already. Also search existing issues first to avoid duplicates.
+
 Please specify whether your issue is about:
 
  - [ ] a possible bug
