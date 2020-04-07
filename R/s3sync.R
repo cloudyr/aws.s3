@@ -46,7 +46,7 @@ s3sync <- function(path = ".", bucket, prefix = "", direction = c("upload", "dow
     if (isTRUE(verbose))
         message("Checking for existence of bucket '", bucket, "'")
     if (!bucket_exists(bucket, ...)) {
-        if (is.TRUE(create)) {
+        if (isTRUE(create)) {
             message("Creating bucket '", bucket, "'")
             put_bucket(bucket, ...)
         } else
