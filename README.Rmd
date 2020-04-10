@@ -97,6 +97,7 @@ put_object(file = "mtcars.Rdata", object = "mtcars2.Rdata", bucket = "my_bucket"
 
 [![CRAN](https://www.r-pkg.org/badges/version/aws.s3)](https://cran.r-project.org/package=aws.s3)
 ![Downloads](https://cranlogs.r-pkg.org/badges/aws.s3)
+[![RForge](https://rforge.net/do/versvg/aws.s3)](https://RForge.net/aws.s3)
 [![Build Status](https://travis-ci.org/cloudyr/aws.s3.png?branch=master)](https://travis-ci.org/cloudyr/aws.s3)
 [![codecov.io](https://codecov.io/github/cloudyr/aws.s3/coverage.svg?branch=master)](https://codecov.io/github/cloudyr/aws.s3?branch=master)
 
