@@ -137,7 +137,7 @@ function(
         
         # function to call abort if any part fails
         abort <- function(id) delete_object(object = object, bucket = bucket, query = list(uploadId = id), ...)
-        on.exit(abort(id))
+        on.exit(abort(id), add = TRUE, after = TRUE)
         
         # loop over parts
         partlist <- list()
@@ -173,6 +173,7 @@ function(
         }
         finalize <- complete_parts(object = object, bucket = bucket, id = id, parts = partlist, ...)
         on.exit(NULL, add = FALSE)
+        close(file)
         return(TRUE)
     } else {
         if (!"Content-Length" %in% names(headers)) {
