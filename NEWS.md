@@ -14,6 +14,7 @@
   ## or (not recommended)
   put_object(, "bucket", file="foo.csv")
   ```
+  Any code that used `file=` explicitly and no positional arguments doesn't need to change.
 
 ## Features
 
