@@ -11,13 +11,12 @@
 #' @param headers List of request headers for the REST call. If \code{multipart = TRUE}, this only applies to the initialization call.
 #' @param verbose A logical indicating whether to be verbose. Default is given by \code{options("verbose")}.
 #' @param show_progress A logical indicating whether to show a progress bar for uploads. Default is given by \code{options("verbose")}.
+#' @param partsize numeric, size of each part when using multipart upload.  AWS imposes a minimum size (currently 5MB) so setting a too low value may fail. Note that it can be set to \code{Inf} in conjunction with \code{multipart=FALSE} to silence the warning suggesting multipart uploads for large content.
 #' @template dots
 #' @details This provides a generic interface for storing objects to S3. Some convenience wrappers are provided for common tasks: e.g., \code{\link{s3save}} and \code{\link{s3saveRDS}}.
 #' 
 #' Note that S3 is a flat file store. So there is no folder hierarchy as in a traditional hard drive. However, S3 allows users to create pseudo-folders by prepending object keys with \code{foldername/}. The \code{put_folder} function is provided as a high-level convenience function for creating folders. This is not actually necessary as objects with slashes in their key will be displayed in the S3 web console as if they were in folders, but it may be useful for creating an empty directory (which is possible in the web console).
 #'
-#' \code{partsize} can be changed to specify the size of each part to upload. AWS imposes a minimum size (currently 5MB) so setting a too low value may fail. Note that it can be set to \code{Inf} in conjunction with \code{multipart=FALSE} to silence the warning suggesting multipart uploads for large content.
-#' 
 #' \strong{IMPORTANT}: In aws.s3 versions before 0.3.22 the first positional argument was \code{file} and \code{put_object} changed behavior depending on whether the file could be found or not. This is inherently very dangerous since \code{put_object} would only store the filename in cases there was any problem with the input. Therefore the first argument was changed to \code{what} which is always the content to store and now also supports connection. If not used, \code{file} is still a named argument and can be set instead - it will be always interpreted as a filename, failing with an error if it doesn't exist.
 #'
 #' When using connections in \code{what} it is preferrable that they are either unopened or open in binary mode. This condition is mandatory for multipart uploads. Text connections are inherently much slower and may not deliver identical results since they mangle line endings. \code{put_object} will automatically open unopened connections and always closes the connection before returning.
