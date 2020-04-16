@@ -1,3 +1,29 @@
+# aws.s3 0.3.22
+
+## API changes
+
+* `put_object` splits the use of files vs payload into two separate arguments: `what` is now the first positional argument and expects actual content to store, `file` is now a named argument used to store file content. The previous use of `file` for both was very dangerous as it stored filenames instead of content without warning if the file was not found.
+
+  Old code that intended to use files such as:
+  ```r
+  put_object("foo.csv", "bucket")
+  ```
+  has to use either of
+  ```r
+  put_object(file="foo.csv", bucket="bucket")
+  ## or (not recommended)
+  put_object(, "bucket", file="foo.csv")
+  ```
+
+## Features
+
+* `put_object` supports connections, including non-seekable ones
+
+## Bugfixes
+
+* `put_object` now closes its connections properly (#354)
+
+
 # aws.s3 0.3.21
 
 * `s3HTTP()` (and thus all API functions) gain `write_fn=function(x) {...}` argument which allows chunk-wise streaming output for `GET` requests.
