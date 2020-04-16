@@ -3,32 +3,36 @@
 \name{put_object}
 \alias{put_object}
 \alias{put_folder}
-\title{Put object}
+\title{Put/store object in S3}
 \usage{
 put_object(
-  file,
+  what,
   object,
   bucket,
   multipart = FALSE,
   acl = NULL,
+  file,
   headers = list(),
   verbose = getOption("verbose", FALSE),
   show_progress = getOption("verbose", FALSE),
+  partsize = 1e+08,
   ...
 )
 
 put_folder(folder, bucket, ...)
 }
 \arguments{
-\item{file}{A character string containing the filename (or full path) of the file you want to upload to S3. Alternatively, an raw vector containing the file can be passed directly, in which case \code{object} needs to be specified explicitly.}
+\item{what}{character vector, raw vector or a connection (see Details section for important change in 0.3.22!)}
 
-\item{object}{A character string containing the name the object should have in S3 (i.e., its "object key"). If missing, the filename is used.}
+\item{object}{A character string containing the name the object should have in S3 (i.e., its "object key"). If missing, an attempt is made to infer it.}
 
 \item{bucket}{Character string with the name of the bucket, or an object of class \dQuote{s3_bucket}.}
 
-\item{multipart}{A logical indicating whether to use multipart uploads. See \url{http://docs.aws.amazon.com/AmazonS3/latest/dev/mpuoverview.html}. If \code{file} is less than 100 MB, this is ignored.}
+\item{multipart}{A logical indicating whether to use multipart uploads. See \url{http://docs.aws.amazon.com/AmazonS3/latest/dev/mpuoverview.html}. If the content is smaller than \code{partsize} it is ignored.}
 
 \item{acl}{A character string indicating a \href{http://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl}{\dQuote{canned} access control list}. By default all bucket contents and objects therein are given the ACL \dQuote{private}. This can later be viewed using \code{\link{get_acl}} and modified using \code{\link{put_acl}}.}
+
+\item{file}{string, path to a file to store. Mutually exclusive with \code{what}.}
 
 \item{headers}{List of request headers for the REST call. If \code{multipart = TRUE}, this only applies to the initialization call.}
 
@@ -44,12 +48,18 @@ put_folder(folder, bucket, ...)
 If successful, \code{TRUE}.
 }
 \description{
-Puts an object into an S3 bucket
+Stores an object into an S3 bucket
 }
 \details{
-This provide a generic interface for sending files (or serialized, in-memory representations thereof) to S3. Some convenience wrappers are provided for common tasks: e.g., \code{\link{s3save}} and \code{\link{s3saveRDS}}.
+This provides a generic interface for storing objects to S3. Some convenience wrappers are provided for common tasks: e.g., \code{\link{s3save}} and \code{\link{s3saveRDS}}.
 
 Note that S3 is a flat file store. So there is no folder hierarchy as in a traditional hard drive. However, S3 allows users to create pseudo-folders by prepending object keys with \code{foldername/}. The \code{put_folder} function is provided as a high-level convenience function for creating folders. This is not actually necessary as objects with slashes in their key will be displayed in the S3 web console as if they were in folders, but it may be useful for creating an empty directory (which is possible in the web console).
+
+\code{partsize} can be changed to specify the size of each part to upload. AWS imposes a minimum size (currently 5MB) so setting a too low value may fail. Note that it can be set to \code{Inf} in conjunction with \code{multipart=FALSE} to silence the warning suggesting multipart uploads for large content.
+
+\strong{IMPORTANT}: In aws.s3 versions before 0.3.22 the first positional argument was \code{file} and \code{put_object} changed behavior depending on whether the file could be found or not. This is inherently very dangerous since \code{put_object} would only store the filename in cases there was any problem with the input. Therefore the first argument was changed to \code{what} which is always the content to store and now also supports connection. If not used, \code{file} is still a named argument and can be set instead - it will be always interpreted as a filename, failing with an error if it doesn't exist.
+
+When using connections in \code{what} it is preferrable that they are either unopened or open in binary mode. This condition is mandatory for multipart uploads. Text connections are inherently much slower and may not deliver identical results since they mangle line endings. \code{put_object} will automatically open unopened connections and always closes the connection before returning.
 }
 \examples{
 \dontrun{
@@ -60,15 +70,15 @@ Note that S3 is a flat file store. So there is no folder hierarchy as in a tradi
   on.exit(unlink(tmp))
   utils::write.csv(mtcars, file = tmp)
   # put object with an upload progress bar
-  put_object(tmp, object = "mtcars.csv", bucket = "myexamplebucket", show_progress = TRUE)
+  put_object(file = tmp, object = "mtcars.csv", bucket = "myexamplebucket", show_progress = TRUE)
 
-  # create a "folder" in a bucket
+  # create a "folder" in a bucket (NOT required! Folders are really just 0-length files)
   put_folder("example", bucket = "myexamplebucket")
   ## write object to the "folder"
-  put_object(tmp, object = "example/mtcars.csv", bucket = "myexamplebucket")
+  put_object(file = tmp, object = "example/mtcars.csv", bucket = "myexamplebucket")
 
   # write serialized, in-memory object to S3
-  x <- rawConnection(raw(0), "w")
+  x <- rawConnection(raw(), "w")
   utils::write.csv(mtcars, x)
   put_object(rawConnectionValue(x), object = "mtcars.csv", bucket = "myexamplebucketname")
 
@@ -89,8 +99,8 @@ Note that S3 is a flat file store. So there is no folder hierarchy as in a tradi
   \donttest{
   x <- rnorm(3e6)
   saveRDS(x, tmp)
-  put_object(tmp, object = "rnorm.rds", bucket = "myexamplebucket",
-             show_progress = TRUE, multipart = TRUE)
+  put_object(file = tmp, object = "rnorm.rds", bucket = "myexamplebucket",
+             show_progress = TRUE, multipart = TRUE, partsize=1e6)
   identical(x, s3readRDS("s3://myexamplebucket/rnorm.rds"))
   }
 }
