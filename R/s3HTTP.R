@@ -101,6 +101,7 @@ function(verb = "GET",
     # parse headers
     canonical_headers <- c(list(host = hostname,
                                 `x-amz-date` = d_timestamp), headers)
+    headers[["x-amz-date"]] <- d_timestamp
     # parse query arguments
     if (is.null(query) && !is.null(p$query)) {
         query <- p[["query"]]
@@ -113,14 +114,24 @@ function(verb = "GET",
         if (isTRUE(verbose)) {
             message("Executing request without AWS credentials")
         }
-        headers[["x-amz-date"]] <- d_timestamp
         Sig <- list()
-        H <- do.call(httr::add_headers, headers)
     } else {
         # if authenticated, figure out the request signature
-        if (isTRUE(verbose)) {
+        if (isTRUE(verbose))
             message("Executing request with AWS credentials")
-        }
+
+        ## we need to augment canonical headers with
+        ## x-amz-content-sha256 since signature_v4_auth() doesn't do it
+        ## the following is what signature_v4_auth() does and it's terribly fragile!
+        ## We really need to convince them that using conditionals on file presence is really, really bad!
+        ## But for compatibility we keep it until fixed...
+        body_hash <- tolower(digest::digest(request_body,
+                                            file = is.character(request_body) && file.exists(request_body),
+                                            algo = "sha256", serialize = FALSE))
+
+        canonical_headers[["x-amz-content-sha256"]] <-
+            headers[["x-amz-content-sha256"]] <- body_hash
+
         Sig <- aws.signature::signature_v4_auth(
                datetime = d_timestamp,
                region = region,
@@ -135,14 +146,12 @@ function(verb = "GET",
                secret = secret,
                session_token = session_token,
                verbose = verbose)
-        headers[["x-amz-date"]] <- d_timestamp
-        headers[["x-amz-content-sha256"]] <- Sig$BodyHash
         if (!is.null(session_token) && session_token != "") {
             headers[["x-amz-security-token"]] <- session_token
         }
         headers[["Authorization"]] <- Sig[["SignatureHeader"]]
-        H <- do.call(httr::add_headers, headers)
     }
+    H <- do.call(httr::add_headers, headers)
     
     # execute request
     if (verb == "GET") {
