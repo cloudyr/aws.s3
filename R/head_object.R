@@ -5,7 +5,7 @@
 #' @template bucket
 #' @template dots
 #' @details \code{head_object} is a low-level API wrapper that checks whether an object exists by executing an HTTP HEAD request; this can be useful for checking object headers such as \dQuote{content-length} or \dQuote{content-type}. \code{object_exists} is sugar that returns only the logical.
-#' 
+#'
 #' \code{object_size} returns the size of the object (from the \dQuote{content-length} attribute returned by \code{head_object}).
 #'
 #' @examples
@@ -13,17 +13,17 @@
 #'   # get an object in memory
 #'   ## create bucket
 #'   b <- put_bucket("myexamplebucket")
-#'   
+#'
 #'   ## save a dataset to the bucket
 #'   s3save(mtcars, bucket = b, object = "mtcars")
-#'   
+#'
 #'   # check that object exists
 #'   object_exists("mtcars", "myexamplebucket")
 #'   object_exists("s3://myexamplebucket/mtcars")
-#'   
+#'
 #'   # get the object's size
 #'   object_size("s3://myexamplebucket/mtcars")
-#'   
+#'
 #'   # get the object
 #'   get_object("s3://myexamplebucket/mtcars")
 #' }
@@ -35,9 +35,9 @@
 head_object <- function(object, bucket, ...) {
     if (missing(bucket)) {
         bucket <- get_bucketname(object)
-    } 
+    }
     object <- get_objectkey(object)
-    r <- s3HTTP(verb = "HEAD", 
+    r <- s3HTTP(verb = "HEAD",
                 bucket = bucket,
                 path = paste0("/", object),
                 ...)
@@ -49,7 +49,7 @@ head_object <- function(object, bucket, ...) {
 object_exists <- function(object, bucket, ...) {
     if (missing(bucket)) {
         bucket <- get_bucketname(object)
-    } 
+    }
     object <- get_objectkey(object)
     as.logical(r <- head_object(object, bucket, ...))
 }
@@ -59,12 +59,12 @@ object_exists <- function(object, bucket, ...) {
 object_size <- function(object, bucket, ...) {
     if (missing(bucket)) {
         bucket <- get_bucketname(object)
-    } 
+    }
     object <- get_objectkey(object)
     r <- head_object(object, bucket, ...)
     if (isTRUE(r)) {
-        as.integer(attr(r, "content-length"))
+        as.numeric(attr(r, "content-length"))
     } else {
-        NA_integer_
+        NA_real_
     }
 }
