@@ -22,6 +22,7 @@
 #' @param secret A character string containing an AWS Secret Access Key. If missing, defaults to value stored in environment variable \env{AWS_SECRET_ACCESS_KEY}.
 #' @param session_token Optionally, a character string containing an AWS temporary Session Token. If missing, defaults to value stored in environment variable \env{AWS_SESSION_TOKEN}.
 #' @param use_https Optionally, a logical indicating whether to use HTTPS requests. Default is \code{TRUE}.
+#' @param do_standalone_check_for_http_errors A logical indicating whether to check for HTTP error status codes. If \code{parse_response} is \code{TRUE} then this is ignored. Default is \code{FALSE}.
 #' @param ... Additional arguments passed to an HTTP request function. such as \code{\link[httr]{GET}}.
 #' @return the S3 response, or the relevant error.
 #' @import httr
@@ -52,6 +53,7 @@ function(verb = "GET",
          secret = NULL, 
          session_token = NULL,
          use_https = TRUE,
+         do_standalone_check_for_http_errors = FALSE,
          ...) {
     
     # locate and validate credentials
@@ -224,9 +226,15 @@ function(verb = "GET",
     # handle response, failing if HTTP error occurs
     if (isTRUE(parse_response)) {
         out <- parse_aws_s3_response(r, Sig, verbose = verbose)
+        check_aws_s3_status(r, Sig, out, verbose = verbose)
     } else {
+        # even if we don't parse the response, we can still check for HTTP errors
+        if (isTRUE(do_standalone_check_for_http_errors)) {
+            check_aws_s3_status(r, Sig, verbose = verbose)
+        }
         out <- r
     }
+
     attributes(out) <- c(attributes(out), httr::headers(r))
     out
 }
@@ -247,6 +255,11 @@ parse_aws_s3_response <- function(r, Sig, verbose = getOption("verbose")){
     } else {
         response <- r
     }
+    
+    return(response)
+}
+
+check_aws_s3_status <- function(r, Sig, response = NULL, verbose = getOption("verbose")) {
     if (isTRUE(verbose)) {
         message(httr::http_status(r)[["message"]])
     }
@@ -259,11 +272,9 @@ parse_aws_s3_response <- function(r, Sig, verbose = getOption("verbose")){
         print(out)
         httr::stop_for_status(r)
     }
-    return(response)
 }
 
-setup_s3_url <- 
-function(bucketname, 
+setup_s3_url <- function(bucketname, 
          region, 
          path, 
          accelerate = FALSE, 
