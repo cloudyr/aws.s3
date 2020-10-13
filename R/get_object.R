@@ -7,6 +7,7 @@
 #' @param request_body For \code{select_object}, an XML request body as described in the \href{https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectSELECTContent.html}{SELECT API documentation}.
 #' @param headers List of request headers for the REST call.
 #' @param parse_response Passed through to \code{\link{s3HTTP}}, as this function requires a non-default setting. There is probably no reason to ever change this.
+#' @param do_standalone_check_for_http_errors Passed through to \code{\link{s3HTTP}}, as this function requires a non-default setting. There is probably no reason to ever change this.
 #' @param as Passed through to \code{httr::content}. 
 #' @template dots
 #' @details \code{get_object} retrieves an object into memory as a raw vector. This page describes \code{get_object} and several wrappers that provide additional useful functionality.
@@ -80,6 +81,7 @@ function(object,
          bucket, 
          headers = list(), 
          parse_response = FALSE, 
+         do_standalone_check_for_http_errors = FALSE,
 		 as = "raw",
          ...) {
     if (missing(bucket)) {
@@ -91,6 +93,7 @@ function(object,
                 path = paste0("/", object),
                 headers = headers,
                 parse_response = parse_response,
+                do_standalone_check_for_http_errors = do_standalone_check_for_http_errors,
                 ...)
     cont <- httr::content(r, as = as)
     return(cont)
@@ -136,6 +139,7 @@ function(
   request_body,
   headers = list(),
   parse_response = FALSE,
+  do_standalone_check_for_http_errors = TRUE,
   ...
 ) {
     if (missing(bucket)) {
@@ -150,6 +154,7 @@ function(
                 query = list(select = "", "select-type" = "2"),
                 request_body = request_body,
                 parse_response = parse_response,
+                do_standalone_check_for_http_errors = do_standalone_check_for_http_errors,
                 ...)
     cont <- httr::content(r, as = "raw")
     return(cont)
