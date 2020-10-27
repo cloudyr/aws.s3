@@ -15,6 +15,7 @@ Authors@R: c(person("Thomas J.", "Leeper", role = "aut",
              person("Andrii", "Degtiarov", role = "ctb"),
              person("Dhruv", "Aggarwal", role = "ctb"),
              person("Alyssa", "Columbus", role = "ctb"),
+             person("Vitali", "Marenny", role = "ctb"),
              person("Simon", "Urbanek", role = c("cre", "ctb"),
                     email = "simon.urbanek@R-project.org")
 	     )
