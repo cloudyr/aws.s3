@@ -1,3 +1,12 @@
+# aws.s3 0.3.23
+
+## Bugfixes
+
+* `as.data.frame.s3_bucket` correct logic that results in function error when 
+[[Owner]][[ID]] is populated and [[Owner]][[DisplayName]] is not. 
+In the case above map [[Owner]] to Owner_ID, and Owner_DisplayName to NA (#368).
+
+
 # aws.s3 0.3.22
 
 ## API changes
