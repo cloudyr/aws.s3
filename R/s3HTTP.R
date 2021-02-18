@@ -57,8 +57,8 @@ function(verb = "GET",
          ...) {
 
     # locate and validate credentials
+    credentials <- aws.signature::locate_credentials(key = key, secret = secret, session_token = session_token, region = region, verbose = verbose)
     if (require_authorization) {
-        credentials <- aws.signature::locate_credentials(key = key, secret = secret, session_token = session_token, region = region, verbose = verbose)
         key <- credentials[["key"]]
         secret <- credentials[["secret"]]
         session_token <- credentials[["session_token"]]
