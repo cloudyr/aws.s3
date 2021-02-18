@@ -5,7 +5,7 @@
 #' @param bucket A character string with the name of the bucket, or an object of class \dQuote{s3_bucket}. If the latter and a region can be inferred from the bucket object attributes, then that region is used instead of \code{region}.
 #' @param path A character string with the name of the object to put in the bucket (sometimes called the object or 'key name' in the AWS documentation.)
 #' @param query Any query arguments, passed as a named list of key-value pairs.
-#' @param headers A list of request headers for the REST call.   
+#' @param headers A list of request headers for the REST call.
 #' @param request_body A character string containing request body data.
 #' @param write_disk If \code{verb = "GET"}, this is, optionally, an argument like \code{\link[httr]{write_disk}} to write the result directly to disk.
 #' @param write_fn If set to a function and \code{verb = "GET"} is used then the output is passed in chunks as a raw vector in the first argument to this function, allowing streaming output. Note that \code{write_disk} and \code{write_fn} are mutually exclusive.
@@ -22,6 +22,7 @@
 #' @param secret A character string containing an AWS Secret Access Key. If missing, defaults to value stored in environment variable \env{AWS_SECRET_ACCESS_KEY}.
 #' @param session_token Optionally, a character string containing an AWS temporary Session Token. If missing, defaults to value stored in environment variable \env{AWS_SESSION_TOKEN}.
 #' @param use_https Optionally, a logical indicating whether to use HTTPS requests. Default is \code{TRUE}.
+#' @param require_authorization A logical indicator of whether an access key and secret are required.
 #' @param ... Additional arguments passed to an HTTP request function. such as \code{\link[httr]{GET}}.
 #' @return the S3 response, or the relevant error.
 #' @import httr
@@ -30,38 +31,41 @@
 #' @importFrom curl handle_setheaders new_handle curl
 #' @import aws.signature
 #' @export
-s3HTTP <- 
+s3HTTP <-
 function(verb = "GET",
-         bucket = "", 
-         path = "", 
+         bucket = "",
+         path = "",
          query = NULL,
-         headers = list(), 
+         headers = list(),
          request_body = "",
          write_disk = NULL,
          write_fn = NULL,
          accelerate = FALSE,
          dualstack = FALSE,
-         parse_response = TRUE, 
+         parse_response = TRUE,
          check_region = FALSE,
          url_style = c("path", "virtual"),
          base_url = Sys.getenv("AWS_S3_ENDPOINT", "s3.amazonaws.com"),
          verbose = getOption("verbose", FALSE),
          show_progress = getOption("verbose", FALSE),
-         region = NULL, 
-         key = NULL, 
-         secret = NULL, 
+         region = NULL,
+         key = NULL,
+         secret = NULL,
          session_token = NULL,
          use_https = TRUE,
+         require_authorization = TRUE,
          ...) {
-    
+
     # locate and validate credentials
-    credentials <- aws.signature::locate_credentials(key = key, secret = secret, session_token = session_token, region = region, verbose = verbose)
-    key <- credentials[["key"]]
-    secret <- credentials[["secret"]]
-    session_token <- credentials[["session_token"]]
+    if (require_authorization) {
+        credentials <- aws.signature::locate_credentials(key = key, secret = secret, session_token = session_token, region = region, verbose = verbose)
+        key <- credentials[["key"]]
+        secret <- credentials[["secret"]]
+        session_token <- credentials[["session_token"]]
+    }
     ## allow region="" to override any config - the only way to use 3rd party URLs without region
     region <- if (length(region) && !nzchar(region)) region else credentials[["region"]]
-    
+
     # handle 'show_progress' argument
     if (isTRUE(show_progress)) {
         if (verb %in% c("GET")) {
@@ -72,7 +76,7 @@ function(verb = "GET",
     } else {
         show_progress <- NULL
     }
-    
+
     # validate bucket name and region
     bucketname <- get_bucketname(bucket)
     if (isTRUE(check_region) && (bucketname != "")) {
@@ -87,17 +91,17 @@ function(verb = "GET",
             message("Executing request using bucket region ", region)
         }
     }
-    
+
     # validate arguments and setup request URL
     current <- Sys.time()
     d_timestamp <- format(current, "%Y%m%dT%H%M%SZ", tz = "UTC")
-    
+
     url_style <- match.arg(url_style)
     url <- setup_s3_url(bucketname, region, path, accelerate, url_style = url_style, base_url = base_url, verbose = verbose, use_https = use_https)
     p <- httr::parse_url(url)
     action <- if (p$path == "") "/" else paste0("/", p$path)
     hostname <- paste(p$hostname, p$port, sep=ifelse(length(p$port), ":", ""))
-    
+
     # parse headers
     canonical_headers <- c(list(host = hostname,
                                 `x-amz-date` = d_timestamp), headers)
@@ -152,7 +156,7 @@ function(verb = "GET",
         headers[["Authorization"]] <- Sig[["SignatureHeader"]]
     }
     H <- do.call(httr::add_headers, headers)
-    
+
     # execute request
     if (verb == "GET") {
         # GET verb
@@ -220,7 +224,7 @@ function(verb = "GET",
         # OPTIONS verb
         r <- httr::VERB("OPTIONS", url, H, query = query, ...)
     }
-    
+
     # handle response, failing if HTTP error occurs
     if (isTRUE(parse_response)) {
         out <- parse_aws_s3_response(r, Sig, verbose = verbose)
@@ -262,20 +266,20 @@ parse_aws_s3_response <- function(r, Sig, verbose = getOption("verbose")){
     return(response)
 }
 
-setup_s3_url <- 
-function(bucketname, 
-         region, 
-         path, 
-         accelerate = FALSE, 
+setup_s3_url <-
+function(bucketname,
+         region,
+         path,
+         accelerate = FALSE,
          dualstack = FALSE,
-         url_style = c("path", "virtual"), 
+         url_style = c("path", "virtual"),
          base_url = Sys.getenv("AWS_S3_ENDPOINT", "s3.amazonaws.com"),
          verbose = getOption("verbose", FALSE),
-         use_https = TRUE) 
+         use_https = TRUE)
 {
     # Figure out 'path' or 'virtual' style. Default is 'path'.
     url_style <- match.arg(url_style)
-    
+
     # handle S3-compatible storage URLs
     if (base_url != "s3.amazonaws.com") {
         if (isTRUE(verbose)) {
@@ -336,14 +340,14 @@ function(bucketname,
             }
         }
     }
-    
+
     # define prefix http:// or https://
     if (isTRUE(use_https)) {
         prefix <- "https://"
     } else {
         prefix <- "http://"
     }
-    
+
     # handle bucket name
     if (bucketname == "") {
         url <- paste0(prefix, base_url)
@@ -359,7 +363,7 @@ function(bucketname,
             url <- paste0(prefix, base_url, "/", bucketname)
         }
     }
-    
+
     # cleanup terminal slashes
     terminal_slash <- grepl("/$", path)
     path <- if (path == "") "/" else {
@@ -369,10 +373,10 @@ function(bucketname,
             USE.NAMES = FALSE
         ), collapse = '/')
     }
-    url <- if (grepl('^[\\/].*', path)) { 
-        paste0(url, path) 
-    } else { 
-        paste(url, path, sep = "/") 
+    url <- if (grepl('^[\\/].*', path)) {
+        paste0(url, path)
+    } else {
+        paste(url, path, sep = "/")
     }
     if (isTRUE(terminal_slash)) {
         url <- paste0(url, "/")
