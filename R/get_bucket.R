@@ -45,7 +45,7 @@ get_bucket <- function(bucket,
 
     if (isTRUE(parse_response)) {
         while (
-            r[["IsTruncated"]] == "true" &&
+            (r[["IsTruncated"]] == "true" | "NextMarker" %in% names(r)) &&
             !is.null(max) &&
             as.integer(r[["MaxKeys"]]) < max
         ) {
@@ -53,12 +53,12 @@ get_bucket <- function(bucket,
                 prefix = prefix,
                 delimiter = delimiter,
                 "max-keys" = as.integer(pmin(max - as.integer(r[["MaxKeys"]]), 1000)),
-                marker = tail(r, 1)[["Contents"]][["Key"]]
+                marker = r[[max(which(names(r) == "Contents"))]][["Key"]]
             )
             extra <- s3HTTP(verb = "GET", bucket = bucket, query = query, parse_response = parse_response, ...)
-            new_r <- c(r, tail(extra, -5))
-            new_r[["MaxKeys"]] <- as.character(as.integer(r[["MaxKeys"]]) + as.integer(extra[["MaxKeys"]]))
-            new_r[["IsTruncated"]] <- extra[["IsTruncated"]]
+            r[["MaxKeys"]] <- as.character(as.integer(r[["MaxKeys"]]) + as.integer(extra[["MaxKeys"]]))
+            r[["IsTruncated"]] <- extra[["IsTruncated"]]
+            new_r <- c(r, extra[which(names(extra) == "Contents")])
             attr(new_r, "x-amz-id-2") <- attr(r, "x-amz-id-2")
             attr(new_r, "x-amz-request-id") <- attr(r, "x-amz-request-id")
             attr(new_r, "date") <- attr(r, "date")
