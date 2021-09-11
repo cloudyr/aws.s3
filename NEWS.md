@@ -23,6 +23,7 @@
 ## Bugfixes
 
 * `put_object` now closes its connections properly (#354)
+* `get_bucket` now works with DigitalOcean (#393)
 
 
 # aws.s3 0.3.21
