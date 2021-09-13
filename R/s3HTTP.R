@@ -256,7 +256,9 @@ parse_aws_s3_response <- function(r, Sig, verbose = getOption("verbose")){
         attr(out, "request_canonical") <- Sig$CanonicalRequest
         attr(out, "request_string_to_sign") <- Sig$StringToSign
         attr(out, "request_signature") <- Sig$SignatureHeader
-        print(out)
+        if (isTRUE(verbose)) {
+          print(out)
+        }
         httr::stop_for_status(r)
     }
     return(response)
