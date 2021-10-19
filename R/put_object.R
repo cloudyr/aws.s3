@@ -246,7 +246,7 @@ function(
         return(TRUE)
     }
 
-    if (!is.na(size) && size > partsize)
+    if (!is.na(size) && size > partsize && isFALSE(multipart))
         message("File size is ", size, ", consider setting using multipart=TRUE")
 
     ## httr doesn't support connections so we have to read it all into memory first
