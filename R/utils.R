@@ -97,8 +97,8 @@ as.data.frame.s3_bucket <- function(x, row.names = NULL, optional = FALSE, ...) 
                 LastModified = z[["LastModified"]],
                 ETag = z[["ETag"]],
                 Size = z[["Size"]],
-                Owner_ID = z[["Owner"]][["ID"]]),
-                Owner_DisplayName = z[["Owner"]][["DisplayName"]]),
+                Owner_ID = z[["Owner"]][["ID"]],
+                Owner_DisplayName = z[["Owner"]][["DisplayName"]],
                 StorageClass = z[["StorageClass"]],
                 Bucket = z[["Bucket"]])
          
