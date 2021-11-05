@@ -1,3 +1,7 @@
+# aws.s3 0.3.22x
+
+* `get_bucket_df` no longer throws an error when listing bucket contents from a Backblaze S3 bucket. Fixes #407.
+
 # aws.s3 0.3.22
 
 ## API changes

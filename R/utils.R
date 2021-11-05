@@ -92,22 +92,28 @@ get_objectkey.s3_object <- function(x, ...) {
 #' @export
 as.data.frame.s3_bucket <- function(x, row.names = NULL, optional = FALSE, ...) {
     if (length(x)) {
-        out <- lapply(x, function(z) {
-            c(Key = z[["Key"]],
-              LastModified = z[["LastModified"]],
-              ETag = z[["ETag"]],
-              Size = z[["Size"]],
-              Owner_ID =
-                ifelse(is.null(z[["Owner"]]), NA, z[["Owner"]][["ID"]]),
-              Owner_DisplayName =
-                ifelse(is.null(z[["Owner"]]), NA, z[["Owner"]][["DisplayName"]]),
-              StorageClass = z[["StorageClass"]],
-              Bucket = z[["Bucket"]])
+        x <- lapply(x, function(z) {
+        lst = c(Key = z[["Key"]],
+                LastModified = z[["LastModified"]],
+                ETag = z[["ETag"]],
+                Size = z[["Size"]],
+                Owner_ID = z[["Owner"]][["ID"]],
+                Owner_DisplayName = z[["Owner"]][["DisplayName"]],
+                StorageClass = z[["StorageClass"]],
+                Bucket = z[["Bucket"]])
+         
+        # any null values will be dropped, so add back in
+        # only seems to be a problem for the "Owner" properties, so assuming for
+        # now that the others are correct.
+        if(is.null(lst[["Owner_DisplayName"]])) lst[["Owner_DisplayName"]] = NA
+        if(is.null(lst[["Owner_ID"]])) lst[["Owner_ID"]] = NA
+        return(lst)  
+            
         })
         op <- options(stringsAsFactors = FALSE)
         on.exit(options(op))
-        out <- do.call("rbind.data.frame", unname(out))
-        names(out) <- c("Key", "LastModified", "ETag", "Size", "Owner_ID", "Owner_DisplayName", "StorageClass", "Bucket")
+        out <- do.call("rbind.data.frame", unname(x))
+        names(out) <- names(x$Contents)
         structure(out, row.names = if(!is.null(row.names)) row.names else seq_len(nrow(out)),
                        Marker = attributes(x)[["Marker"]],
                        IsTruncated = attributes(x)[["IsTruncated"]],
