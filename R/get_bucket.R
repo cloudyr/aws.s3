@@ -53,10 +53,11 @@ get_bucket <- function(bucket,
                 prefix = prefix,
                 delimiter = delimiter,
                 "max-keys" = as.integer(pmin(max - as.integer(r[["MaxKeys"]]), 1000)),
-                marker = tail(r, 1)[["Contents"]][["Key"]]
+                marker = r$NextMarker
             )
             extra <- s3HTTP(verb = "GET", bucket = bucket, query = query, parse_response = parse_response, ...)
-            new_r <- c(r, tail(extra, -5))
+            new_r <- c(r, extra)
+            new_r[["NextMarker"]] <- extra$NextMarker
             new_r[["MaxKeys"]] <- as.character(as.integer(r[["MaxKeys"]]) + as.integer(extra[["MaxKeys"]]))
             new_r[["IsTruncated"]] <- extra[["IsTruncated"]]
             attr(new_r, "x-amz-id-2") <- attr(r, "x-amz-id-2")
