@@ -23,7 +23,7 @@
 ## Bugfixes
 
 * `put_object` now closes its connections properly (#354)
-
+* `get_bucket` now references NextMarker by name, ensuring increased compatibility (#413)
 
 # aws.s3 0.3.21
 
