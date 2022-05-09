@@ -1,7 +1,7 @@
 Package: aws.s3
 Type: Package
 Title: 'AWS S3' Client Package
-Version: 0.3.22
+Version: 0.3.23
 Authors@R: c(person("Thomas J.", "Leeper", role = "aut",
                     email = "thosjleeper@gmail.com",
                     comment = c(ORCID = "0000-0003-4097-6326")),
@@ -15,6 +15,7 @@ Authors@R: c(person("Thomas J.", "Leeper", role = "aut",
              person("Andrii", "Degtiarov", role = "ctb"),
              person("Dhruv", "Aggarwal", role = "ctb"),
              person("Alyssa", "Columbus", role = "ctb"),
+             person("Matt", "Kaye", role = "ctb"),
              person("Simon", "Urbanek", role = c("cre", "ctb"),
                     email = "simon.urbanek@R-project.org")
 	     )
@@ -33,7 +34,8 @@ Imports:
     xml2 (> 1.0.0),
     base64enc,
     digest,
-    aws.signature (>= 0.3.7)
+    aws.signature (>= 0.3.7),
+    prettyunits
 Suggests:
     testthat,
     datasets
