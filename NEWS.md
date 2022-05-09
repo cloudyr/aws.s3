@@ -1,3 +1,10 @@
+# aws.s3 0.3.23
+
+## Features
+
+* `put_object` now uses `prettyunits::pretty_bytes` to prettify log messages printed when suggesting
+using `multipart = TRUE`.
+
 # aws.s3 0.3.22
 
 ## API changes
