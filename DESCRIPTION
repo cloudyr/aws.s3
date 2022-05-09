@@ -34,7 +34,8 @@ Imports:
     xml2 (> 1.0.0),
     base64enc,
     digest,
-    aws.signature (>= 0.3.7)
+    aws.signature (>= 0.3.7),
+    prettyunits
 Suggests:
     testthat,
     datasets
