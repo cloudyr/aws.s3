@@ -14,48 +14,48 @@
 #' @param partsize numeric, size of each part when using multipart upload.  AWS imposes a minimum size (currently 5MB) so setting a too low value may fail. Note that it can be set to \code{Inf} in conjunction with \code{multipart=FALSE} to silence the warning suggesting multipart uploads for large content.
 #' @template dots
 #' @details This provides a generic interface for storing objects to S3. Some convenience wrappers are provided for common tasks: e.g., \code{\link{s3save}} and \code{\link{s3saveRDS}}.
-#' 
+#'
 #' Note that S3 is a flat file store. So there is no folder hierarchy as in a traditional hard drive. However, S3 allows users to create pseudo-folders by prepending object keys with \code{foldername/}. The \code{put_folder} function is provided as a high-level convenience function for creating folders. This is not actually necessary as objects with slashes in their key will be displayed in the S3 web console as if they were in folders, but it may be useful for creating an empty directory (which is possible in the web console).
 #'
 #' \strong{IMPORTANT}: In aws.s3 versions before 0.3.22 the first positional argument was \code{file} and \code{put_object} changed behavior depending on whether the file could be found or not. This is inherently very dangerous since \code{put_object} would only store the filename in cases there was any problem with the input. Therefore the first argument was changed to \code{what} which is always the content to store and now also supports connection. If not used, \code{file} is still a named argument and can be set instead - it will be always interpreted as a filename, failing with an error if it doesn't exist.
 #'
 #' When using connections in \code{what} it is preferrable that they are either unopened or open in binary mode. This condition is mandatory for multipart uploads. Text connections are inherently much slower and may not deliver identical results since they mangle line endings. \code{put_object} will automatically open unopened connections and always closes the connection before returning.
-#'  
+#'
 #' @return If successful, \code{TRUE}.
 #' @examples
 #' \dontrun{
 #'   library("datasets")
-#'   
+#'
 #'   # write file to S3
 #'   tmp <- tempfile()
 #'   on.exit(unlink(tmp))
 #'   utils::write.csv(mtcars, file = tmp)
 #'   # put object with an upload progress bar
 #'   put_object(file = tmp, object = "mtcars.csv", bucket = "myexamplebucket", show_progress = TRUE)
-#' 
+#'
 #'   # create a "folder" in a bucket (NOT required! Folders are really just 0-length files)
 #'   put_folder("example", bucket = "myexamplebucket")
 #'   ## write object to the "folder"
 #'   put_object(file = tmp, object = "example/mtcars.csv", bucket = "myexamplebucket")
-#' 
+#'
 #'   # write serialized, in-memory object to S3
 #'   x <- rawConnection(raw(), "w")
 #'   utils::write.csv(mtcars, x)
 #'   put_object(rawConnectionValue(x), object = "mtcars.csv", bucket = "myexamplebucketname")
-#' 
+#'
 #'   # use `headers` for server-side encryption
 #'   ## require appropriate bucket policy
 #'   ## encryption can also be set at the bucket-level using \code{\link{put_encryption}}
 #'   put_object(file = tmp, object = "mtcars.csv", bucket = "myexamplebucket",
 #'              headers = c('x-amz-server-side-encryption' = 'AES256'))
-#' 
+#'
 #'   # alternative "S3 URI" syntax:
 #'   put_object(rawConnectionValue(x), object = "s3://myexamplebucketname/mtcars.csv")
 #'   close(x)
-#' 
+#'
 #'   # read the object back from S3
 #'   read.csv(text = rawToChar(get_object(object = "s3://myexamplebucketname/mtcars.csv")))
-#' 
+#'
 #'   # multi-part uploads for objects over 5MB
 #'   \donttest{
 #'   x <- rnorm(3e6)
@@ -68,6 +68,7 @@
 #' @references \href{http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPUT.html}{API Documentation}
 #' @seealso \code{\link{put_bucket}}, \code{\link{get_object}}, \code{\link{delete_object}}, \code{\link{put_encryption}}
 #' @importFrom utils head
+#' @importFrom prettyunits pretty_bytes
 #' @export
 put_object <-
 function(
@@ -104,7 +105,7 @@ function(
 
     ## we cache connection info
     what.info <- if (inherits(what, "connection")) summary(what) else NULL
-    
+
     ## auto-detect file name if object is not provided
     if (missing(object) && inherits(what, "connection") && what.info$class == "file") {
         if (missing(bucket))
@@ -190,7 +191,7 @@ function(
                                   headers = headers,
                                   ...)
         id <- initialize[["UploadId"]]
-        
+
         # function to call abort if any part fails (otherwise the user pays for incomplete payload!)
         abort.upload <- function(id) delete_object(object = object, bucket = bucket, query = list(uploadId = id), ...)
 
@@ -214,7 +215,7 @@ function(
             if (length(data) == 0) ## end of payload
                 break
 
-            r <- s3HTTP(verb = "PUT", 
+            r <- s3HTTP(verb = "PUT",
                         bucket = bucket,
                         path = paste0('/', object),
                         query = list(partNumber = i, uploadId = id),
@@ -247,7 +248,7 @@ function(
     }
 
     if (!is.na(size) && size > partsize)
-        message("File size is ", size, ", consider setting using multipart=TRUE")
+        message("File size is ", pretty_bytes(size), ", consider setting using multipart=TRUE")
 
     ## httr doesn't support connections so we have to read it all into memory first
     if (inherits(what, "connection")) {
@@ -271,10 +272,10 @@ function(
         }
     }
 
-    r <- s3HTTP(verb = "PUT", 
+    r <- s3HTTP(verb = "PUT",
                 bucket = bucket,
                 path = paste0('/', object),
-                headers = headers, 
+                headers = headers,
                 request_body = what,
                 verbose = verbose,
                 show_progress = show_progress,
@@ -303,10 +304,10 @@ post_object <- function(file, object, bucket, headers = list(), ...) {
     if (!"Content-Length" %in% names(headers)) {
         headers <- c(headers, list(`Content-Length` = formatSize(calculate_data_size(file))))
     }
-    r <- s3HTTP(verb = "POST", 
+    r <- s3HTTP(verb = "POST",
                 bucket = bucket,
                 path = paste0("/", object),
-                headers = headers, 
+                headers = headers,
                 request_body = file,
                 ...)
     structure(r, class = "s3_object")
@@ -334,7 +335,7 @@ complete_parts <- function(object, bucket, id, parts, ...) {
         bucket <- get_bucketname(object)
     }
     object <- get_objectkey(object)
-    
+
     tmp <- tempfile()
     xml2::write_xml(xml2::as_xml_document(list(CompleteMultipartUpload = parts)), tmp, options = "no_declaration")
     post_object(file = tmp, object = object, bucket = bucket, query = list(uploadId = id), ...)
