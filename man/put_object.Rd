@@ -64,7 +64,7 @@ When using connections in \code{what} it is preferrable that they are either uno
 \examples{
 \dontrun{
   library("datasets")
-  
+
   # write file to S3
   tmp <- tempfile()
   on.exit(unlink(tmp))
