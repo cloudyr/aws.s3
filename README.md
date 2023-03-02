@@ -1,4 +1,5 @@
 # AWS S3 Client Package
+111
 
 **aws.s3** is a simple client package for the [Amazon Web Services (AWS) Simple Storage Service (S3)](https://aws.amazon.com/s3/) REST API. While [other packages](https://github.com/ropensci/webservices#amazon) currently connect R to S3, they do so incompletely (mapping only some of the API endpoints to R) and most implementations rely on the AWS command-line tools, which users may not have installed on their system.
 
