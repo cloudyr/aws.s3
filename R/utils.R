@@ -89,6 +89,32 @@ get_objectkey.s3_object <- function(x, ...) {
     sub("^/+", "", x[["Key"]])
 }
 
+#' Changes to the Owner field in the S3 API began July 15, 2025
+#' https://docs.aws.amazon.com/AmazonS3/latest/API/API_Owner.html
+#'
+#' @param obj an s3_object
+#' @return the Owner ID or `NA_character_` if not found
+unwrap_owner_id <- function(obj) {
+  stopifnot(is(obj, "s3_object"))
+  owner <- obj[["Owner"]]
+
+  if (is.null(owner)) {
+    return(NA_character_)
+  }
+
+  if (is.list(owner)) {
+    owner_id <- owner[["ID"]]
+
+    if (is.null(owner_id)) {
+      return(NA_character_)
+    }
+
+    return(owner_id)
+  }
+
+  return(owner)
+}
+
 #' @export
 as.data.frame.s3_bucket <- function(x, row.names = NULL, optional = FALSE, ...) {
     if (length(x)) {
@@ -97,10 +123,11 @@ as.data.frame.s3_bucket <- function(x, row.names = NULL, optional = FALSE, ...) 
               LastModified = z[["LastModified"]],
               ETag = z[["ETag"]],
               Size = z[["Size"]],
-              Owner_ID =
-                ifelse(is.null(z[["Owner"]]), NA, z[["Owner"]][["ID"]]),
-              Owner_DisplayName =
-                ifelse(is.null(z[["Owner"]]), NA, z[["Owner"]][["DisplayName"]]),
+              Owner_ID = unwrap_owner_id(z),
+              # Owner_DisplayName is hard deprecated after October 1 2025
+              # and soft-deprecated starting July 15 2025
+              # https://docs.aws.amazon.com/AmazonS3/latest/API/API_Owner.html
+              Owner_DisplayName = NA_character_,
               StorageClass = z[["StorageClass"]],
               Bucket = z[["Bucket"]])
         })
