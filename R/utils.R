@@ -97,10 +97,14 @@ as.data.frame.s3_bucket <- function(x, row.names = NULL, optional = FALSE, ...) 
               LastModified = z[["LastModified"]],
               ETag = z[["ETag"]],
               Size = z[["Size"]],
-              Owner_ID =
-                ifelse(is.null(z[["Owner"]]), NA, z[["Owner"]][["ID"]]),
-              Owner_DisplayName =
-                ifelse(is.null(z[["Owner"]]), NA, z[["Owner"]][["DisplayName"]]),
+	      # flatten_list is folding $Owner$ID into a single string $Owner
+	      # in the absence of any other entries (see #43)
+              Owner_ID = if (is.character(owner <- z[["Owner"]])) owner else
+		if (is.list(owner) && !is.null(owner[["ID"]])) owner[["ID"]] else NA_character_,
+	      # DisplayName has been removed in 2025 see https://docs.aws.amazon.com/AmazonS3/latest/API/API_Owner.html
+              Owner_DisplayName = if (is.list(z[["Owner"]]) && length(z[["Owner"]][["DisplayName"]]))
+	        z[["Owner"]][["DisplayName"]] else NA_character_,
+              #  ifelse(is.null(z[["Owner"]]), NA, z[["Owner"]][["DisplayName"]]),
               StorageClass = z[["StorageClass"]],
               Bucket = z[["Bucket"]])
         })
