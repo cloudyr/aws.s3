@@ -135,7 +135,7 @@ as.data.frame.s3_bucket <- function(x, row.names = NULL, optional = FALSE, ...) 
 
 flatten_list <- function(x) {
     if (is.list(x)) {
-        if ((class(x) != "list") || (length(class(x)) > 1)) {
+        if ((!inherits(x, "list")) || (length(class(x)) > 1)) {
             return(x)
         } else {
             if (length(x) == 1) {
