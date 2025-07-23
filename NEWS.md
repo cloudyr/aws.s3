@@ -24,6 +24,8 @@
 
 * `put_object` now closes its connections properly (#354)
 
+* Adapt to `DisplayName` being removed from the AWS API (#437)
+
 
 # aws.s3 0.3.21
 

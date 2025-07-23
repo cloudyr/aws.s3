@@ -15,7 +15,7 @@ print.s3_object <- function(x, ...){
         cat("Owner:         ", x$Owner, "\n")    
     }
     else{
-        cat("Owner:         ", x$Owner$DisplayName, "\n")   
+        cat("Owner:         ", if (length(x$Owner$DisplayName)) x$Owner$DisplayName else x$Owner$ID, "\n")
     }
     cat("Storage class: ", x$StorageClass, "\n")
     invisible(x)
