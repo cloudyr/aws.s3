@@ -236,7 +236,7 @@ parse_aws_s3_response <- function(r, Sig, verbose = getOption("verbose")){
         message("Parsing AWS API response")
     }
     ctype <- httr::headers(r)[["content-type"]]
-    if (is.null(ctype) || ctype == "application/xml"){
+    if (is.null(ctype) || grepl("application/xml", ctype)){
         content <- httr::content(r, as = "text", encoding = "UTF-8")
         if (content != "") {
             response_contents <- xml2::as_list(xml2::read_xml(content))
