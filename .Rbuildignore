@@ -9,3 +9,4 @@ knitreadme.sh
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^\.github.?
+^aws\.s3\.Rproj$

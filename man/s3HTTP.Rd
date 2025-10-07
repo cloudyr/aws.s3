@@ -26,6 +26,7 @@ s3HTTP(
   secret = NULL,
   session_token = NULL,
   use_https = TRUE,
+  require_authorization = TRUE,
   ...
 )
 }
@@ -71,6 +72,8 @@ s3HTTP(
 \item{session_token}{Optionally, a character string containing an AWS temporary Session Token. If missing, defaults to value stored in environment variable \env{AWS_SESSION_TOKEN}.}
 
 \item{use_https}{Optionally, a logical indicating whether to use HTTPS requests. Default is \code{TRUE}.}
+
+\item{require_authorization}{A logical indicator of whether an access key and secret are required.}
 
 \item{...}{Additional arguments passed to an HTTP request function. such as \code{\link[httr]{GET}}.}
 }
