@@ -80,8 +80,10 @@ s3sync <- function(path = ".", bucket, prefix = "", direction = c("upload", "dow
     ## list all object keys
     s3.names <- unname(unlist(lapply(b, `[[`, "Key")))
 
-    cat("all keys:\n")
-    print(s3.names)
+    if (isTrue(verbose)) {
+        cat("all keys:\n")
+        print(s3.names)
+    }
 
     ## filter only objects matching the prefix
     if (nchar(prefix)) {
