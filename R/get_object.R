@@ -118,13 +118,22 @@ function(object,
     }
     
     # use httr::write_disk() to write directly to disk
-    r <- s3HTTP(verb = "GET", 
-                bucket = bucket,
-                path = paste0("/", object),
-                headers = headers,
-                write_disk = httr::write_disk(path = file, overwrite = overwrite),
-                ...)
-    return(file)
+    r <- try(
+      s3HTTP(verb = "GET", 
+             bucket = bucket,
+             path = paste0("/", object),
+             headers = headers,
+             write_disk = httr::write_disk(path = file, overwrite = overwrite),
+             ...)
+    )
+    
+    if (inherits(r, "try-error")) {
+      file.remove(file)
+      if (length(dir(d)) == 0) file.remove(d)
+      stop(r, call. = FALSE)
+    }
+    
+      return(file)
 }
 
 #' @rdname get_object
