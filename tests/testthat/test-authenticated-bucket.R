@@ -1,6 +1,7 @@
 context("Authenticated bucket tests")
 
 test_that("basic usage of getbucket for signed in user", {
+  skip_if(Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID") == "")
   ex <- get_bucket(
     bucket = 'hpk',
     key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
@@ -18,6 +19,7 @@ test_that("basic usage of getbucket for signed in user", {
 
 
 test_that("unparsed getbucket", {
+  skip_if(Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID") == "")
   ex <- get_bucket(
     bucket = 'hpk',
     key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
@@ -35,6 +37,7 @@ test_that("unparsed getbucket", {
 
 
 test_that("get_cors on a bucket with no cors setup", {
+  skip_if(Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID") == "")
   expect_error(get_cors(
       bucket = 'hpk',
       key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
@@ -44,6 +47,7 @@ test_that("get_cors on a bucket with no cors setup", {
 
 
 test_that("putbucket and deletebucket", {
+  skip_if(Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID") == "")
   test_name <- paste0('cloudyr_test_', gsub('\\s', '_', gsub('[-:]', '_', Sys.time())))
   
   resp <- put_bucket(
@@ -62,6 +66,7 @@ test_that("putbucket and deletebucket", {
 })
 
 test_that("bucket versioning", {
+  skip_if(Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID") == "")
   test_name <- paste0('cloudyr_test_', gsub('\\s', '_', gsub('[-:]', '_', Sys.time())))
   
   resp <- put_bucket(

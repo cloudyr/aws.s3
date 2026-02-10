@@ -35,7 +35,7 @@ get_acl <- function(object, bucket, ...) {
                     parse_response = FALSE,
                     ...)
     }
-    return(content(r, "text", encoding = "UTF-8"))
+    return(httr2::resp_body_string(r, "UTF-8"))
 }
 
 #' @rdname acl

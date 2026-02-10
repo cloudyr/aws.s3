@@ -29,7 +29,7 @@ Imports:
     utils,
     tools,
     curl,
-    httr,
+    httr2,
     xml2 (> 1.0.0),
     base64enc,
     digest,
@@ -37,4 +37,4 @@ Imports:
 Suggests:
     testthat,
     datasets
-RoxygenNote: 7.1.0
+RoxygenNote: 7.3.2

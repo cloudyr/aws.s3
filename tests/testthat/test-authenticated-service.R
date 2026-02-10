@@ -1,6 +1,7 @@
 context("Authenticated service tests")
 
 test_that("basic usage of bucketlist", {
+  skip_if(Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID") == "")
   bl <- bucketlist(
     key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
     secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY")
@@ -12,6 +13,7 @@ test_that("basic usage of bucketlist", {
 
 
 test_that("unparsed bucketlist", {
+  skip_if(Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID") == "")
   bl <- bucketlist(
     key = Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID"), 
     secret = Sys.getenv("TRAVIS_AWS_SECRET_ACCESS_KEY"),

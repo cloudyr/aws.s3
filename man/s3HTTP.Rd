@@ -11,8 +11,9 @@ s3HTTP(
   query = NULL,
   headers = list(),
   request_body = "",
-  write_disk = NULL,
-  write_fn = NULL,
+  file,
+  write_disk,
+  write_fn,
   accelerate = FALSE,
   dualstack = FALSE,
   parse_response = TRUE,
@@ -42,9 +43,11 @@ s3HTTP(
 
 \item{request_body}{A character string containing request body data.}
 
-\item{write_disk}{If \code{verb = "GET"}, this is, optionally, an argument like \code{\link[httr]{write_disk}} to write the result directly to disk.}
+\item{file}{File path. If specified and `verb="GET"` the response content
+will be written to this file.}
 
-\item{write_fn}{If set to a function and \code{verb = "GET"} is used then the output is passed in chunks as a raw vector in the first argument to this function, allowing streaming output. Note that \code{write_disk} and \code{write_fn} are mutually exclusive.}
+\item{write_disk, write_fn}{Deprecated. argument not supported by `httr2`.
+Use `verb="connection"` or `file` instead.}
 
 \item{accelerate}{A logical indicating whether to use AWS transfer acceleration, which can produce significant speed improvements for cross-country transfers. Acceleration only works with buckets that do not have dots in bucket name.}
 

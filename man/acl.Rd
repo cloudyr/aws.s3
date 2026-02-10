@@ -16,7 +16,7 @@ put_acl(object, bucket, acl = NULL, headers = list(), body = NULL, ...)
 
 \item{\dots}{Additional arguments passed to \code{\link{s3HTTP}}.}
 
-\item{acl}{A character string indicating a \href{https://docs.aws.amazon.com/AmazonS3/latest/userguide/acl-overview.html#canned-acl}{\dQuote{canned} access control list}. By default all bucket contents and objects therein are given the ACL \dQuote{private}. This can later be viewed using \code{\link{get_acl}} and modified using \code{\link{put_acl}}.}
+\item{acl}{A character string indicating a \href{http://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl}{\dQuote{canned} access control list}. By default all bucket contents and objects therein are given the ACL \dQuote{private}. This can later be viewed using \code{\link{get_acl}} and modified using \code{\link{put_acl}}.}
 
 \item{headers}{List of request headers for the REST call}
 

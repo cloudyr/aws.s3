@@ -1,6 +1,6 @@
 
 ```r
-library("httr")
+library("httr2")
 library("caTools")
 library("digest")
 library("aws.signature")
@@ -92,21 +92,26 @@ In a POST request, it [looks like](https://raam.org/2008/using-curl-to-upload-fi
   fields$`x-amz-date` <- d_timestamp
 ```
 
-Here we add the policy in base64, and then add this to the signature digest.  Last, we include the file with `httr::upload_file()`
+Here we add the policy in base64, and then add this to the signature digest.  Last, we include the file with `curl::form_file()`
 
 
 ```r
   fields$Policy <- caTools::base64encode(as.character(policy))
   fields$`x-amz-signature` <- digest::hmac(Sig$Signature, fields$Policy, "sha256")
-  fields$file <- httr::upload_file(filename)
+  fields$file <- curl::form_file(filename)
 ```
 
 Let's give this a try:
 
 
 ```r
-  r <- httr::POST(url, encode="multipart", body = fields)
-  content(r)
+  request <-
+    request(url) |>
+    req_method("POST")
+  request <- do.call(req_body_multipart, c(list(.req = request), fields))
+  request |>
+    req_perform() |>
+    resp_body_raw()
 ```
 
 
