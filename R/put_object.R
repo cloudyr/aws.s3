@@ -249,7 +249,8 @@ function(
     if (!is.na(size) && size > partsize)
         message("File size is ", size, ", consider setting using multipart=TRUE")
 
-    ## httr doesn't support connections so we have to read it all into memory first
+    ## httr2 doesn't support connections as request body,
+    ## so we have to read it all into memory first
     if (inherits(what, "connection")) {
         con <- what
         if (!isOpen(con, "r"))

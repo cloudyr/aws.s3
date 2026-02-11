@@ -30,7 +30,7 @@ put_folder(folder, bucket, ...)
 
 \item{multipart}{A logical indicating whether to use multipart uploads. See \url{https://docs.aws.amazon.com/AmazonS3/latest/userguide/mpuoverview.html}. If the content is smaller than \code{partsize} it is ignored.}
 
-\item{acl}{A character string indicating a \href{https://docs.aws.amazon.com/AmazonS3/latest/userguide/acl-overview.html#canned-acl}{\dQuote{canned} access control list}. By default all bucket contents and objects therein are given the ACL \dQuote{private}. This can later be viewed using \code{\link{get_acl}} and modified using \code{\link{put_acl}}.}
+\item{acl}{A character string indicating a \href{http://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl}{\dQuote{canned} access control list}. By default all bucket contents and objects therein are given the ACL \dQuote{private}. This can later be viewed using \code{\link{get_acl}} and modified using \code{\link{put_acl}}.}
 
 \item{file}{string, path to a file to store. Mutually exclusive with \code{what}.}
 

@@ -11,6 +11,14 @@ AWS S3 Client Package
 \details{
 A simple client package for the Amazon Web Services (AWS) Simple Storage Service (S3) REST API.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/cloudyr/aws.s3}
+  \item Report bugs at \url{https://github.com/cloudyr/aws.s3/issues}
+}
+
+}
 \author{
 Thomas J. Leeper <thosjleeper@gmail.com>
 }

@@ -45,13 +45,15 @@ s3connection(object, bucket, headers = list(), ...)
 
 \item{parse_response}{Passed through to \code{\link{s3HTTP}}, as this function requires a non-default setting. There is probably no reason to ever change this.}
 
-\item{as}{Passed through to \code{httr::content}.}
+\item{as}{Should be one of `"raw"` (returns a vector of `raw` data),
+`"text"` (returns a `character` string), or `"parsed"`. The latter will
+attempt to parse the content to an appropriate R object.}
 
 \item{\dots}{Additional arguments passed to \code{\link{s3HTTP}}.}
 
 \item{file}{An R connection, or file name specifying the local file to save the object into.}
 
-\item{overwrite}{A logical indicating whether to overwrite \code{file}. Passed to \code{\link[httr]{write_disk}}. Default is \code{TRUE}.}
+\item{overwrite}{A logical indicating whether to overwrite \code{file}.}
 
 \item{request_body}{For \code{select_object}, an XML request body as described in the \href{https://docs.aws.amazon.com/AmazonS3/latest/API/API_SelectObjectContent.html}{SELECT API documentation}.}
 }

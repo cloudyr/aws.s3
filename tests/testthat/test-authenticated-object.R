@@ -3,6 +3,7 @@ context("Authenticated object tests")
 require("datasets")
 
 test_that("basic usage of getobject for signed in user", {
+  skip_if(Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID") == "")
   ex <- get_object(
                   object = 'robots.txt',
                   bucket = 'hpk', 
@@ -20,6 +21,7 @@ test_that("basic usage of getobject for signed in user", {
 })
 
 test_that("basic usage of putobject and deleteobject for signed in user", {
+  skip_if(Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID") == "")
   tmp <- tempfile(fileext = ".txt")
   writeLines(c("cloudyr", "test"), tmp)
 
@@ -44,7 +46,8 @@ test_that("basic usage of putobject and deleteobject for signed in user", {
 })
 
 test_that("basic usage of s3save and s3load", {
-  
+  skip_if(Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID") == "")
+
   p <- s3save(
     iris,
     object = "iris-dataset",
@@ -67,7 +70,8 @@ test_that("basic usage of s3save and s3load", {
 })
 
 test_that("basic usage of s3saveRDS and s3readRDS", {
-  
+  skip_if(Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID") == "")
+
   p <- s3saveRDS(
     iris,
     object = "iris-dataset",
@@ -90,6 +94,7 @@ test_that("basic usage of s3saveRDS and s3readRDS", {
 })
 
 test_that("putobject and deleteobject handle object names with spaces and special characters", {
+  skip_if(Sys.getenv("TRAVIS_AWS_ACCESS_KEY_ID") == "")
   tmp <- tempfile(pattern = 'tricky file name &$@=:+,? ', fileext = ".txt")
   writeLines(c("cloudyr", "test"), tmp)
 

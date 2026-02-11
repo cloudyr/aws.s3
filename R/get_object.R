@@ -7,7 +7,9 @@
 #' @param request_body For \code{select_object}, an XML request body as described in the \href{https://docs.aws.amazon.com/AmazonS3/latest/API/API_SelectObjectContent.html}{SELECT API documentation}.
 #' @param headers List of request headers for the REST call.
 #' @param parse_response Passed through to \code{\link{s3HTTP}}, as this function requires a non-default setting. There is probably no reason to ever change this.
-#' @param as Passed through to \code{httr::content}. 
+#' @param as Should be one of `"raw"` (returns a vector of `raw` data),
+#' `"text"` (returns a `character` string), or `"parsed"`. The latter will
+#' attempt to parse the content to an appropriate R object.
 #' @template dots
 #' @details \code{get_object} retrieves an object into memory as a raw vector. This page describes \code{get_object} and several wrappers that provide additional useful functionality.
 #' 
@@ -92,12 +94,29 @@ function(object,
                 headers = headers,
                 parse_response = parse_response,
                 ...)
-    cont <- httr::content(r, as = as)
+    cont <-
+        switch(
+            as,
+            text   = { httr2::resp_body_string(r) },
+            raw    = { httr2::resp_body_raw(r) },
+            parsed = {
+                ctype <- httr2::resp_content_type(r)
+                switch(
+                    ctype,
+                    `application/json` = { httr2::resp_body_json(r) },
+                    `text/xml`         = { httr2::resp_body_xml() },
+                    `application/xml`  = { httr2::resp_body_xml() },
+                    `text/html`        = { httr2::resp_body_html() },
+                    { httr2::resp_body_raw() },
+                )
+            },
+            { httr2::resp_body_raw() }
+        )
     return(cont)
 }
 
 #' @rdname get_object
-#' @param overwrite A logical indicating whether to overwrite \code{file}. Passed to \code{\link[httr]{write_disk}}. Default is \code{TRUE}.
+#' @param overwrite A logical indicating whether to overwrite \code{file}.
 #' @export
 save_object <- 
 function(object, 
@@ -117,12 +136,13 @@ function(object,
         dir.create(d, recursive = TRUE)
     }
     
-    # use httr::write_disk() to write directly to disk
+    if (!overwrite && file.exists(file))
+        stop(sprintf("File '%s' already exists. Set 'overwrite' to TRUE, to overwrite"))
     r <- s3HTTP(verb = "GET", 
                 bucket = bucket,
                 path = paste0("/", object),
                 headers = headers,
-                write_disk = httr::write_disk(path = file, overwrite = overwrite),
+                file = file,
                 ...)
     return(file)
 }
@@ -151,7 +171,7 @@ function(
                 request_body = request_body,
                 parse_response = parse_response,
                 ...)
-    cont <- httr::content(r, as = "raw")
+    cont <- httr2::resp_body_raw(r)
     return(cont)
 }
 
@@ -175,7 +195,7 @@ get_torrent <- function(object, bucket, ...) {
                 path = paste0("/", object),
                 query = list(torrent =""),
                 ...)
-    return(content(r, "raw"))
+    return(httr2::resp_body_raw(r))
 }
 
 #' @rdname get_object

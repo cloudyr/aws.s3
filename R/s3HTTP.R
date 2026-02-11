@@ -7,8 +7,10 @@
 #' @param query Any query arguments, passed as a named list of key-value pairs.
 #' @param headers A list of request headers for the REST call.   
 #' @param request_body A character string containing request body data.
-#' @param write_disk If \code{verb = "GET"}, this is, optionally, an argument like \code{\link[httr]{write_disk}} to write the result directly to disk.
-#' @param write_fn If set to a function and \code{verb = "GET"} is used then the output is passed in chunks as a raw vector in the first argument to this function, allowing streaming output. Note that \code{write_disk} and \code{write_fn} are mutually exclusive.
+#' @param write_disk,write_fn Deprecated. Argument not supported by `httr2`.
+#' Use `verb="connection"` or `file` instead.
+#' @param file File path. If specified and `verb="GET"` the response content
+#' will be written to this file.
 #' @param accelerate A logical indicating whether to use AWS transfer acceleration, which can produce significant speed improvements for cross-country transfers. Acceleration only works with buckets that do not have dots in bucket name.
 #' @param dualstack A logical indicating whether to use \dQuote{dual stack} requests, which can resolve to either IPv4 or IPv6. See \url{https://docs.aws.amazon.com/AmazonS3/latest/API/dual-stack-endpoints.html}.
 #' @param parse_response A logical indicating whether to return the response as is, or parse and return as a list. Default is \code{TRUE}.
@@ -24,7 +26,7 @@
 #' @param use_https Optionally, a logical indicating whether to use HTTPS requests. Default is \code{TRUE}.
 #' @param ... Additional arguments passed to an HTTP request function. such as \code{\link[httr]{GET}}.
 #' @return the S3 response, or the relevant error.
-#' @import httr
+#' @import httr2
 #' @importFrom xml2 read_xml as_list
 #' @importFrom utils URLencode
 #' @importFrom curl handle_setheaders new_handle curl
@@ -37,8 +39,9 @@ function(verb = "GET",
          query = NULL,
          headers = list(), 
          request_body = "",
-         write_disk = NULL,
-         write_fn = NULL,
+         file,
+         write_disk,
+         write_fn,
          accelerate = FALSE,
          dualstack = FALSE,
          parse_response = TRUE, 
@@ -53,7 +56,10 @@ function(verb = "GET",
          session_token = NULL,
          use_https = TRUE,
          ...) {
-    
+    if (!missing(write_disk) || !missing(write_fn))
+        stop(paste("Arguments `write_disk` and `write_fn` are deprecated.",
+        "Use `file` argument instead", sep = "\n"))
+
     # locate and validate credentials
     credentials <- aws.signature::locate_credentials(key = key, secret = secret, session_token = session_token, region = region, verbose = verbose)
     key <- credentials[["key"]]
@@ -61,17 +67,6 @@ function(verb = "GET",
     session_token <- credentials[["session_token"]]
     ## allow region="" to override any config - the only way to use 3rd party URLs without region
     region <- if (length(region) && !nzchar(region)) region else credentials[["region"]]
-    
-    # handle 'show_progress' argument
-    if (isTRUE(show_progress)) {
-        if (verb %in% c("GET")) {
-            show_progress <- httr::progress(type = "down")
-        } else {
-            show_progress <- httr::progress(type = "up")
-        }
-    } else {
-        show_progress <- NULL
-    }
     
     # validate bucket name and region
     bucketname <- get_bucketname(bucket)
@@ -94,32 +89,32 @@ function(verb = "GET",
     
     url_style <- match.arg(url_style)
     url <- setup_s3_url(bucketname, region, path, accelerate, url_style = url_style, base_url = base_url, verbose = verbose, use_https = use_https)
-    p <- httr::parse_url(url)
-    action <- if (p$path == "") "/" else paste0("/", p$path)
+    p <- httr2::url_parse(url)
+    request <-
+        httr2::request(url) |>
+        httr2::req_method(ifelse(verb == "connection", "GET", verb))
+    request <-
+        do.call(httr2::req_url_query, c(list(.req = request), query))
+
+    if (show_progress) request <- httr2::req_progress(request)
+    
+    action <- p$path
     hostname <- paste(p$hostname, p$port, sep=ifelse(length(p$port), ":", ""))
     
     # parse headers
     canonical_headers <- c(list(host = hostname,
                                 `x-amz-date` = d_timestamp), headers)
     headers[["x-amz-date"]] <- d_timestamp
-    # parse query arguments
-    if (is.null(query) && !is.null(p$query)) {
-        query <- p[["query"]]
-    }
-    if (all(sapply(query, is.null))) {
-        query <- NULL
-    }
+
     # assess whether request is authenticated or not
     if (is.null(key) || key == "") {
         if (isTRUE(verbose)) {
             message("Executing request without AWS credentials")
         }
-        Sig <- list()
     } else {
         # if authenticated, figure out the request signature
         if (isTRUE(verbose))
             message("Executing request with AWS credentials")
-
         ## we need to augment canonical headers with
         ## x-amz-content-sha256 since signature_v4_auth() doesn't do it
         ## the following is what signature_v4_auth() does and it's terribly fragile!
@@ -128,106 +123,57 @@ function(verb = "GET",
         body_hash <- tolower(digest::digest(request_body,
                                             file = is.character(request_body) && file.exists(request_body),
                                             algo = "sha256", serialize = FALSE))
-
+        
         canonical_headers[["x-amz-content-sha256"]] <-
             headers[["x-amz-content-sha256"]] <- body_hash
-
+        
         Sig <- aws.signature::signature_v4_auth(
-               datetime = d_timestamp,
-               region = region,
-               service = "s3",
-               # For s3connection() we hack the 'verb' argument. It's otherwise a GET request.
-               verb = if (verb == "connection") "GET" else verb,
-               action = action,
-               query_args = query,
-               canonical_headers = canonical_headers,
-               request_body = request_body,
-               key = key,
-               secret = secret,
-               session_token = session_token,
-               verbose = verbose)
+            datetime = d_timestamp,
+            region = region,
+            service = "s3",
+            # For s3connection() we hack the 'verb' argument. It's otherwise a GET request.
+            verb = if (verb == "connection") "GET" else verb,
+            action = action,
+            query_args = query,
+            canonical_headers = canonical_headers,
+            request_body = request_body,
+            key = key,
+            secret = secret,
+            session_token = session_token,
+            verbose = verbose)
         if (!is.null(session_token) && session_token != "") {
             headers[["x-amz-security-token"]] <- session_token
         }
-        headers[["Authorization"]] <- Sig[["SignatureHeader"]]
+        headers[["Authorization"]] <- Sig[["SignatureHeader"]]        
     }
-    H <- do.call(httr::add_headers, headers)
-    
+    request <-
+        do.call(httr2::req_headers, c(list(.req = request), headers))
+
     # execute request
-    if (verb == "GET") {
-        # GET verb
-        r <- if (is.function(write_fn)) {
-            if (!is.null(write_disk)) stop("write_stream and write_disk are mutually exclusive.")
-            httr::GET(url, H, query = query, httr::write_stream(write_fn), show_progress, ...)
-        } else if (!is.null(write_disk)) {
-            httr::GET(url, H, query = query, write_disk, show_progress, ...)
+    if (verb %in% c("POST", "PUT")) {
+        # POST or PUT verb
+        if (is.character(request_body) && file.exists(request_body)) {
+            request <- request |>
+                httr2::req_body_file(request_body)
         } else {
-            httr::GET(url, H, query = query, show_progress, ...)
+            request <- request |>
+                httr2::req_body_raw(request_body)
         }
-    } else if (verb == "connection") {
-        # support for a streaming GET connection
-        stream_handle <- curl::new_handle()
-        curl::handle_setheaders(stream_handle, .list = headers)
-        connection <- curl::curl(url, open = "rb", handle = stream_handle)
-        return(connection)
-    } else if (verb == "HEAD") {
-        # HEAD verb
-        r <- httr::HEAD(url, H, query = query, ...)
-        s <- httr::http_status(r)
-        if (tolower(s$category) == "success") {
-            out <- TRUE
-            attributes(out) <- c(attributes(out), httr::headers(r))
-            return(out)
-        } else {
-            message(s$message)
-            out <- FALSE
-            attributes(out) <- c(attributes(out), httr::headers(r))
-            return(out)
-        }
-    } else if (verb == "DELETE") {
-        # DELETE verb
-        r <- httr::DELETE(url, H, query = query, ...)
-        s <- httr::http_status(r)
-        if (tolower(s$category) == "success") {
-            out <- TRUE
-            attributes(out) <- c(attributes(out), httr::headers(r))
-            return(out)
-        } else {
-            message(s$message)
-            out <- FALSE
-            attributes(out) <- c(attributes(out), httr::headers(r))
-            return(out)
-        }
-    } else if (verb == "POST") {
-        # POST verb
-        if (is.character(request_body) && request_body == "") {
-            r <- httr::POST(url, H, query = query, show_progress, ...)
-        } else if (is.character(request_body) && file.exists(request_body)) {
-            r <- httr::POST(url, H, body = httr::upload_file(request_body), query = query, show_progress, ...)
-        } else {
-            r <- httr::POST(url, H, body = request_body, query = query, show_progress, ...)
-        }
-    } else if (verb == "PUT") {
-        # PUT verb
-        if (is.character(request_body) && request_body == "") {
-            r <- httr::PUT(url, H, query = query, show_progress, ...)
-        } else if (is.character(request_body) && file.exists(request_body)) {
-            r <- httr::PUT(url, H, body = httr::upload_file(request_body), query = query, show_progress, ...)
-        } else {
-            r <- httr::PUT(url, H, body = request_body, query = query, show_progress, ...)
-        }
-    } else if (verb == "OPTIONS") {
-        # OPTIONS verb
-        r <- httr::VERB("OPTIONS", url, H, query = query, ...)
     }
     
+    if (verb == "connection") {
+        return(httr2::req_perform_connection(request)$body)
+    } else {
+        r <- httr2::req_perform(request)
+    }
+
     # handle response, failing if HTTP error occurs
     if (isTRUE(parse_response)) {
         out <- parse_aws_s3_response(r, Sig, verbose = verbose)
     } else {
         out <- r
     }
-    attributes(out) <- c(attributes(out), httr::headers(r))
+    attributes(out) <- c(attributes(out), httr2::resp_headers(r))
     out
 }
 
@@ -235,29 +181,19 @@ parse_aws_s3_response <- function(r, Sig, verbose = getOption("verbose")){
     if (isTRUE(verbose)) {
         message("Parsing AWS API response")
     }
-    ctype <- httr::headers(r)[["content-type"]]
+    ctype <- httr2::resp_header(r, "content-type")
     if (is.null(ctype) || ctype == "application/xml"){
-        content <- httr::content(r, as = "text", encoding = "UTF-8")
-        if (content != "") {
-            response_contents <- xml2::as_list(xml2::read_xml(content))
-            response <- flatten_list(response_contents)
-        } else {
-            response <- NULL
-        }
+        response <- httr2::resp_body_xml(r) |>
+            xml2::as_list() |>
+            flatten_list()
     } else {
         response <- r
     }
     if (isTRUE(verbose)) {
-        message(httr::http_status(r)[["message"]])
+        message(sprintf("%s: %s", httr2::resp_status(r), httr2::resp_status_desc(r)))
     }
-    if (httr::http_error(r) | (httr::http_status(r)[["category"]] == "Redirection")) {
-        h <- httr::headers(r)
-        out <- structure(response, headers = h, class = "aws_error")
-        attr(out, "request_canonical") <- Sig$CanonicalRequest
-        attr(out, "request_string_to_sign") <- Sig$StringToSign
-        attr(out, "request_signature") <- Sig$SignatureHeader
-        print(out)
-        httr::stop_for_status(r)
+    if (floor(httr2::resp_status(r)/100) == 3) {
+        stop("Unexpected redirection")
     }
     return(response)
 }
