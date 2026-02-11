@@ -46,7 +46,7 @@ s3HTTP(
 \item{file}{File path. If specified and `verb="GET"` the response content
 will be written to this file.}
 
-\item{write_disk, write_fn}{Deprecated. argument not supported by `httr2`.
+\item{write_disk, write_fn}{Deprecated. Argument not supported by `httr2`.
 Use `verb="connection"` or `file` instead.}
 
 \item{accelerate}{A logical indicating whether to use AWS transfer acceleration, which can produce significant speed improvements for cross-country transfers. Acceleration only works with buckets that do not have dots in bucket name.}

@@ -102,22 +102,19 @@ function(verb = "GET",
     hostname <- paste(p$hostname, p$port, sep=ifelse(length(p$port), ":", ""))
     
     # parse headers
-    request <- do.call(httr2::req_headers, c(
-        list(.req = request,
-             host = hostname,
-             `x-amz-date` = d_timestamp), headers))
-    
+    canonical_headers <- c(list(host = hostname,
+                                `x-amz-date` = d_timestamp), headers)
+    headers[["x-amz-date"]] <- d_timestamp
+
     # assess whether request is authenticated or not
     if (is.null(key) || key == "") {
         if (isTRUE(verbose)) {
             message("Executing request without AWS credentials")
         }
-        Sig <- list()
     } else {
         # if authenticated, figure out the request signature
         if (isTRUE(verbose))
             message("Executing request with AWS credentials")
-
         ## we need to augment canonical headers with
         ## x-amz-content-sha256 since signature_v4_auth() doesn't do it
         ## the following is what signature_v4_auth() does and it's terribly fragile!
@@ -126,30 +123,32 @@ function(verb = "GET",
         body_hash <- tolower(digest::digest(request_body,
                                             file = is.character(request_body) && file.exists(request_body),
                                             algo = "sha256", serialize = FALSE))
-        request <- request |>
-            httr2::req_headers(`x-amz-content-sha256` = body_hash)
-
+        
+        canonical_headers[["x-amz-content-sha256"]] <-
+            headers[["x-amz-content-sha256"]] <- body_hash
+        
         Sig <- aws.signature::signature_v4_auth(
-               datetime = d_timestamp,
-               region = region,
-               service = "s3",
-               # For s3connection() we hack the 'verb' argument. It's otherwise a GET request.
-               verb = if (verb == "connection") "GET" else verb,
-               action = action,
-               query_args = query,
-               canonical_headers = httr2::req_headers(request),
-               request_body = request_body,
-               key = key,
-               secret = secret,
-               session_token = session_token,
-               verbose = verbose)
+            datetime = d_timestamp,
+            region = region,
+            service = "s3",
+            # For s3connection() we hack the 'verb' argument. It's otherwise a GET request.
+            verb = if (verb == "connection") "GET" else verb,
+            action = action,
+            query_args = query,
+            canonical_headers = canonical_headers,
+            request_body = request_body,
+            key = key,
+            secret = secret,
+            session_token = session_token,
+            verbose = verbose)
         if (!is.null(session_token) && session_token != "") {
-            request <- request |>
-                httr2::req_headers(`x-amz-security-token` = session_token)
+            headers[["x-amz-security-token"]] <- session_token
         }
-        request <- request |>
-            httr2::req_headers(`Authorization` = Sig[["SignatureHeader"]])
+        headers[["Authorization"]] <- Sig[["SignatureHeader"]]        
     }
+    request <-
+        do.call(httr2::req_headers, c(list(.req = request), headers))
+
     # execute request
     if (verb %in% c("POST", "PUT")) {
         # POST or PUT verb
