@@ -7,7 +7,7 @@
 #' @param query Any query arguments, passed as a named list of key-value pairs.
 #' @param headers A list of request headers for the REST call.   
 #' @param request_body A character string containing request body data.
-#' @param write_disk,write_fn Deprecated. argument not supported by `httr2`.
+#' @param write_disk,write_fn Deprecated. Argument not supported by `httr2`.
 #' Use `verb="connection"` or `file` instead.
 #' @param file File path. If specified and `verb="GET"` the response content
 #' will be written to this file.
@@ -56,7 +56,10 @@ function(verb = "GET",
          session_token = NULL,
          use_https = TRUE,
          ...) {
-    #TODO test deprecated args
+    if (!missing(write_disk) || !missing(write_fn))
+        stop(paste("Arguments `write_disk` and `write_fn` are deprecated.",
+        "Use `file` argument instead", sep = "\n"))
+
     # locate and validate credentials
     credentials <- aws.signature::locate_credentials(key = key, secret = secret, session_token = session_token, region = region, verbose = verbose)
     key <- credentials[["key"]]
@@ -104,13 +107,6 @@ function(verb = "GET",
              host = hostname,
              `x-amz-date` = d_timestamp), headers))
     
-    # # parse query arguments TODO this is handled by httr2::request
-    # if (is.null(query) && !is.null(p$query)) {
-    #     query <- p[["query"]]
-    # }
-    # if (all(sapply(query, is.null))) {
-    #     query <- NULL
-    # }
     # assess whether request is authenticated or not
     if (is.null(key) || key == "") {
         if (isTRUE(verbose)) {
